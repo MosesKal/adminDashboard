@@ -43,7 +43,7 @@ const Labels = () => {
   const handleShow = () => setShow(true);
   const updateRoles = async () => {
     try {
-      const responseRoles = await axios.get("/lables");
+      const responseRoles = await axios.get("/labels");
       const dataRoles = responseRoles.data.data;
       setRoles(dataRoles);
     } catch (error) {
@@ -60,7 +60,7 @@ const Labels = () => {
         name: name.current.value,
       };
 
-      await axios.post("/lables", JSON.stringify(payload));
+      await axios.post("/labels", JSON.stringify(payload));
       toast.success("Impression créée avec succès !");
       handleClose();
       setIsLoadingCreating(false);
