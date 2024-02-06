@@ -246,7 +246,7 @@ const Solution = () => {
             const fetchFeedBack = async () => {
                 let data;
                 try {
-                    const labelsResponse = await axios.get("/lables");
+                    const labelsResponse = await axios.get("/labels");
 
                     data = labelsResponse.data.data;
 
