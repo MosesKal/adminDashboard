@@ -19,24 +19,19 @@ const Labelscom = ({ updateRoles }) => {
   const [isLoadingRoles, setIsLoadingRoles] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [selectedRole, setSelectedRole] = useState(null);
-
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [rolesToDelete, setRolesToDelete] = useState(null);
   const [showAlertModal, setShowAlertModal] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
-
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedRoleForEdit, setSelectedRoleForEdit] = useState(null);
-
   const [editedRoleName, setEditedRoleName] = useState("");
-
-
 
   useEffect(() => {
     const fetchRoles = async () => {
       try {
         setIsLoadingRoles(true);
-        const response = await axios.get("/lables");
+        const response = await axios.get("/labels");
         setRoles(response.data.data);
         setIsLoadingRoles(false);
       } catch (error) {
@@ -44,7 +39,6 @@ const Labelscom = ({ updateRoles }) => {
         console.error("Erreur lors de la récupération des données :", error);
       }
     };
-
     fetchRoles();
   }, []);
 
@@ -224,7 +218,7 @@ const Labelscom = ({ updateRoles }) => {
     };
 
     return <Export onExport={Selectdata} icon="true" />;
-  }, [roles, selectedRows, toggleCleared]);
+  }, [downloadCSV, roles, selectedRows, toggleCleared]);
 
   return (
     <div>
