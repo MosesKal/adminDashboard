@@ -6,6 +6,8 @@ import axios from "@/pages/api/axios";
 import Select from "react-select";
 // import { Singleselect } from "../../../shared/data/form/advanced-forms";
 import {ToastContainer} from "react-toastify";
+import { merge } from "immutable";
+
 const isValidUrl = (url) => {
   const urlPattern = /^(https?:\/\/)?((www\.)?youtube\.com\/(embed\/|v\/|watch\?v=)|youtu\.be\/)/;
   return urlPattern.test(url);
@@ -79,12 +81,15 @@ const Solutionslistcom = () => {
       }
     };
 
+
     const fetchUser = async () => {
       try {
         setIsLoadingUsers(true);
         const responseUser = await axios.get("/users");
         const dataUser = responseUser.data.data;
-        setUsers(dataUser.filter(user => user.roles.some(role => role.name === "USER")));
+
+        // setUsers(dataUser.filter(user => user.roles.some(role => role.name === "USER")));
+        setUsers(dataUser);
         setIsLoadingUsers(false);
       } catch (error) {
         setIsLoadingUsers(false);
@@ -127,6 +132,7 @@ const Solutionslistcom = () => {
         setIsAdmin(true);
       }
     }
+
     fetchUser();
     fetchThematique();
     fetchStatus();
@@ -173,7 +179,9 @@ const Solutionslistcom = () => {
     };
 
     mergeData(solutions, users);
+    
   }, [solutions, users]);
+
 
   useEffect(() => {
     const filteredSolutions = dataMerged?.filter((solution) => {

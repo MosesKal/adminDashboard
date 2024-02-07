@@ -168,11 +168,11 @@ const Solution = () => {
   useEffect(() => {
 
     const status = JSON.parse(localStorage?.getItem("STATUS_ACCOUNT"));
-
     const userRoles = JSON.parse(localStorage?.getItem("ACCESS_ACCOUNT"))?.roles;
     setIsAdmin(userRoles?.some(role => role.name === "ADMIN"));
 
     if (status.authenticate) {
+
       setDomLoaded(true);
       setParametreId(id);
       setParametreUserId(innovateurId);
@@ -182,10 +182,12 @@ const Solution = () => {
         try {
           const profileResponse = await axios.get(`/users/${innovateurId}`);
           setProfileInnovateur(profileResponse.data.data);
+          console.log(profileResponse);
         } catch (error) {
           console.log(error);
         }
       };
+
       const fetchSolution = async () => {
         try {
           const solutionResponse = await axios.get(`/solutions/${id}`);
@@ -424,7 +426,7 @@ const Solution = () => {
       <div className="breadcrumb-header justify-content-between">
         <div className="left-content">
           <span className="main-content-title mg-b-0 mg-b-lg-1">
-            SOLUTION DETAIL
+            SOLUTION DETAILs
           </span>
         </div>
         <div className="justify-content-center mt-2">
@@ -799,74 +801,133 @@ const Solution = () => {
                                       Feed-backs solution
                                     </div>
 
-                                    <Row className="row mt-5">
-                                      <Col md={6}>{"Sélectionnez votre impression par rapport à la solution"}</Col>
-                                      <Col md={6}>
-                                        {isExistCommentaire ? (
-                                          <Select
-                                            options={optionsFeedBack}
-                                            onChange={handleSelectChangeFeedBack}
-                                            isDisabled={true}
-                                          />
-                                        ) : (
-                                          <Select
-                                            options={optionsFeedBack}
-                                            onChange={handleSelectChangeFeedBack}
-                                          />
-                                        )}
-                                      </Col>
-                                      <Col md={4}></Col>
-                                    </Row>
+                                    {
+                                      isAdmin ? (
+                                        <>
 
-                                    <Row className="row mt-5">
-                                      <Col md={6}>{"Votre commentaire par rapport à la solution"}</Col>
-                                      <Col md={6}>
-                                        {isExistCommentaire ? (
-                                          <textarea
-                                            className="form-control"
-                                            placeholder="Votre Commentaire"
-                                            onChange={(e) => setCommentUser(e.target.value)}
-                                            disabled={true}
-                                            value={commentaires && commentaires}
-                                          >
-                                          </textarea>
-                                        ) : (
-                                          <textarea
-                                            className="form-control"
-                                            placeholder="Votre Commentaire"
-                                            onChange={(e) => setCommentUser(e.target.value)}
-                                          >
-                                          </textarea>
-                                        )}
-                                      </Col>
-                                      <Col md={4}></Col>
-                                    </Row>
+                                          <Row className="row mt-5">
+                                            <Col md={6}>{"Envoyer un commentaire à l'innovateur"}</Col>
+                                            <Col md={6}>
+                                              {isExistCommentaire ? (
+                                                <textarea
+                                                  className="form-control"
+                                                  placeholder="Votre Commentaire à l'innovateur"
+                                                  onChange={(e) => setCommentUser(e.target.value)}
+                                                  disabled={true}
+                                                  value={commentaires && commentaires}
+                                                >
+                                                </textarea>
+                                              ) : (
+                                                <textarea
+                                                  className="form-control"
+                                                  placeholder="Votre Commentaire à l'innovateur"
+                                                  onChange={(e) => setCommentUser(e.target.value)}
+                                                >
+                                                </textarea>
+                                              )}
+                                            </Col>
+                                            <Col md={4}></Col>
+                                          </Row>
 
-                                    <Row className="row mt-5">
-                                      <Col md={6}></Col>
-                                      <Col md={6}>
-                                        {isExistCommentaire ? (<Button
-                                          variant=""
-                                          className="btn btn-primary"
-                                          type="button"
-                                          onClick={handleSendFeedBack}
-                                          disabled
-                                        >
+                                          <Row className="row mt-5">
+                                            <Col md={6}></Col>
+                                            <Col md={6}>
+                                              {isExistCommentaire ? (<Button
+                                                variant=""
+                                                className="btn btn-primary"
+                                                type="button"
+                                                onClick={handleSendFeedBack}
+                                                disabled
+                                              >
 
-                                          {"Envoyer votre impression"}
-                                        </Button>) : (
-                                          <Button
-                                            variant=""
-                                            className="btn btn-primary"
-                                            type="button"
-                                            onClick={handleSendFeedBack}
-                                          >
-                                            {"Envoyer votre impression"}
-                                          </Button>
-                                        )}
+                                                {"Envoyer le commentaire"}
+                                              </Button>) : (
+                                                <Button
+                                                  variant=""
+                                                  className="btn btn-primary"
+                                                  type="button"
+                                                  onClick={handleSendFeedBack}
+                                                >
+                                                  {"Envoyer le commentaire"}
+                                                </Button>
+                                              )}
 
-                                      </Col>
-                                    </Row>
+                                            </Col>
+                                          </Row>
+                                        </>
+                                      ) : (
+                                        <>
+                                          <Row className="row mt-5">
+                                            <Col md={6}>{"Sélectionnez votre impression par rapport à la solution"}</Col>
+                                            <Col md={6}>
+                                              {isExistCommentaire ? (
+                                                <Select
+                                                  options={optionsFeedBack}
+                                                  onChange={handleSelectChangeFeedBack}
+                                                  isDisabled={true}
+                                                />
+                                              ) : (
+                                                <Select
+                                                  options={optionsFeedBack}
+                                                  onChange={handleSelectChangeFeedBack}
+                                                />
+                                              )}
+                                            </Col>
+                                            <Col md={4}></Col>
+                                          </Row>
+
+                                          <Row className="row mt-5">
+                                            <Col md={6}>{"Votre commentaire par rapport à la solution"}</Col>
+                                            <Col md={6}>
+                                              {isExistCommentaire ? (
+                                                <textarea
+                                                  className="form-control"
+                                                  placeholder="Votre Commentaire"
+                                                  onChange={(e) => setCommentUser(e.target.value)}
+                                                  disabled={true}
+                                                  value={commentaires && commentaires}
+                                                >
+                                                </textarea>
+                                              ) : (
+                                                <textarea
+                                                  className="form-control"
+                                                  placeholder="Votre Commentaire"
+                                                  onChange={(e) => setCommentUser(e.target.value)}
+                                                >
+                                                </textarea>
+                                              )}
+                                            </Col>
+                                            <Col md={4}></Col>
+                                          </Row>
+
+                                          <Row className="row mt-5">
+                                            <Col md={6}></Col>
+                                            <Col md={6}>
+                                              {isExistCommentaire ? (<Button
+                                                variant=""
+                                                className="btn btn-primary"
+                                                type="button"
+                                                onClick={handleSendFeedBack}
+                                                disabled
+                                              >
+
+                                                {"Envoyer votre impression"}
+                                              </Button>) : (
+                                                <Button
+                                                  variant=""
+                                                  className="btn btn-primary"
+                                                  type="button"
+                                                  onClick={handleSendFeedBack}
+                                                >
+                                                  {"Envoyer votre impression"}
+                                                </Button>
+                                              )}
+
+                                            </Col>
+                                          </Row>
+                                        </>
+                                      )
+                                    }
                                   </Col>
 
                                   {
@@ -917,7 +978,7 @@ const Solution = () => {
                                                     </Badge>
                                                   </Link>
 
-                                                  <div
+                                                  {/* <div
                                                     className="btn-group btn-group-sm mb-1 ms-auto float-sm-right mt-1">
                                                     <Button variant=""
                                                       className="btn btn-light me-2">
@@ -928,7 +989,7 @@ const Solution = () => {
                                                       <span
                                                         className="fe fe-thumbs-down tx-16"></span>
                                                     </Button>
-                                                  </div>
+                                                  </div>*/}
                                                 </div>
                                               </div>
                                             </Card.Body>
@@ -987,17 +1048,17 @@ const Solution = () => {
                   </Col>
                 </Row>
               </Tab.Container>
-            </div>
-          </span>
-        </Col>
-      </Row>
+            </div >
+          </span >
+        </Col >
+      </Row >
       <Row className=" row-sm">
         <Col lg={12} md={12}>
           <div className="tab-content"></div>
         </Col>
       </Row>
       <ToastContainer />
-    </div>
+    </div >
   );
 };
 
