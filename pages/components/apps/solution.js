@@ -9,7 +9,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Select from "react-select";
+import Select, { useStateManager } from "react-select";
 import Seo from "@/shared/layout-components/seo/seo";
 import { useRouter } from "next/router";
 import axios from "@/pages/api/axios";
@@ -143,6 +143,7 @@ const Solution = () => {
 
   const [commentUser, setCommentUser] = useState(null);
   const [profileCurateur, setProfileCurateur] = useState();
+  const [idCurateur, setIdCurateur] = useState();
 
   const [newStatus, setNewStatus] = useState(null);
   const [newPole, setNewPole] = useState(null);
@@ -156,6 +157,7 @@ const Solution = () => {
   const [isLoadingSendMail, setIsLoadingSendMail] = useState(false);
 
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isCommented, setIsCommented] = useState(false);
 
   const [isExistCommentaire, setIsExistCommentaire] = useState(false);
   const [commentaires, setCommentaires] = useState();
@@ -182,7 +184,6 @@ const Solution = () => {
         try {
           const profileResponse = await axios.get(`/users/${innovateurId}`);
           setProfileInnovateur(profileResponse.data.data);
-          console.log(profileResponse);
         } catch (error) {
           console.log(error);
         }
@@ -264,28 +265,28 @@ const Solution = () => {
         }
       }
 
-      const fetchCommentaire = async () => {
+      // const fetchCommentaire = async () => {
 
-        try {
-          const response = await axios.get(`/solutions/${id}/feedbacks`);
-          setIsExistCommentaire(response.data.data.length > 0);
-          console.log("commentaires", response.data.data);
-        } catch (error) {
-          console.error("Erreur survenue lors de la récupération des commentaires :", error);
-        }
+      //   try {
+      //     const response = await axios.get(`/solutions/${id}/feedbacks`);
+      //     setIsExistCommentaire(response.data.data.length > 0);
+      //     console.log("commentaires", response.data.data);
+      //   } catch (error) {
+      //     console.error("Erreur survenue lors de la récupération des commentaires :", error);
+      //   }
 
-      }
+      // }
 
-      const fecthProfile = async () => {
-        try {
-          const profileResponse = await axios.get(
-            `/auth/profile/`
-          );
-          setProfileCurateur(profileResponse.data.data);
-        } catch (error) {
-          console.log(error);
-        }
-      };
+      // const fecthProfile = async () => {
+      //   try {
+      //     const profileResponse = await axios.get(
+      //       `/auth/profile/`
+      //     );
+      //     setProfileCurateur(profileResponse.data.data);
+      //   } catch (error) {
+      //     console.log(error);
+      //   }
+      // };
 
 
       fetchInnovateur();
@@ -294,8 +295,8 @@ const Solution = () => {
       fetchStatus();
       fetchPole();
       fetchFeedBack();
-      fetchCommentaire();
-      fecthProfile();
+      // fetchCommentaire();
+      // fecthProfile();
 
     } else {
       navigate.push("/");
@@ -356,6 +357,7 @@ const Solution = () => {
     feedbacks.push();
 
     try {
+
       const payload = {
         labels: feedbacks,
         user: emailCurateur?.email,
@@ -365,7 +367,6 @@ const Solution = () => {
 
       const response = await axios.post(`/solutions/feedback/${solution?.id}`, payload);
       toast.success("Feedback envoyé avec succès");
-
 
     } catch (error) {
       console.error("Erreur survenue lors de l'envoi de l'impression :", error);
@@ -397,12 +398,12 @@ const Solution = () => {
     if (solution.imageLink) {
       imageLinks.push({ "link": solution.imageLink })
     }
-
     if (solution.images && solution.images.length > 0) {
       solution.images.forEach((image) => {
         imageLinks.push({ "link": image.imageLink });
       });
     }
+
   }
 
   useEffect(() => {
@@ -411,14 +412,32 @@ const Solution = () => {
 
         solution.feedbacks.forEach(feedback => {
 
-          if (feedback.userId === emailCurateur?.id) {
+          if (feedback.userId === emailCurateur.id || isAdmin) {
+            setIdCurateur(feedback.userId)
             setIsExistCommentaire(true);
             setCommentaires(feedback.adminComment)
+          }
+          if(solution.feedbacks.length > 0 || feedback.userId !== emailCurateur.id){
+            setIsCommented(true);
           }
         });
       }
     }
   }, [solution, emailCurateur]);
+
+  useEffect(()=>{
+    const fetchCurateur = async ()=>{
+      try{
+        const profileCurateur = await axios.get(`/users/${idCurateur}`);
+        setProfileCurateur(profileCurateur.data.data);
+      }catch(error){
+        console.log(error);
+      }
+    }
+
+    fetchCurateur();
+
+  }, [idCurateur])
 
   return (
     <div>
@@ -494,11 +513,13 @@ const Solution = () => {
                     {"Date d'inscription sur la plateforme:"}
                   </span>
                   <span>
-                    {profileInnovateur
-                      ? moment(profileInnovateur.createdAt).format(
-                        "DD MMMM YYYY [à] HH:mm"
-                      )
-                      : ""}
+                    {
+                      profileInnovateur
+                        ? moment(profileInnovateur.createdAt).format(
+                          "DD MMMM YYYY [à] HH:mm"
+                        )
+                        : ""
+                      }
                   </span>
                 </p>
               </div>
@@ -800,31 +821,19 @@ const Solution = () => {
                                     <div className=" mb-4 main-content-label">
                                       Feed-backs solution
                                     </div>
-
                                     {
                                       isAdmin ? (
                                         <>
-
                                           <Row className="row mt-5">
                                             <Col md={6}>{"Envoyer un commentaire à l'innovateur"}</Col>
                                             <Col md={6}>
-                                              {isExistCommentaire ? (
+                                              
                                                 <textarea
                                                   className="form-control"
                                                   placeholder="Votre Commentaire à l'innovateur"
-                                                  onChange={(e) => setCommentUser(e.target.value)}
-                                                  disabled={true}
-                                                  value={commentaires && commentaires}
                                                 >
                                                 </textarea>
-                                              ) : (
-                                                <textarea
-                                                  className="form-control"
-                                                  placeholder="Votre Commentaire à l'innovateur"
-                                                  onChange={(e) => setCommentUser(e.target.value)}
-                                                >
-                                                </textarea>
-                                              )}
+                                             
                                             </Col>
                                             <Col md={4}></Col>
                                           </Row>
@@ -832,25 +841,15 @@ const Solution = () => {
                                           <Row className="row mt-5">
                                             <Col md={6}></Col>
                                             <Col md={6}>
-                                              {isExistCommentaire ? (<Button
+                                              <Button
                                                 variant=""
                                                 className="btn btn-primary"
                                                 type="button"
-                                                onClick={handleSendFeedBack}
-                                                disabled
+                                                // onClick={handleSendFeedBack}
+                                                // disabled
                                               >
-
                                                 {"Envoyer le commentaire"}
-                                              </Button>) : (
-                                                <Button
-                                                  variant=""
-                                                  className="btn btn-primary"
-                                                  type="button"
-                                                  onClick={handleSendFeedBack}
-                                                >
-                                                  {"Envoyer le commentaire"}
-                                                </Button>
-                                              )}
+                                              </Button>
 
                                             </Col>
                                           </Row>
@@ -922,7 +921,6 @@ const Solution = () => {
                                                   {"Envoyer votre impression"}
                                                 </Button>
                                               )}
-
                                             </Col>
                                           </Row>
                                         </>
@@ -942,13 +940,11 @@ const Solution = () => {
                                               <div
                                                 className="d-sm-flex p-3 mt-4 sub-review-section border subsection-color br-tl-0 br-tr-0">
                                                 <div className="d-flex me-3">
-
                                                   <img
                                                     className="media-object brround avatar-md"
                                                     alt="64x64"
                                                     src={`${apiBaseUrl}/uploads/${profileCurateur?.profile}`}
                                                   />
-
                                                 </div>
                                                 <div className="media-body">
 

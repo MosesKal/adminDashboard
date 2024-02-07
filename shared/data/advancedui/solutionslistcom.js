@@ -5,7 +5,7 @@ import { columns as configureColumns, truncateText } from "./solutionslist";
 import axios from "@/pages/api/axios";
 import Select from "react-select";
 // import { Singleselect } from "../../../shared/data/form/advanced-forms";
-import {ToastContainer} from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import { merge } from "immutable";
 
 const isValidUrl = (url) => {
@@ -42,7 +42,7 @@ const Solutionslistcom = () => {
 
   const [optionPole, setOptionPole] = useState();
   const [selectedSolutions, setSelectedSolutions] = useState(null);
-  const [optionSolutionId, setOptionSolutionId]  = useState();
+  const [optionSolutionId, setOptionSolutionId] = useState();
   const [showEditModal, setShowEditModal] = useState(false);
 
 
@@ -109,29 +109,29 @@ const Solutionslistcom = () => {
     const fetchPole = async () => {
       let data;
 
-      try{
+      try {
         const poleResponse = await axios.get("/poles");
 
         data = poleResponse.data.data;
 
         setOptionPole(
-            data.map((option)=>({
-              value : option.id,
-              label : option.name
-            }))
+          data.map((option) => ({
+            value: option.id,
+            label: option.name
+          }))
         );
 
-      }catch(e){
+      } catch (e) {
         console.log(e)
       }
     }
 
-    if (localStorage.getItem("ACCESS_ACCOUNT")) {
-      const roles = JSON.parse(localStorage.getItem("ACCESS_ACCOUNT")).roles;
-      if (roles && roles[0].name === "ADMIN") {
-        setIsAdmin(true);
-      }
+    if (localStorage?.getItem("ACCESS_ACCOUNT")) {
+      const userRoles = JSON.parse(localStorage?.getItem("ACCESS_ACCOUNT"))?.roles;
+      setIsAdmin(userRoles?.some(role => role.name === "ADMIN"))
     }
+
+
 
     fetchUser();
     fetchThematique();
@@ -146,7 +146,7 @@ const Solutionslistcom = () => {
         try {
           setIsLoadingSolution(true);
           let responseSolution;
-          if (profile.roles.some(role => role.name === "ADMIN")) {
+          if (isAdmin) {
             responseSolution = await axios.get("/solutions");
           } else {
             responseSolution = await axios.get(`/solutions/pole/${profile.poleId}`);
@@ -179,7 +179,7 @@ const Solutionslistcom = () => {
     };
 
     mergeData(solutions, users);
-    
+
   }, [solutions, users]);
 
 
@@ -190,9 +190,9 @@ const Solutionslistcom = () => {
       }
 
       const textMatch =
-          solution.name.toLowerCase().includes(filters.searchText.toLowerCase()) ||
-          solution.user?.name.toLowerCase().includes(filters.searchText.toLowerCase()) ||
-          solution.user?.email.toLowerCase().includes(filters.searchText.toLowerCase());
+        solution.name.toLowerCase().includes(filters.searchText.toLowerCase()) ||
+        solution.user?.name.toLowerCase().includes(filters.searchText.toLowerCase()) ||
+        solution.user?.email.toLowerCase().includes(filters.searchText.toLowerCase());
 
       const statusMatch = filters.statusFilter === "Tous" || solution?.status?.name === filters.statusFilter;
 
@@ -217,7 +217,7 @@ const Solutionslistcom = () => {
       await axios.delete(`/solutions/${solutionToDelete.id}`);
       setShowDeleteModal(false);
       setSolutions((prevSolutions) =>
-          prevSolutions.filter((solution) => solution.id !== solutionToDelete.id)
+        prevSolutions.filter((solution) => solution.id !== solutionToDelete.id)
       );
     } catch (error) {
       console.error("Erreur lors de la suppression de la solution :", error);
@@ -227,12 +227,12 @@ const Solutionslistcom = () => {
     setShowAlertModal(false);
   };
 
-  const handleShowModalEdit = (solution)=>{
+  const handleShowModalEdit = (solution) => {
     setSelectedSolutions(solution);
     setShowEditModal(true);
   }
 
-  const handleCloseModalEdit = ()=>{
+  const handleCloseModalEdit = () => {
     setShowEditModal(false);
   }
 
@@ -272,9 +272,9 @@ const Solutionslistcom = () => {
 
         try {
           const value =
-              typeof item[key] === "object" && item[key] !== null ? item[key]?.props?.alt : item[key];
+            typeof item[key] === "object" && item[key] !== null ? item[key]?.props?.alt : item[key];
           result += value;
-        } catch (e) {}
+        } catch (e) { }
 
         ctr++;
       });
@@ -300,9 +300,9 @@ const Solutionslistcom = () => {
   }
 
   const Export = ({ onExport }) => (
-      <Button size="sm" onClick={() => onExport()}>
-        Exporter les Solutions
-      </Button>
+    <Button size="sm" onClick={() => onExport()}>
+      Exporter les Solutions
+    </Button>
   );
 
   const actionsMemo = React.useMemo(() => <Export onExport={() => downloadCSV(solutions)} />, [solutions]);
@@ -334,132 +334,132 @@ const Solutionslistcom = () => {
 
 
   return (
-      <div>
-        <Row className="row-sm">
-          <Col lg={12}>
-            <Card className="custom-card">
-              <Card.Body>
-                {isLoadingSolution ? (
-                    <div className="text-center">
-                      <Spinner animation="border" variant="primary" />
-                    </div>
-                ) : (
-                    <div className="table-responsive ">
-                      <Row>
-                        <Col xs={12} md={12} lg={4} xl={4}>
-                          <Form>
-                            <FormGroup className="form-group">
-                              <Form.Control
-                                  type="text"
-                                  className="form-control"
-                                  placeholder="Recherche par titre de la solution, par le nom ou l'email de l'innovateur"
-                                  value={filters.searchText}
-                                  onChange={(e) => setFilters({ ...filters, searchText: e.target.value })}
-                              />
-                            </FormGroup>
-                          </Form>
-                        </Col>
+    <div>
+      <Row className="row-sm">
+        <Col lg={12}>
+          <Card className="custom-card">
+            <Card.Body>
+              {isLoadingSolution ? (
+                <div className="text-center">
+                  <Spinner animation="border" variant="primary" />
+                </div>
+              ) : (
+                <div className="table-responsive ">
+                  <Row>
+                    <Col xs={12} md={12} lg={4} xl={4}>
+                      <Form>
+                        <FormGroup className="form-group">
+                          <Form.Control
+                            type="text"
+                            className="form-control"
+                            placeholder="Recherche par titre de la solution, par le nom ou l'email de l'innovateur"
+                            value={filters.searchText}
+                            onChange={(e) => setFilters({ ...filters, searchText: e.target.value })}
+                          />
+                        </FormGroup>
+                      </Form>
+                    </Col>
 
-                        <Col xs={12} md={12} lg={4} xl={4}>
-                          <div className=" SlectBox">
-                            <Select
-                                classNamePrefix="selectform"
-                                // defaultValue={Singleselect}
-                                onChange={handleSelectChangeStatus}
-                                options={optionsStatus}
-                                placeholder="Filtre par Status"
-                            />
-                          </div>
-                        </Col>
+                    <Col xs={12} md={12} lg={4} xl={4}>
+                      <div className=" SlectBox">
+                        <Select
+                          classNamePrefix="selectform"
+                          // defaultValue={Singleselect}
+                          onChange={handleSelectChangeStatus}
+                          options={optionsStatus}
+                          placeholder="Filtre par Status"
+                        />
+                      </div>
+                    </Col>
 
-                        <Col xs={12} md={12} lg={4} xl={4}>
-                          <div className=" SlectBox">
-                            <Select
-                                classNamePrefix="selectform"
-                                // defaultValue={Singleselect}
-                                onChange={handleSelectChangeThematic}
-                                options={optionsThematique}
-                                placeholder="Filtre par Thématique"
-                            />
-                          </div>
-                        </Col>
-                      </Row>
-                      <span className="datatable">
+                    <Col xs={12} md={12} lg={4} xl={4}>
+                      <div className=" SlectBox">
+                        <Select
+                          classNamePrefix="selectform"
+                          // defaultValue={Singleselect}
+                          onChange={handleSelectChangeThematic}
+                          options={optionsThematique}
+                          placeholder="Filtre par Thématique"
+                        />
+                      </div>
+                    </Col>
+                  </Row>
+                  <span className="datatable">
                     <span className="uselistdata">
                       <DataTable
-                          columns={columns}
-                          data={filteredSolutions}
-                          actions={actionsMemo}
-                          contextActions={contextActions}
-                          onSelectedRowsChange={handleRowSelected}
-                          clearSelectedRows={toggleCleared}
-                          defaultSortField="id"
-                          defaultSortAsc={false}
-                          selectableRows
-                          pagination
+                        columns={columns}
+                        data={filteredSolutions}
+                        actions={actionsMemo}
+                        contextActions={contextActions}
+                        onSelectedRowsChange={handleRowSelected}
+                        clearSelectedRows={toggleCleared}
+                        defaultSortField="id"
+                        defaultSortAsc={false}
+                        selectableRows
+                        pagination
                       />
                     </span>
                   </span>
-                    </div>
-                )}
-              </Card.Body>
-            </Card>
-          </Col>
-        </Row>
-        <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
-          <Modal.Body>
-            <div className="tx-center">
-              <i className="icon icon ion-ios-close-circle-outline tx-100 tx-danger lh-1 mg-t-20 d-inline-block"></i>{" "}
-              <h4 className="tx-danger mg-b-20">
-                {"Êtes - vous sûr de vouloir supprimer la solution "}{" "}
-                <span className="badge bg-danger">{truncateText(solutionToDelete?.name, 20)} ?</span>
-              </h4>
-            </div>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button size={"sm"} variant="primary" onClick={() => setShowDeleteModal(false)}>
-              Annuler
-            </Button>
-            <Button size={"sm"} variant="danger" onClick={handleDeleteSolution}>
-              Supprimer
-            </Button>
-          </Modal.Footer>
-        </Modal>
-        <Modal show={showAlertModal} onHide={handleCloseAlertModal}>
-          <Modal.Body>
-            <div className="tx-center">
-              <i className="icon icon ion-ios-close-circle-outline tx-100 tx-danger lh-1 mg-t-20 d-inline-block"></i>{" "}
-              <h4 className="tx-danger mg-b-20">{"Vous n'avez pas les droits nécessaires pour effectuer cette action."}</h4>
-            </div>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button size={"sm"} variant="primary" onClick={handleCloseAlertModal}>
-              {"OK"}
-            </Button>
-          </Modal.Footer>
-        </Modal>
-        <Modal show={showEditModal} onHide={handleCloseModalEdit}>
-          <Modal.Header className="modal-header">
-            <h6 className="modal-title">{"Assigner la solution à un pôle"}</h6>
-            <Button
-              variant=""
-              className="btn-close"
-              type="button"
-              onClick={handleCloseModalEdit}
-            >
-              <span aria-hidden="true">x</span>
-            </Button>
-          </Modal.Header>
-          <Modal.Body className="modal-body">
-            <div className="p-4">
-              <FormGroup className="form-group">
-                <Select options={optionPole}/>
-              </FormGroup>
-            </div>
-          </Modal.Body>
-        </Modal>
-        <ToastContainer />
-      </div>
+                </div>
+              )}
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
+      <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
+        <Modal.Body>
+          <div className="tx-center">
+            <i className="icon icon ion-ios-close-circle-outline tx-100 tx-danger lh-1 mg-t-20 d-inline-block"></i>{" "}
+            <h4 className="tx-danger mg-b-20">
+              {"Êtes - vous sûr de vouloir supprimer la solution "}{" "}
+              <span className="badge bg-danger">{truncateText(solutionToDelete?.name, 20)} ?</span>
+            </h4>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button size={"sm"} variant="primary" onClick={() => setShowDeleteModal(false)}>
+            Annuler
+          </Button>
+          <Button size={"sm"} variant="danger" onClick={handleDeleteSolution}>
+            Supprimer
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      <Modal show={showAlertModal} onHide={handleCloseAlertModal}>
+        <Modal.Body>
+          <div className="tx-center">
+            <i className="icon icon ion-ios-close-circle-outline tx-100 tx-danger lh-1 mg-t-20 d-inline-block"></i>{" "}
+            <h4 className="tx-danger mg-b-20">{"Vous n'avez pas les droits nécessaires pour effectuer cette action."}</h4>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button size={"sm"} variant="primary" onClick={handleCloseAlertModal}>
+            {"OK"}
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      <Modal show={showEditModal} onHide={handleCloseModalEdit}>
+        <Modal.Header className="modal-header">
+          <h6 className="modal-title">{"Assigner la solution à un pôle"}</h6>
+          <Button
+            variant=""
+            className="btn-close"
+            type="button"
+            onClick={handleCloseModalEdit}
+          >
+            <span aria-hidden="true">x</span>
+          </Button>
+        </Modal.Header>
+        <Modal.Body className="modal-body">
+          <div className="p-4">
+            <FormGroup className="form-group">
+              <Select options={optionPole} />
+            </FormGroup>
+          </div>
+        </Modal.Body>
+      </Modal>
+      <ToastContainer />
+    </div>
   );
 };
 

@@ -28,6 +28,8 @@ const Profile = () => {
   const [newNumTel, setNewNumTel] = useState(profile ? profile.phoneNumber : "");
   const [newImage, setNewImage] = useState(null);
   const [isLoading , setIsLoading] = useState(false);
+  const [oldPassword, setOldPassword] = useState();
+  const [newPassword, setNewPassword] = useState();
 
 
   let navigate = useRouter();
@@ -70,22 +72,24 @@ const Profile = () => {
 
   const handleProfileUpdate = async () => {
     try {
+
       setIsLoading(true);
+
       const identityFormData = new FormData();
       identityFormData.append("name", newName);
       identityFormData.append("address", newAddress);
       identityFormData.append("phoneNumber", newNumTel);
-
-      console.log("Selected file:", filesimade[0]);
+      identityFormData.append("oldPassword", oldPassword);
+      identityFormData.append("password", newPassword);
 
       const imageFormData = new FormData();
+
       if (filesimade.length > 0) {
         imageFormData.append(`thumb`, filesimade[0].file);
       }
 
       await Promise.all([
         axios.patch(`/auth/profile/${profile.id}`, identityFormData)
-        // filesimade.length > 0 ? axios.post(`/users/${profile.id}/image`, imageFormData) : Promise.resolve(),
       ]);
 
       setProfile({
@@ -122,7 +126,7 @@ const Profile = () => {
               </Breadcrumb>
             </div>
           </div>
-          {/* <!-- /breadcrumb --> */}
+          {/* <!-- breadcrumb --> */}
           <Row>
             <Col lg={12} md={12}>
               <Card className="custom-card customs-cards">
@@ -137,7 +141,6 @@ const Profile = () => {
                       />
                   ) : (
                       <img
-
                           className="br-5"
                           alt=""
                           src={"../../../assets/img/faces/profile.jpg"}
@@ -168,7 +171,6 @@ const Profile = () => {
                   </div>
                 </Card.Body>
               </Card>
-              {/* <SSRProvider> */}
               <span className=" py-0 ">
             <div className="profile-tab tab-menu-heading border-bottom-0 ">
               <Tab.Container id="left-tabs-example" defaultActiveKey="About">
@@ -315,6 +317,42 @@ const Profile = () => {
                                             }
                                             value={newNumTel}
                                             onChange={(e) => setNewNumTel(e.target.value)}
+                                        />
+                                      </Col>
+                                    </Row>
+                                  </FormGroup>
+
+                                  <FormGroup className="form-group ">
+                                    <Row className=" row-sm">
+                                      <Col md={3}>
+                                        <Form.Label className="form-label">
+                                            Ancien mot de passe
+                                        </Form.Label>
+                                      </Col>
+                                      <Col md={9}>
+                                        <Form.Control
+                                            type="text"
+                                            className="form-control"
+                                            placeholder="Ancien mot de passe"
+                                            onChange={(e) => setOldPassword(e.target.value)}
+                                        />
+                                      </Col>
+                                    </Row>
+                                  </FormGroup>
+
+                                  <FormGroup className="form-group ">
+                                    <Row className=" row-sm">
+                                      <Col md={3}>
+                                        <Form.Label className="form-label">
+                                            Nouveau mot de passe
+                                        </Form.Label>
+                                      </Col>
+                                      <Col md={9}>
+                                        <Form.Control
+                                            type="text"
+                                            className="form-control"
+                                            placeholder="Nouveau mot de passe"
+                                            onChange={(e) => setNewPassword(e.target.value)}
                                         />
                                       </Col>
                                     </Row>
