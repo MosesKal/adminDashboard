@@ -84,7 +84,7 @@ const Solution = () => {
 
 
       const fetchInnovateur = async () => {
-        if(navigate.query.innovateurId){
+        if (navigate.query.innovateurId) {
           try {
             const profileResponse = await axios.get(`/users/${navigate?.query?.innovateurId}`);
             setProfileInnovateur(profileResponse?.data?.data);
@@ -95,7 +95,7 @@ const Solution = () => {
       };
 
       const fetchSolution = async () => {
-        if(navigate.query.id){
+        if (navigate.query.id) {
           try {
             const solutionResponse = await axios.get(`/solutions/${navigate?.query?.id}`);
             setSolution(solutionResponse?.data?.data);
@@ -103,22 +103,22 @@ const Solution = () => {
             console.log(error);
           }
         }
-       
+
       };
 
       const fetchThematique = async () => {
 
-        if(navigate.query.thematiqueId){
+        if (navigate.query.thematiqueId) {
 
-        try {
-          const thematiqueResponse = await axios.get(
-            `/thematics/${navigate?.query?.thematiqueId}`
-          );
-          setThematique(thematiqueResponse?.data?.data);
-        } catch (error) {
-          console.log(error);
+          try {
+            const thematiqueResponse = await axios.get(
+              `/thematics/${navigate?.query?.thematiqueId}`
+            );
+            setThematique(thematiqueResponse?.data?.data);
+          } catch (error) {
+            console.log(error);
+          }
         }
-      }
       };
 
       const fetchStatus = async () => {
@@ -348,7 +348,7 @@ const Solution = () => {
 
   useEffect(() => {
     const fetchCurateur = async () => {
-      if(idCurateur){
+      if (idCurateur) {
         try {
           const curateurResponse = await axios.get(`/users/${idCurateur}`);
           setProfileCurateur(curateurResponse?.data?.data);
@@ -371,8 +371,11 @@ const Solution = () => {
       setSolution(allSolutions[currentIndex - 1]);
       const previousSolution = allSolutions[currentIndex - 1];
       try {
-        const profileResponse = await axios.get(`/users/${previousSolution?.userId}`);
-        setProfileInnovateur(profileResponse?.data?.data);
+        if (previousSolution.userId) {
+          const profileResponse = await axios.get(`/users/${previousSolution?.userId}`);
+          setProfileInnovateur(profileResponse?.data?.data);
+        }
+
       } catch (error) {
         console.log(error);
       }
@@ -385,8 +388,10 @@ const Solution = () => {
       setSolution(allSolutions[currentIndex + 1]);
       const nextSolution = allSolutions[currentIndex + 1];
       try {
-        const profileResponse = await axios.get(`/users/${nextSolution?.userId}`);
-        setProfileInnovateur(profileResponse?.data?.data);
+        if (nextSolution.userId) {
+          const profileResponse = await axios.get(`/users/${nextSolution?.userId}`);
+          setProfileInnovateur(profileResponse?.data?.data);
+        }
       } catch (error) {
         console.log(error);
       }
@@ -450,9 +455,9 @@ const Solution = () => {
                         <div
                           aria-label="Basic example"
                           className="d-flex justify-content-start"
-                          
+
                         >
-                          <Button 
+                          <Button
                             onClick={handlePreviousSolution}
                             type="button"
                             className="btn button-icon"
@@ -460,7 +465,7 @@ const Solution = () => {
                             <i class="bi bi-chevron-double-left"></i>
                             <span>Solution Précedente</span>
                           </Button>
-                          
+
                         </div>
                       </Col>
 
@@ -468,16 +473,16 @@ const Solution = () => {
                         <div
                           aria-label="Basic example"
                           className="d-flex justify-content-end"
-                          
+
                         >
-                          <Button 
+                          <Button
                             onClick={handleNextSolution}
                             type="button"
                             className="btn button-icon"
-                            >
-                              <span>Solution Suivante</span>
-                              <i class="bi bi-chevron-double-right"></i>
-                            </Button>
+                          >
+                            <span>Solution Suivante</span>
+                            <i class="bi bi-chevron-double-right"></i>
+                          </Button>
                         </div>
                       </Col>
                     </Row>
