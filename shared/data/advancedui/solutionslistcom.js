@@ -320,7 +320,6 @@ const Solutionslistcom = () => {
     setFilters({ ...filters, thematicFilter: selectedOption?.label || "all" });
   };
 
-  console.log(solutions, "solutions")
 
   return (
     <div>
