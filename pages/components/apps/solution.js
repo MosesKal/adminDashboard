@@ -443,6 +443,7 @@ const Solution = () => {
             isLoadingUpdateStatut={isLoadingUpdateStatut}
             optionsFeedBack={optionsFeedBack}
             profileCurateur={profileCurateur}
+            showYoutubeThumbnail={showYoutubeThumbnail}
           />
           <Col lg={12} md={12} xl={12}>
             <Card>

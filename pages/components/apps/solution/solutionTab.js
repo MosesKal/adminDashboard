@@ -27,7 +27,8 @@ const SolutionTab = (
         optionsFeedBack,
         isAdmin,
         options,
-        profileCurateur
+        profileCurateur,
+        showYoutubeThumbnail
 
     }) => {
     return (
@@ -153,20 +154,7 @@ const SolutionTab = (
                                                                                             </a>
                                                                                         )}
                                                                                     </span>
-                                                                                    {showYoutubeThumbnail || (
-                                                                                        <a
-                                                                                            href={`https://www.youtube.com/watch?v=${getVideoIdFromUrl(
-                                                                                                solution.videoLink
-                                                                                            )}`}
-                                                                                            target="_blank"
-                                                                                            rel="noopener noreferrer"
-                                                                                            onClick={
-                                                                                                toggleYoutubeThumbnail
-                                                                                            }
-                                                                                        >
-                                                                                            Afficher la vidéo YouTube
-                                                                                        </a>
-                                                                                    )}
+                                                                                    
                                                                                 </>
                                                                             ) : (
                                                                                 "pas de lien youtube"
