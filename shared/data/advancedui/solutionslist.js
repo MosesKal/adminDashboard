@@ -58,7 +58,7 @@ export const columns = (handleDelete, handleShowEditModal)=>[
 
                 <Link
                     className="btn btn-primary btn-sm w-100 button-icon"
-                    href={`/components/apps/solution?id=${row.id}&innovateurId=${row.userId}&thematiqueId=${row.thematicId}`}
+                    href={`/components/apps/solution?id=${row?.id}&innovateurId=${row?.user?.id}&thematiqueId=${row?.thematic?.id}`}
                     as="/components/apps/solution"
                 >
                     <i className="bi bi-card-list"></i>

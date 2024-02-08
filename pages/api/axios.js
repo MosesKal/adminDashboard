@@ -1,7 +1,7 @@
 import axios from "axios";
 
-//export  const apiBaseUrl = "http://localhost:8000";
-export const apiBaseUrl = "https://api.fikiri.co";
+ //export  const apiBaseUrl = "http://localhost:8000";
+ export const apiBaseUrl = "https://api.fikiri.co";
 
 export default axios.create(
     {

@@ -23,9 +23,9 @@ const Solution = () => {
   const [parametreThematiqueId, setParametreThematiqueId] = useState(null);
 
   const navigate = useRouter();
-  const id = navigate.query.id;
-  const innovateurId = navigate.query.innovateurId;
-  const thematiqueId = navigate.query.thematiqueId;
+  const id = navigate?.query?.id;
+  const innovateurId = navigate?.query?.innovateurId;
+  const thematiqueId = navigate?.query?.thematiqueId;
 
   const [options, setOptions] = useState();
   const [selectedOptions, setSelectedOptions] = useState();
@@ -84,39 +84,48 @@ const Solution = () => {
 
 
       const fetchInnovateur = async () => {
-        try {
-          const profileResponse = await axios.get(`/users/${innovateurId}`);
-          setProfileInnovateur(profileResponse.data.data);
-        } catch (error) {
-          console.log(error);
+        if(navigate.query.innovateurId){
+          try {
+            const profileResponse = await axios.get(`/users/${navigate?.query?.innovateurId}`);
+            setProfileInnovateur(profileResponse?.data?.data);
+          } catch (error) {
+            console.log(error);
+          }
         }
       };
 
       const fetchSolution = async () => {
-        try {
-          const solutionResponse = await axios.get(`/solutions/${id}`);
-          setSolution(solutionResponse.data.data);
-        } catch (error) {
-          console.log(error);
+        if(navigate.query.id){
+          try {
+            const solutionResponse = await axios.get(`/solutions/${navigate?.query?.id}`);
+            setSolution(solutionResponse?.data?.data);
+          } catch (error) {
+            console.log(error);
+          }
         }
+       
       };
 
       const fetchThematique = async () => {
+
+        if(navigate.query.thematiqueId){
+
         try {
           const thematiqueResponse = await axios.get(
-            `/thematics/${thematiqueId}`
+            `/thematics/${navigate?.query?.thematiqueId}`
           );
-          setThematique(thematiqueResponse.data.data);
+          setThematique(thematiqueResponse?.data?.data);
         } catch (error) {
           console.log(error);
         }
+      }
       };
 
       const fetchStatus = async () => {
         let data;
         try {
           const statusResponse = await axios.get("/status");
-          data = statusResponse.data.data;
+          data = statusResponse?.data?.data;
 
           setOptions(
             data.map((option) => ({
@@ -133,7 +142,7 @@ const Solution = () => {
         try {
           const poleResponse = await axios.get("/poles");
 
-          data = poleResponse.data.data;
+          data = poleResponse?.data?.data;
 
           setOptionsPole(
             data.map((option) => ({
@@ -151,7 +160,7 @@ const Solution = () => {
         try {
           const labelsResponse = await axios.get("/labels");
 
-          data = labelsResponse.data.data;
+          data = labelsResponse?.data?.data;
 
           setOptionsFeedBack(
             data.map((option) => ({
@@ -167,7 +176,7 @@ const Solution = () => {
       const fetchProfile = async () => {
         try {
           const profileResponse = await axios.get("/auth/profile/");
-          setProfile(profileResponse.data.data);
+          setProfile(profileResponse?.data?.data);
         } catch (error) {
           console.log(error);
         }
@@ -189,9 +198,9 @@ const Solution = () => {
     navigate,
     isAdmin,
     thematiqueId,
-    navigate.query.id,
-    navigate.query.innovateurId,
-    navigate.query.thematiqueId,
+    // navigate.query.id,
+    // navigate.query.innovateurId,
+    // navigate.query.thematiqueId,
   ]);
 
 
@@ -339,11 +348,13 @@ const Solution = () => {
 
   useEffect(() => {
     const fetchCurateur = async () => {
-      try {
-        const profileCurateur = await axios.get(`/users/${idCurateur}`);
-        setProfileCurateur(profileCurateur.data.data);
-      } catch (error) {
-        console.log(error);
+      if(idCurateur){
+        try {
+          const curateurResponse = await axios.get(`/users/${idCurateur}`);
+          setProfileCurateur(curateurResponse?.data?.data);
+        } catch (error) {
+          console.log(error);
+        }
       }
     };
 
@@ -355,13 +366,13 @@ const Solution = () => {
   };
 
   const handlePreviousSolution = async () => {
-    const currentIndex = allSolutions.findIndex((sol) => sol.id === solution.id);
+    const currentIndex = allSolutions.findIndex((sol) => sol?.id === solution?.id);
     if (currentIndex > 0) {
       setSolution(allSolutions[currentIndex - 1]);
       const previousSolution = allSolutions[currentIndex - 1];
       try {
-        const profileResponse = await axios.get(`/users/${previousSolution.userId}`);
-        setProfileInnovateur(profileResponse.data.data);
+        const profileResponse = await axios.get(`/users/${previousSolution?.userId}`);
+        setProfileInnovateur(profileResponse?.data?.data);
       } catch (error) {
         console.log(error);
       }
@@ -370,12 +381,12 @@ const Solution = () => {
 
   const handleNextSolution = async () => {
     const currentIndex = allSolutions.findIndex((sol) => sol.id === solution.id);
-    if (currentIndex < allSolutions.length - 1) {
+    if (currentIndex < allSolutions?.length - 1) {
       setSolution(allSolutions[currentIndex + 1]);
       const nextSolution = allSolutions[currentIndex + 1];
       try {
-        const profileResponse = await axios.get(`/users/${nextSolution.userId}`);
-        setProfileInnovateur(profileResponse.data.data);
+        const profileResponse = await axios.get(`/users/${nextSolution?.userId}`);
+        setProfileInnovateur(profileResponse?.data?.data);
       } catch (error) {
         console.log(error);
       }

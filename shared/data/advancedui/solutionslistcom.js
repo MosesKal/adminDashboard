@@ -44,7 +44,7 @@ const Solutionslistcom = () => {
     const fetchThematique = async () => {
       try {
         const thematiqueResponse = await axios.get("/thematics");
-        const data = thematiqueResponse.data.data;
+        const data = thematiqueResponse?.data?.data;
         const allThematiqueOption = { value: "Tous", label: "Tous" };
         setOptionsThematique([
           allThematiqueOption,
@@ -61,7 +61,7 @@ const Solutionslistcom = () => {
     const fetchStatus = async () => {
       try {
         const statusResponse = await axios.get("/status");
-        const data = statusResponse.data.data;
+        const data = statusResponse?.data?.data;
         const allStatusOption = { value: "Tous", label: "Tous" };
         setOptionsStatus([
           allStatusOption,
@@ -80,7 +80,7 @@ const Solutionslistcom = () => {
       try {
         setIsLoadingUsers(true);
         const responseUser = await axios.get("/users");
-        const dataUser = responseUser.data.data;
+        const dataUser = responseUser?.data?.data;
 
         // setUsers(dataUser.filter(user => user.roles.some(role => role.name === "USER")));
         setUsers(dataUser);
@@ -94,7 +94,7 @@ const Solutionslistcom = () => {
     const fetchProfile = async () => {
       try {
         const profileResponse = await axios.get("/auth/profile/");
-        setProfile(profileResponse.data.data);
+        setProfile(profileResponse?.data?.data);
       } catch (error) {
         console.log(error);
       }
@@ -106,7 +106,7 @@ const Solutionslistcom = () => {
       try {
         const poleResponse = await axios.get("/poles");
 
-        data = poleResponse.data.data;
+        data = poleResponse?.data?.data;
 
         setOptionPole(
           data.map((option) => ({
