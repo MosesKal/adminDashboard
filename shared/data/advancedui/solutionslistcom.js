@@ -4,14 +4,8 @@ import DataTable from "react-data-table-component";
 import { columns as configureColumns, truncateText } from "./solutionslist";
 import axios from "@/pages/api/axios";
 import Select from "react-select";
-// import { Singleselect } from "../../../shared/data/form/advanced-forms";
 import { ToastContainer } from "react-toastify";
-import { merge } from "immutable";
 
-const isValidUrl = (url) => {
-  const urlPattern = /^(https?:\/\/)?((www\.)?youtube\.com\/(embed\/|v\/|watch\?v=)|youtu\.be\/)/;
-  return urlPattern.test(url);
-};
 
 const Solutionslistcom = () => {
 
@@ -131,8 +125,6 @@ const Solutionslistcom = () => {
       setIsAdmin(userRoles?.some(role => role.name === "ADMIN"))
     }
 
-
-
     fetchUser();
     fetchThematique();
     fetchStatus();
@@ -226,12 +218,10 @@ const Solutionslistcom = () => {
   const handleCloseAlertModal = () => {
     setShowAlertModal(false);
   };
-
   const handleShowModalEdit = (solution) => {
     setSelectedSolutions(solution);
     setShowEditModal(true);
   }
-
   const handleCloseModalEdit = () => {
     setShowEditModal(false);
   }
@@ -330,8 +320,7 @@ const Solutionslistcom = () => {
     setFilters({ ...filters, thematicFilter: selectedOption?.label || "all" });
   };
 
-
-
+  console.log(solutions, "solutions")
 
   return (
     <div>

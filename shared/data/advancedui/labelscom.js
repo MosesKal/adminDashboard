@@ -46,7 +46,7 @@ const Labelscom = ({ updateRoles }) => {
     const fetchRole = async () => {
       try {
         setIsLoadingRoles(true);
-        const response = await axios.get("/lables");
+        const response = await axios.get("/labels");
         setRoles(response.data.data);
         setIsLoadingRoles(false);
         updateRoles((prevRoles) => [...response.data.data]);
@@ -91,7 +91,7 @@ const Labelscom = ({ updateRoles }) => {
           name: editedRoleName,
         };
 
-        await axios.patch(`/lables/${selectedRoleForEdit.id}`, updatedData);
+        await axios.patch(`/labels/${selectedRoleForEdit.id}`, updatedData);
         toast.success("Impression modifiée avec succès !");
 
         updateRoles((prevRoles) => {

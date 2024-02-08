@@ -13,10 +13,12 @@ import Link from "next/link";
 import {useRouter} from "next/router";
 import dynamic from "next/dynamic";
 import Seo from "@/shared/layout-components/seo/seo";
+
 const Settingscom = dynamic(
   () => import("@/shared/data/advancedui/statuscom"),
   { ssr: false }
 );
+
 import axios from "@/pages/api/axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -150,7 +152,6 @@ const Settings = () => {
             </Modal>
           </div>
         </div>
-
         <Settingscom updateRoles={setRoles}/>
       </div>
   );

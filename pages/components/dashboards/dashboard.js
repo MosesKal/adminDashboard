@@ -3,7 +3,7 @@ import Seo from "@/shared/layout-components/seo/seo";
 import moment from "moment";
 import { useRouter } from "next/router";
 import axios from "@/pages/api/axios";
-import {Breadcrumb, Col, Row, Card, Spinner, Button} from "react-bootstrap";
+import { Breadcrumb, Col, Row, Card, Spinner, Button } from "react-bootstrap";
 import Statistics from "@/shared/data/dashboards/dashboards1";
 import Rapport from "@/pages/components/apps/rapport";
 
@@ -27,6 +27,8 @@ const Dashboard = () => {
   const [solutionExperimentee, setSolutionExperimentee] = useState([]);
   const [solutionsCartographied, setSolutionCartographied] = useState([]);
   const [solutionsSoumises, setSolutionSoumises] = useState([]);
+
+  const [dashboard, setDashboard] = useState();
 
   useEffect(() => {
     const status = JSON.parse(localStorage.getItem("STATUS_ACCOUNT"));
@@ -86,13 +88,25 @@ const Dashboard = () => {
         }
       };
 
+      const fetchDashboard = async () => {
+        try {
+          const dashboardResponse = await axios.get("/dashboard");
+          setDashboard(dashboardResponse.data);
+        } catch (error) {
+          console.log(error);
+        }
+      };
+
       fetchUsers();
       fetchSolutions();
       fetchStatut();
+      fetchDashboard();
     } else {
       navigate.push("/");
     }
   }, [navigate]);
+
+
 
   return (
     <>
@@ -100,14 +114,14 @@ const Dashboard = () => {
       <React.Fragment>
         <div className="breadcrumb-header justify-content-between">
           <div className="left-content">
-          <span className="main-content-title mg-b-0 mg-b-lg-1">
-            TABLEAU DE BORD
-          </span>
+            <span className="main-content-title mg-b-0 mg-b-lg-1">
+              TABLEAU DE BORD
+            </span>
           </div>
           <div className="justify-content-center mt-2">
             <Breadcrumb className="breadcrumb">
               <Button variant="" type="button" className="btn button-icon btn-sm btn-outline-secondary me-1"
-                      onClick={() => router.back()}>
+                onClick={() => router.back()}>
                 <i class="bi bi-arrow-left"></i> <span className="ms-1">{"Retour"}</span>
               </Button>
             </Breadcrumb>
@@ -132,11 +146,11 @@ const Dashboard = () => {
                         </div>
                       </Col>
                       <Col
-                          xl={3}
-                          lg={5}
-                          md={6}
-                          sm={12}
-                          className="d-flex align-items-center justify-content-center upgrade-chart-circle"
+                        xl={3}
+                        lg={5}
+                        md={6}
+                        sm={12}
+                        className="d-flex align-items-center justify-content-center upgrade-chart-circle"
                       ></Col>
                     </Row>
                   </Card.Body>
@@ -152,22 +166,22 @@ const Dashboard = () => {
                         </div>
                         <div className="pb-0 mt-0">
                           <div className="d-flex">
-                            {isLoadingUsers === false ? (
-                                <h4 className="tx-20 font-weight-semibold mb-2">
-                                  {users.length}
-                                </h4>
+                            {dashboard ? (
+                              <h4 className="tx-20 font-weight-semibold mb-2">
+                                {dashboard.totalUsers}
+                              </h4>
                             ) : (
-                                <div className="text-wrap">
-                                  <div className="tx-center">
-                                    <Spinner
-                                        animation="grow"
-                                        className="spinner-grow spinner-grow-sm"
-                                        role="status"
-                                    >
-                                      <span className="sr-only">Loading...</span>
-                                    </Spinner>
-                                  </div>
+                              <div className="text-wrap">
+                                <div className="tx-center">
+                                  <Spinner
+                                    animation="grow"
+                                    className="spinner-grow spinner-grow-sm"
+                                    role="status"
+                                  >
+                                    <span className="sr-only">Loading...</span>
+                                  </Spinner>
                                 </div>
+                              </div>
                             )}
                           </div>
                         </div>
@@ -192,22 +206,22 @@ const Dashboard = () => {
                         <div className="pb-0 mt-0">
                           <i class="bi bi-ban-fill text-secondary"></i>
                           <div className="d-flex">
-                            {isLoadingSolution === false ? (
-                                <h4 className="tx-20 font-weight-semibold mb-2">
-                                  {solutions.length}
-                                </h4>
+                            {dashboard ? (
+                              <h4 className="tx-20 font-weight-semibold mb-2">
+                                {dashboard.totalSolutions}
+                              </h4>
                             ) : (
-                                <div className="text-wrap">
-                                  <div className="tx-center">
-                                    <Spinner
-                                        animation="grow"
-                                        className="spinner-grow spinner-grow-sm"
-                                        role="status"
-                                    >
-                                      <span className="sr-only">Loading...</span>
-                                    </Spinner>
-                                  </div>
+                              <div className="text-wrap">
+                                <div className="tx-center">
+                                  <Spinner
+                                    animation="grow"
+                                    className="spinner-grow spinner-grow-sm"
+                                    role="status"
+                                  >
+                                    <span className="sr-only">Loading...</span>
+                                  </Spinner>
                                 </div>
+                              </div>
                             )}
                           </div>
                         </div>
@@ -234,21 +248,21 @@ const Dashboard = () => {
                         <div className="pb-0 mt-0">
                           <div className="d-flex">
                             {isLoadingSolution === false ? (
-                                <h4 className="tx-20 font-weight-semibold mb-2">
-                                  {solutionsExplored.length}
-                                </h4>
+                              <h4 className="tx-20 font-weight-semibold mb-2">
+                                {solutionsExplored.length}
+                              </h4>
                             ) : (
-                                <div className="text-wrap">
-                                  <div className="tx-center">
-                                    <Spinner
-                                        animation="grow"
-                                        className="spinner-grow spinner-grow-sm"
-                                        role="status"
-                                    >
-                                      <span className="sr-only">Loading...</span>
-                                    </Spinner>
-                                  </div>
+                              <div className="text-wrap">
+                                <div className="tx-center">
+                                  <Spinner
+                                    animation="grow"
+                                    className="spinner-grow spinner-grow-sm"
+                                    role="status"
+                                  >
+                                    <span className="sr-only">Loading...</span>
+                                  </Spinner>
                                 </div>
+                              </div>
                             )}
                           </div>
                         </div>
@@ -256,7 +270,7 @@ const Dashboard = () => {
                     </div>
                     <div className="col-4">
                       <div
-                          className="circle-icon bg-secondary-transparent text-center align-self-center overflow-hidden">
+                        className="circle-icon bg-secondary-transparent text-center align-self-center overflow-hidden">
                         <i class="bi bi-folder2-open text-secondary"></i>
                       </div>
                     </div>
@@ -276,21 +290,21 @@ const Dashboard = () => {
                         <div className="pb-0 mt-0">
                           <div className="d-flex">
                             {isLoadingSolution === false ? (
-                                <h4 className="tx-20 font-weight-semibold mb-2">
-                                  {solutionsCartographied.length}
-                                </h4>
+                              <h4 className="tx-20 font-weight-semibold mb-2">
+                                {solutionsCartographied.length}
+                              </h4>
                             ) : (
-                                <div className="text-wrap">
-                                  <div className="tx-center">
-                                    <Spinner
-                                        animation="grow"
-                                        className="spinner-grow spinner-grow-sm"
-                                        role="status"
-                                    >
-                                      <span className="sr-only">Loading...</span>
-                                    </Spinner>
-                                  </div>
+                              <div className="text-wrap">
+                                <div className="tx-center">
+                                  <Spinner
+                                    animation="grow"
+                                    className="spinner-grow spinner-grow-sm"
+                                    role="status"
+                                  >
+                                    <span className="sr-only">Loading...</span>
+                                  </Spinner>
                                 </div>
+                              </div>
                             )}
                           </div>
                         </div>
@@ -317,12 +331,12 @@ const Dashboard = () => {
                 </div>
               </Card.Header>
               <Card.Body>
-                <Statistics/>
+                <Statistics />
               </Card.Body>
             </Card>
           </Col>
         </Row>
-        <Rapport/>
+        <Rapport />
       </React.Fragment>
     </>
   );

@@ -97,7 +97,7 @@ const Settingscom = ({ updateRoles }) => {
           name: editedRoleName,
         };
 
-        await axios.patch(`/roles/${selectedRoleForEdit.id}`, updatedData);
+        await axios.patch(`/organisations/${selectedRoleForEdit.id}`, updatedData);
         toast.success("Rôle modifié avec succès !");
 
         updateRoles((prevRoles) => {
