@@ -2,6 +2,8 @@ import React from "react";
 import Carousels from "./carroussel";
 import { Image, Card, Col, Button, Nav, Row, Tab, Badge } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { faPlay } from "@fortawesome/free-solid-svg-icons";
 import Select from "react-select";
 import moment from "moment";
 import { apiBaseUrl } from "@/pages/api/axios";
@@ -17,15 +19,15 @@ const getVideoIdFromUrl = (url) => {
   return match ? match[1] : null;
 };
 
-const isImageValid = (url) => {
-  const validExtensions = ['.jpeg', '.jpg', '.png', '.gif'];
-  if (url) {
-    const lowercasedUrl = url.toLowerCase();
-    return validExtensions.some((extension) => lowercasedUrl.endsWith(extension));
-  } else {
-    return false;
-  }
-};
+// const isImageValid = (url) => {
+//   const validExtensions = ['.jpeg', '.jpg', '.png', '.gif'];
+//   if (url) {
+//     const lowercasedUrl = url.toLowerCase();
+//     return validExtensions.some((extension) => lowercasedUrl.endsWith(extension));
+//   } else {
+//     return false;
+//   }
+// };
 
 const SolutionTab = (
     {

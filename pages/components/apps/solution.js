@@ -2,15 +2,15 @@ import React, { useEffect, useState } from "react";
 import { Col, Button, Breadcrumb, Row, Card } from "react-bootstrap";
 import SolutionTab from "./solution/solutionTab";
 import CardInnovateur from "./solution/cardInnovateur";
-import { library } from "@fortawesome/fontawesome-svg-core";
-import { faPlay } from "@fortawesome/free-solid-svg-icons";
+// import { library } from "@fortawesome/fontawesome-svg-core";
+// import { faPlay } from "@fortawesome/free-solid-svg-icons";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Seo from "@/shared/layout-components/seo/seo";
 import { useRouter } from "next/router";
 import axios from "@/pages/api/axios";
 
-library.add(faPlay);
+// library.add(faPlay);
 
 const Solution = () => {
   const router = useRouter();
