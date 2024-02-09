@@ -7,6 +7,26 @@ import moment from "moment";
 import { apiBaseUrl } from "@/pages/api/axios";
 import Link from "next/link";
 
+library.add(faPlay);
+
+const getVideoIdFromUrl = (url) => {
+  const pattern =
+    /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+
+  const match = url.match(pattern);
+  return match ? match[1] : null;
+};
+
+const isImageValid = (url) => {
+  const validExtensions = ['.jpeg', '.jpg', '.png', '.gif'];
+  if (url) {
+    const lowercasedUrl = url.toLowerCase();
+    return validExtensions.some((extension) => lowercasedUrl.endsWith(extension));
+  } else {
+    return false;
+  }
+};
+
 const SolutionTab = (
     {
         solution,

@@ -5,7 +5,7 @@ export const ADD = (item) => {
     }
 }
 
-// remove iteams
+
 export const Delete = (item) => {
     return {
         type: "RMV_CART",
@@ -13,7 +13,6 @@ export const Delete = (item) => {
     }
 }
 
-// remove individual iteam
 
 export const REMOVE = (item) => {
     return {
