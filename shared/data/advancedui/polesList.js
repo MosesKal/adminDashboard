@@ -1,6 +1,5 @@
 import React from "react";
 import moment from "moment";
-
 import {Button, Col, Row} from "react-bootstrap";
 
 export const columns = (handleShowModal, handleDelete) => [
@@ -42,7 +41,7 @@ export const columns = (handleShowModal, handleDelete) => [
                             className="w-100"
                         >
                             <i className="bi bi-card-list"></i>
-                            <span className="ps-1">Détails</span>
+                            <span className="ps-1">Modifier</span>
                         </Button>
                     </Col>
 

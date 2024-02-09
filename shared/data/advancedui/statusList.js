@@ -42,7 +42,7 @@ export const columns = (handleShowModal, handleDelete) => [
                             className="w-100"
                         >
                             <i className="bi bi-card-list"></i>
-                            <span className="ps-1">Détails</span>
+                            <span className="ps-1">Modifier</span>
                         </Button>
                     </Col>
 
