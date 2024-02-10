@@ -28,17 +28,27 @@ export const columns = (handleShowModal, handleDelete, handleShowEditModal) => [
         ),
     },
     {
-        name: " Num Tel",
-        selector: (row) => [row.phoneNumber],
+        name: "Pôle",
+        selector: (row) => [row.poleName],
         sortable: false,
         cell: (row) => (
             <span>
-            <span className="text-muted tx-13">{row.phoneNumber}</span>
+                {row.poleName}
+            </span>
+        ),
+    },
+    {
+        name: "Organisation",
+        selector: (row) => [row.organisationName],
+        sortable: false,
+        cell: (row) => (
+            <span>
+            {row.organisationName}
         </span>
         ),
     },
     {
-        name: "Role",
+        name: "Rôle",
         selector: (row) => row.roles.map(role => role.name),
         sortable: false,
         cell: (row) => (
@@ -52,6 +62,7 @@ export const columns = (handleShowModal, handleDelete, handleShowEditModal) => [
         </span>
         ),
     },
+
     {
         name: "Actions",
         selector: (row) => [row.Action],
@@ -66,7 +77,7 @@ export const columns = (handleShowModal, handleDelete, handleShowEditModal) => [
                             onClick={() => handleShowModal(row)}
                             className="w-100 button-icon"
                         >
-                            <i className="bi bi-card-list"></i>
+                            {/* <i className="bi bi-card-list"></i> */}
                             <span className="ps-1">Détails</span>
                         </Button>
                     </Col>
@@ -78,7 +89,7 @@ export const columns = (handleShowModal, handleDelete, handleShowEditModal) => [
                             onClick={() => handleDelete(row)}
                             className="btn w-100 button-icon btn-sm btn-secondary m-0"
                         >
-                            <i class="bi bi-trash"></i>
+                            {/* <i class="bi bi-trash"></i> */}
                             <span className="ps-1">Supprimer</span>
                         </Button>
                     </Col>
@@ -90,7 +101,7 @@ export const columns = (handleShowModal, handleDelete, handleShowEditModal) => [
                             onClick={() => handleShowEditModal(row)}
                             className="btn btn-info button-icon btn-sm w-100"
                         >
-                            <i class="bi bi-pencil-square bu"></i>
+                            {/* <i class="bi bi-pencil-square bu"></i> */}
                             <span className="ps-1">Modifier</span>
                         </Button>
                     </Col>

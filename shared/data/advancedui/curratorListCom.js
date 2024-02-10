@@ -31,12 +31,37 @@ const CurratorList = ({ updateUsers }) => {
   const [optionRoleId, setOptionRoleId] = useState();
 
   const [optionsPoles, setOptionsPoles] = useState();
+  const [poles, setPoles] = useState();
   const [selectedOptionsPoles, setSelectedOptionsPoles] = useState(null);
   const [optionPoleId, setOptionPoleId] = useState();
 
   const [optionsOrganisations, setOptionsOrganisations] = useState();
+  const [organisations, setOrganisations] = useState();
   const [selectedOrganisations, setSelectedOrganisations] = useState(null);
   const [optionOrganisationId, setOptionOrganisationId] = useState();
+
+  const [mergedUsers, setMergedUsers] = useState([]);
+
+
+  const mergeUserData = () => {
+    const mergedData = users.map((user) => ({
+      ...user,
+      poleName: getPoleNameById(user.poleId),
+      organisationName: getOrganisationNameById(user.organisationId)
+    }));
+
+    setMergedUsers(mergedData);
+  }
+
+  const getPoleNameById = (poleId) => {
+    const pole = poles.find((p) => p.id === poleId);
+    return pole ? pole.name : "";
+  };
+
+  const getOrganisationNameById = (organisationId) => {
+    const organisation = organisations.find((org) => org.id === organisationId);
+    return organisation ? organisation.name : "";
+  };
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -48,11 +73,11 @@ const CurratorList = ({ updateUsers }) => {
           return {
             ...user,
             img: (
-                <img
-                    src={profileImage}
-                    className="rounded-circle w-100 h-100"
-                    alt=""
-                />
+              <img
+                src={profileImage}
+                className="rounded-circle w-100 h-100"
+                alt=""
+              />
             ),
             class: "avatar-md rounded-circle",
           };
@@ -71,10 +96,10 @@ const CurratorList = ({ updateUsers }) => {
         const roleResponse = await axios.get("/roles");
         data = roleResponse.data.data;
         setOptionsRoles(
-            data.map((option) => ({
-              value: option.id,
-              label: option.name
-            }))
+          data.map((option) => ({
+            value: option.id,
+            label: option.name
+          }))
         );
       } catch (e) {
         console.log(e);
@@ -87,30 +112,34 @@ const CurratorList = ({ updateUsers }) => {
         data = poleResponse.data.data;
 
         setOptionsPoles(
-            data.map((option) => ({
-              value: option.id,
-              label: option.name
-            }))
+          data.map((option) => ({
+            value: option.id,
+            label: option.name
+          }))
         );
+
+        setPoles(data);
       } catch (e) {
         console.log(e)
       }
     }
 
-    const fetchOrganisations = async ()=>{
+    const fetchOrganisations = async () => {
       let data;
       try {
         const organisationResponse = await axios.get("/organisations");
         data = organisationResponse.data.data;
 
         setOptionsOrganisations(
-            data.map((option)=>({
-              value: option.id,
-              label : option.name
-            }))
+          data.map((option) => ({
+            value: option.id,
+            label: option.name
+          }))
         );
 
-      }catch (e){
+        setOrganisations(data);
+
+      } catch (e) {
         console.log
       }
     }
@@ -133,11 +162,11 @@ const CurratorList = ({ updateUsers }) => {
           return {
             ...user,
             img: (
-                <img
-                    src={profileImage}
-                    className="rounded-circle w-100 h-100"
-                    alt=""
-                />
+              <img
+                src={profileImage}
+                className="rounded-circle w-100 h-100"
+                alt=""
+              />
             ),
             class: "avatar-md rounded-circle",
           };
@@ -156,9 +185,13 @@ const CurratorList = ({ updateUsers }) => {
 
   }, [updateUsers]);
 
+  useEffect(() => {
+    mergeUserData();
+  }, [users, poles, organisations])
+
   const handleSelectChangeRole = (selectedOptionsRoles) => {
     setSelectedOptionsRoles(selectedOptionsRoles);
-    const selectedOptionIds = selectedOptionsRoles.map((option)=>option.value);
+    const selectedOptionIds = selectedOptionsRoles.map((option) => option.value);
     setOptionRoleId(selectedOptionIds);
   };
 
@@ -167,7 +200,7 @@ const CurratorList = ({ updateUsers }) => {
     setOptionPoleId(selectedOptionsPoles.value);
   };
 
-  const handleSelectChangeOrganisation = async (selectedOptionsOrganisation)=>{
+  const handleSelectChangeOrganisation = async (selectedOptionsOrganisation) => {
     setSelectedOrganisations(selectedOptionsOrganisation);
     setOptionOrganisationId(selectedOptionsOrganisation.value);
   };
@@ -237,7 +270,7 @@ const CurratorList = ({ updateUsers }) => {
         phoneNumber: editedCuratorPhone,
         roles: optionRoleId,
         pole: optionPoleId,
-        organisation : optionOrganisationId,
+        organisation: optionOrganisationId,
       };
 
       await axios.patch(`/users/${selectedUser.id}`, updatedData);
@@ -251,6 +284,12 @@ const CurratorList = ({ updateUsers }) => {
   };
 
   const columns = configureColumns(handleShowModal, handleDelete, handleShowEditModal);
+
+  columns.forEach((column) => {
+    if (column.name === "Actions") {
+      column.width = "30%";
+    }
+  });
 
   function convertArrayOfObjectsToCSV(array) {
     if (!array || array.length === 0) {
@@ -274,9 +313,9 @@ const CurratorList = ({ updateUsers }) => {
 
         try {
           const value =
-              typeof item[key] === "object" && item[key] !== null
-                  ? item[key]?.props?.alt
-                  : item[key];
+            typeof item[key] === "object" && item[key] !== null
+              ? item[key]?.props?.alt
+              : item[key];
 
           result += value;
         } catch (e) {
@@ -306,14 +345,14 @@ const CurratorList = ({ updateUsers }) => {
   }
 
   const Export = ({ onExport }) => (
-      <Button onClick={() => onExport()} size={"sm"}>
-        Exporter les Innovateurs
-      </Button>
+    <Button onClick={() => onExport()} size={"sm"}>
+      Exporter les Innovateurs
+    </Button>
   );
 
   const actionsMemo = React.useMemo(
-      () => <Export onExport={() => downloadCSV(users)} />,
-      [users]
+    () => <Export onExport={() => downloadCSV(users)} />,
+    [users]
   );
 
   const [selectedRows, setSelectedRows] = React.useState([]);
@@ -345,248 +384,267 @@ const CurratorList = ({ updateUsers }) => {
     return <Export onExport={Selectdata} icon="true" />;
   }, [users, selectedRows, toggleCleared]);
 
+
   return (
-      <div>
-        <Row className=" row-sm">
-          <Col lg={12}>
-            <Card className="custom-card">
-              <Card.Body>
-                {isLoadingUsers ? (
-                    <div className="text-center">
-                      <Spinner animation="border" variant="primary" />
-                    </div>
-                ) : (
-                    <div className="table-responsive">
+    <div>
+      <Row className=" row-sm">
+        <Col lg={12}>
+          <Card className="custom-card">
+            <Card.Body>
+              {isLoadingUsers ? (
+                <div className="text-center">
+                  <Spinner animation="border" variant="primary" />
+                </div>
+              ) : (
+                <div className="table-responsive">
                   <span className="datatable">
                     <span className="uselistdata">
                       <DataTable
-                          columns={columns}
-                          data={users}
-                          actions={actionsMemo}
-                          contextActions={contextActions}
-                          onSelectedRowsChange={handleRowSelected}
-                          clearSelectedRows={toggleCleared}
-                          defaultSortField="id"
-                          defaultSortAsc={false}
-                          selectableRows
-                          pagination
+                        columns={columns}
+                        data={mergedUsers}
+                        actions={actionsMemo}
+                        contextActions={contextActions}
+                        onSelectedRowsChange={handleRowSelected}
+                        clearSelectedRows={toggleCleared}
+                        defaultSortField="id"
+                        defaultSortAsc={false}
+                        selectableRows
+                        pagination
                       />
                     </span>
                   </span>
-                    </div>
-                )}
-              </Card.Body>
-            </Card>
-          </Col>
-        </Row>
-        <Modal size="lg" show={showModal} onHide={handleCloseModal}>
-          <Modal.Header closeButton>
-            <Modal.Title>{"Détails du Curateur"}</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <Col lg={12} md={12}>
-              <Card className="custom-card customs-cards">
-                <Card.Body className=" d-md-flex bg-white">
-                  <div className="">
+                </div>
+              )}
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
+      <Modal size="lg" show={showModal} onHide={handleCloseModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>{"Détails du Curateur"}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Col lg={12} md={12}>
+            <Card className="custom-card customs-cards">
+              <Card.Body className=" d-md-flex bg-white">
+                <div className="">
                   <span className="profile-image pos-relative">
                     <img
-                        className="br-5"
-                        alt=""
-                        src={selectedUser?.profile ? `${apiBaseUrl}/uploads/${selectedUser.profile}` : "../../../assets/img/faces/profile.jpg"}
+                      className="br-5"
+                      alt=""
+                      src={selectedUser?.profile ? `${apiBaseUrl}/uploads/${selectedUser.profile}` : "../../../assets/img/faces/profile.jpg"}
                     />
                     <span className="bg-success text-white wd-1 ht-1 rounded-pill profile-online"></span>
                   </span>
-                  </div>
-                  <div className="my-md-auto mt-4 prof-details">
-                    <h4 className="font-weight-semibold ms-md-4 ms-0 mb-1 pb-0">
-                      {selectedUser ? selectedUser.name : ""}
-                    </h4>
-                    <p className="tx-13 text-muted ms-md-4 ms-0 mb-2 pb-2 ">
+                </div>
+                <div className="my-md-auto mt-4 prof-details">
+                  <h4 className="font-weight-semibold ms-md-4 ms-0 mb-1 pb-0">
+                    {selectedUser ? selectedUser.name : ""}
+                  </h4>
+                  <p className="tx-13 text-muted ms-md-4 ms-0 mb-2 pb-2 ">
                     <span className="me-3">
                       <i className="far fa-address-card me-2"></i>{selectedUser ? selectedUser.roles[0].name : ""}
                     </span>
-                      <span className="me-3">
+                    <span className="me-3">
                       <i class="bi bi-geo-alt-fill me-2"></i>
-                        {selectedUser ? selectedUser.address : ""}
+                      {selectedUser ? selectedUser.address : ""}
                     </span>
-                      <span>
+                    <span>
                       <i className="far fa-flag me-2"></i>RDC
                     </span>
-                    </p>
-                    <p className="text-muted ms-md-4 ms-0 mb-2">
+                  </p>
+                  <p className="text-muted ms-md-4 ms-0 mb-2">
                     <span>
                       <i className="fa fa-phone me-2"></i>
                     </span>
-                      <span className="font-weight-semibold me-2">Phone:</span>
-                      <span>
+                    <span className="font-weight-semibold me-2">Phone:</span>
+                    <span>
                       {selectedUser ? selectedUser.phoneNumber : ""}
                     </span>
-                    </p>
-                    <p className="text-muted ms-md-4 ms-0 mb-2">
+                  </p>
+                  <p className="text-muted ms-md-4 ms-0 mb-2">
                     <span>
                       <i className="fa fa-envelope me-2"></i>
                     </span>
-                      <span className="font-weight-semibold me-2">Email:</span>
-                      <span>
+                    <span className="font-weight-semibold me-2">Email:</span>
+                    <span>
                       {selectedUser ? selectedUser.email : ""}
                     </span>
-                    </p>
-                    <p className="text-muted ms-md-4 ms-0 mb-2">
+                  </p>
+                  <p className="text-muted ms-md-4 ms-0 mb-2">
+                    <span>
+                      <i class="bi bi-geo-fill"></i>
+                    </span>
+                    <span className="font-weight-semibold me-2">Pôle:</span>
+                    <span>
+                      {selectedUser ? selectedUser.poleName : ""}
+                    </span>
+                  </p>
+                  <p className="text-muted ms-md-4 ms-0 mb-2">
+                    <span>
+                      <i class="bi bi-building"></i>
+                    </span>
+                    <span className="font-weight-semibold me-2">Organisation:</span>
+                    <span>
+                      {selectedUser ? selectedUser.organisationName : ""}
+                    </span>
+                  </p>
+                  <p className="text-muted ms-md-4 ms-0 mb-2">
                     <span>
                       <i class="bi bi-calendar-check me-2"></i>
                     </span>
-                      <span className="font-weight-semibold me-2">
+                    <span className="font-weight-semibold me-2">
                       {"Date d'inscription sur la plateforme:"}
                     </span>
-                      <span>
+                    <span>
                       {selectedUser
-                          ? moment(selectedUser.createdAt).format(
-                              "DD MMMM YYYY [à] HH:mm"
-                          )
-                          : ""}
+                        ? moment(selectedUser.createdAt).format(
+                          "DD MMMM YYYY [à] HH:mm"
+                        )
+                        : ""}
                     </span>
-                    </p>
-                  </div>
-                </Card.Body>
-              </Card>
-            </Col>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button size="sm" variant="danger" onClick={handleCloseModal}>
-              {"Fermer la fenêtre"}
-            </Button>
-          </Modal.Footer>
-        </Modal>
-        <Modal show={showAlertModal} onHide={handleCloseAlertModal}>
-          <Modal.Body>
-            <div className="tx-center">
-              <i className="icon icon ion-ios-close-circle-outline tx-100 tx-danger lh-1 mg-t-20 d-inline-block"></i>{" "}
-              <h4 className="tx-danger mg-b-20">
-                {"Vous n'avez pas les droits nécessaires pour effectuer cette action."}
-              </h4>
-            </div>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button size={"sm"} variant="primary" onClick={handleCloseAlertModal}>
-              {"OK"}
-            </Button>
-          </Modal.Footer>
-        </Modal>
-        <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
-          <Modal.Body>
-            <div className="tx-center">
-              <i className="icon icon ion-ios-close-circle-outline tx-100 tx-danger lh-1 mg-t-20 d-inline-block"></i>{" "}
-              <h4 className="tx-danger mg-b-20">
-                {"Êtes - vous sûr de vouloir supprimer"} <span className="badge bg-danger">{userToDelete?.name} ?</span>
-              </h4>
-            </div>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button size={"sm"} variant="primary" onClick={() => setShowDeleteModal(false)}>
-              Annuler
-            </Button>
-            <Button size={"sm"} variant="danger" onClick={() => handleConfirmDelete(userToDelete)}>
-              Supprimer
-            </Button>
-          </Modal.Footer>
-        </Modal>
+                  </p>
+                </div>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button size="sm" variant="danger" onClick={handleCloseModal}>
+            {"Fermer la fenêtre"}
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      <Modal show={showAlertModal} onHide={handleCloseAlertModal}>
+        <Modal.Body>
+          <div className="tx-center">
+            <i className="icon icon ion-ios-close-circle-outline tx-100 tx-danger lh-1 mg-t-20 d-inline-block"></i>{" "}
+            <h4 className="tx-danger mg-b-20">
+              {"Vous n'avez pas les droits nécessaires pour effectuer cette action."}
+            </h4>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button size={"sm"} variant="primary" onClick={handleCloseAlertModal}>
+            {"OK"}
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
+        <Modal.Body>
+          <div className="tx-center">
+            <i className="icon icon ion-ios-close-circle-outline tx-100 tx-danger lh-1 mg-t-20 d-inline-block"></i>{" "}
+            <h4 className="tx-danger mg-b-20">
+              {"Êtes - vous sûr de vouloir supprimer"} <span className="badge bg-danger">{userToDelete?.name} ?</span>
+            </h4>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button size={"sm"} variant="primary" onClick={() => setShowDeleteModal(false)}>
+            Annuler
+          </Button>
+          <Button size={"sm"} variant="danger" onClick={() => handleConfirmDelete(userToDelete)}>
+            Supprimer
+          </Button>
+        </Modal.Footer>
+      </Modal>
 
 
 
-        <Modal show={showEditModal} onHide={handleCloseEditModal}>
-          <Modal.Header className="modal-header">
-            <h6 className="modal-title">{"Modifier le Curateur"}</h6>
-            <Button
-                variant=""
-                className="btn-close"
-                type="button"
-                onClick={handleCloseEditModal}
-            >
-              <span aria-hidden="true">×</span>
-            </Button>
-          </Modal.Header>
-          <Modal.Body className="modal-body">
-            <div className="p-4">
-              <Form className="form-horizontal">
-                <FormGroup className="form-group">
-                  <Form.Control
-                      type="string"
-                      className="form-control"
-                      id="inputName"
-                      placeholder="Nom"
-                      value={editedCuratorName}
-                      disabled={true}
-                  />
-                </FormGroup>
+      <Modal show={showEditModal} onHide={handleCloseEditModal}>
+        <Modal.Header className="modal-header">
+          <h6 className="modal-title">{"Modifier le Curateur"}</h6>
+          <Button
+            variant=""
+            className="btn-close"
+            type="button"
+            onClick={handleCloseEditModal}
+          >
+            <span aria-hidden="true">×</span>
+          </Button>
+        </Modal.Header>
+        <Modal.Body className="modal-body">
+          <div className="p-4">
+            <Form className="form-horizontal">
+              <FormGroup className="form-group">
+                <Form.Control
+                  type="string"
+                  className="form-control"
+                  id="inputName"
+                  placeholder="Nom"
+                  value={editedCuratorName}
+                  disabled={true}
+                />
+              </FormGroup>
 
-                <FormGroup className="form-group">
-                  <Form.Control
-                      type="string"
-                      className="form-control"
-                      id="inputPhoneNumber"
-                      placeholder="Num Téléphone"
-                      value={editedCuratorPhone}
-                      disabled={true}
-                  />
-                </FormGroup>
+              <FormGroup className="form-group">
+                <Form.Control
+                  type="string"
+                  className="form-control"
+                  id="inputPhoneNumber"
+                  placeholder="Num Téléphone"
+                  value={editedCuratorPhone}
+                  disabled={true}
+                />
+              </FormGroup>
 
-                <FormGroup className="form-group">
-                  <Form.Control
-                      type="string"
-                      className="form-control"
-                      id="inputPhoneNumber"
-                      placeholder="Adress"
-                      value={editedCuratorAdress}
-                      disabled={true}
-                  />
-                </FormGroup>
+              <FormGroup className="form-group">
+                <Form.Control
+                  type="string"
+                  className="form-control"
+                  id="inputPhoneNumber"
+                  placeholder="Adress"
+                  value={editedCuratorAdress}
+                  disabled={true}
+                />
+              </FormGroup>
 
-                <FormGroup className="form-group">
-                  <Form.Control
-                      type="string"
-                      className="form-control"
-                      id="inputEmail"
-                      placeholder="Email"
-                      value={editedCuratorEmail}
-                      disabled={true}
-                  />
-                </FormGroup>
+              <FormGroup className="form-group">
+                <Form.Control
+                  type="string"
+                  className="form-control"
+                  id="inputEmail"
+                  placeholder="Email"
+                  value={editedCuratorEmail}
+                  disabled={true}
+                />
+              </FormGroup>
 
-                <FormGroup className="form-group">
-                  <Select options={optionsRoles} onChange={handleSelectChangeRole} value={selectedOptionsRoles} placeholder={"Selectionner le rôle"} isMulti />
-                </FormGroup>
+              <FormGroup className="form-group">
+                <Select options={optionsRoles} onChange={handleSelectChangeRole} value={selectedOptionsRoles} placeholder={"Selectionner le rôle"} isMulti />
+              </FormGroup>
 
-                <FormGroup className="form-group">
-                  <Select options={optionsPoles} onChange={handleSelectChangePole} value={selectedOptionsPoles} placeholder={"Selectionner le pôle"} />
-                </FormGroup>
+              <FormGroup className="form-group">
+                <Select options={optionsPoles} onChange={handleSelectChangePole} value={selectedOptionsPoles} placeholder={"Selectionner le pôle"} />
+              </FormGroup>
 
-                <FormGroup className="form-group">
-                  <Select options={optionsOrganisations} onChange={handleSelectChangeOrganisation} value={setSelectedOrganisations} placeholder={"Selectionner l'organisation"}/>
-                </FormGroup>
-              </Form>
-            </div>
+              <FormGroup className="form-group">
+                <Select options={optionsOrganisations} onChange={handleSelectChangeOrganisation} value={setSelectedOrganisations} placeholder={"Selectionner l'organisation"} />
+              </FormGroup>
+            </Form>
+          </div>
 
-          </Modal.Body>
-          <Modal.Footer>
-            <Button
-                variant=""
-                className="btn ripple btn-primary"
-                type="button"
-                onClick={handleEditCurateur}
-            >
-              {"Modifier"}
-            </Button>
-            <Button
-                variant=""
-                className="btn ripple btn-secondary"
-                onClick={handleCloseEditModal}
-            >
-              {"Fermer"}
-            </Button>
-          </Modal.Footer>
-        </Modal>
-        <ToastContainer />
-      </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant=""
+            className="btn ripple btn-primary"
+            type="button"
+            onClick={handleEditCurateur}
+          >
+            {"Modifier"}
+          </Button>
+          <Button
+            variant=""
+            className="btn ripple btn-secondary"
+            onClick={handleCloseEditModal}
+          >
+            {"Fermer"}
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      <ToastContainer />
+    </div>
   );
 };
 export default CurratorList;
