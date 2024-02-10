@@ -47,7 +47,7 @@ const CurrateurList = () => {
       let data;
       try {
         const roleResponse = await axios.get("/roles");
-        data = roleResponse.data.data;
+        data = roleResponse?.data?.data;
         setOptions(
           data.map((option) => ({
             value: option.id,
@@ -62,7 +62,7 @@ const CurrateurList = () => {
       let data;
       try {
         const poleResponse = await axios.get("/poles");
-        data = poleResponse.data.data;
+        data = poleResponse?.data?.data;
 
         setOptionsPoles(
           data.map((option) => ({
@@ -79,7 +79,7 @@ const CurrateurList = () => {
       let data;
       try {
         const organisationResponse = await axios.get("/organisations");
-        data = organisationResponse.data.data;
+        data = organisationResponse?.data?.data;
 
         setOptionsOrganisations(
           data.map((option) => ({
@@ -105,7 +105,7 @@ const CurrateurList = () => {
   const updateUsers = async () => {
     try {
       const responseUser = await axios.get("/users");
-      const usersWithImages = responseUser.data.data.map((user) => ({
+      const usersWithImages = responseUser?.data?.data.map((user) => ({
         ...user,
         img: (
           <img

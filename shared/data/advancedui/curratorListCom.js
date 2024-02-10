@@ -54,7 +54,7 @@ const CurratorList = ({ updateUsers }) => {
   }
 
   const getPoleNameById = (poleId) => {
-    const pole = poles.find((p) => p.id === poleId);
+    const pole = poles?.find((p) => p.id === poleId);
     return pole ? pole.name : "";
   };
 
@@ -157,7 +157,7 @@ const CurratorList = ({ updateUsers }) => {
         setIsLoadingUsers(true);
         const responseUser = await axios.get("/users");
 
-        const usersWithImages = responseUser.data.data.map((user) => {
+        const usersWithImages = responseUser?.data?.data.map((user) => {
           const profileImage = user.profile ? `${apiBaseUrl}/uploads/${user?.profile}` : "../../../assets/img/faces/4.jpg";
           return {
             ...user,
@@ -455,7 +455,7 @@ const CurratorList = ({ updateUsers }) => {
                   </p>
                   <p className="text-muted ms-md-4 ms-0 mb-2">
                     <span>
-                      <i className="fa fa-phone me-2"></i>
+                      <i className="fa fa-phone me-3"></i>
                     </span>
                     <span className="font-weight-semibold me-2">Phone:</span>
                     <span>
@@ -464,7 +464,7 @@ const CurratorList = ({ updateUsers }) => {
                   </p>
                   <p className="text-muted ms-md-4 ms-0 mb-2">
                     <span>
-                      <i className="fa fa-envelope me-2"></i>
+                      <i className="fa fa-envelope me-3"></i>
                     </span>
                     <span className="font-weight-semibold me-2">Email:</span>
                     <span>
@@ -473,25 +473,25 @@ const CurratorList = ({ updateUsers }) => {
                   </p>
                   <p className="text-muted ms-md-4 ms-0 mb-2">
                     <span>
-                      <i class="bi bi-geo-fill"></i>
+                      <i class="bi bi-geo-fill me-3"></i>
                     </span>
-                    <span className="font-weight-semibold me-2">Pôle:</span>
+                    <span className="font-weight-semibold ">Pôle:</span>
                     <span>
                       {selectedUser ? selectedUser.poleName : ""}
                     </span>
                   </p>
                   <p className="text-muted ms-md-4 ms-0 mb-2">
                     <span>
-                      <i class="bi bi-building"></i>
+                      <i class="bi bi-building me-3"></i>
                     </span>
-                    <span className="font-weight-semibold me-2">Organisation:</span>
+                    <span className="font-weight-semibold ">Organisation:</span>
                     <span>
                       {selectedUser ? selectedUser.organisationName : ""}
                     </span>
                   </p>
                   <p className="text-muted ms-md-4 ms-0 mb-2">
                     <span>
-                      <i class="bi bi-calendar-check me-2"></i>
+                      <i class="bi bi-calendar-check me-3"></i>
                     </span>
                     <span className="font-weight-semibold me-2">
                       {"Date d'inscription sur la plateforme:"}

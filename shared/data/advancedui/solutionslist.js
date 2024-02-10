@@ -61,7 +61,7 @@ export const columns = (handleDelete, handleShowEditModal)=>[
                     href={`/components/apps/solution?id=${row?.id}&innovateurId=${row?.user?.id}&thematiqueId=${row?.thematic?.id}`}
                     as="/components/apps/solution"
                 >
-                    <i className="bi bi-card-list"></i>
+                    {/* <i className="bi bi-card-list"></i> */}
                     <span className="ps-1">Détails</span>
 
                 </Link>
@@ -73,7 +73,7 @@ export const columns = (handleDelete, handleShowEditModal)=>[
                     onClick={() => handleDelete(row)}
                     className="btn w-100 button-icon btn-sm btn-secondary m-0"
                 >
-                    <i class="bi bi-trash"></i>
+                    {/* <i class="bi bi-trash"></i> */}
                     <span className="ps-1">Supprimer</span>
                 </Button>
             </Col>

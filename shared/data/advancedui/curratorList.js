@@ -30,7 +30,7 @@ export const columns = (handleShowModal, handleDelete, handleShowEditModal) => [
     {
         name: "Pôle",
         selector: (row) => [row.poleName],
-        sortable: false,
+        sortable: true,
         cell: (row) => (
             <span>
                 {row.poleName}
@@ -40,7 +40,7 @@ export const columns = (handleShowModal, handleDelete, handleShowEditModal) => [
     {
         name: "Organisation",
         selector: (row) => [row.organisationName],
-        sortable: false,
+        sortable: true,
         cell: (row) => (
             <span>
             {row.organisationName}

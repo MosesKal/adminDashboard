@@ -202,26 +202,41 @@ const Solution = () => {
 
 
   useEffect(() => {
-    if (solution) {
-      if (solution?.feedbacks && solution?.feedbacks?.length > 0) {
-        solution?.feedbacks?.forEach((feedback) => {
-          if (
-            feedback?.userId === emailCurateur?.id ||
-            isAdmin
-          ) {
-            setIdCurateur(feedback?.userId);
-            setIsExistCommentaire(true);
-            setCommentaires(feedback?.adminComment);
-          }
-          if (
-            solution?.feedbacks?.length > 0 ||
-            feedback?.userId !== emailCurateur?.id
-          ) {
-            setIsCommented(true);
-          }
-        });
+
+      if(solution){
+        if (solution.feedbacks && solution.feedbacks.length > 0 && solution.feedbacks[0].userId === emailCurateur.id) {
+          setIsExistCommentaire(true);
+          setCommentaires(solution.feedbacks);
+        }else if(solution.feedbacks && solution.feedbacks.length > 0 && solution.feedbacks[0].userId !== emailCurateur.id){
+          setIsCommented(true);
+          setCommentaires(solution.feedbacks);
+        }else{
+          setIsExistCommentaire(false);
+          setIsCommented(false);
+        }
       }
-    }
+
+      // solution.feedbacks.forEach((feedback) => {
+      //   if (
+      //     feedback.userId === emailCurateur.id ||
+      //     isAdmin
+      //   ) {
+      //     setIdCurateur(feedback.userId);
+      //     setIsExistCommentaire(true);
+      //     setCommentaires(feedback.adminComment);
+      //   }
+      //   else if (
+      //     solution.feedbacks.length > 0 ||
+      //     feedback.userId !== emailCurateur.id
+      //   ) {
+      //     setIsCommented(true);
+      //   }
+      //   else {
+      //     setIsExistCommentaire(false);
+      //     setIsCommented(false);
+      //   }
+      // });
+    
   }, [solution, emailCurateur, isAdmin]);
 
   useEffect(() => {
@@ -361,39 +376,53 @@ const Solution = () => {
     setCommentUser(e.target.value);
   };
 
+
   const handlePreviousSolution = async () => {
     const currentIndex = allSolutions.findIndex((sol) => sol?.id === solution?.id);
+    let previousSolution;
     if (currentIndex > 0) {
-      setSolution(allSolutions[currentIndex - 1]);
-      const previousSolution = allSolutions[currentIndex - 1];
+      try {
+        previousSolution = allSolutions[currentIndex - 1];
+        const response = await axios.get(`/solutions/${previousSolution?.id}`);
+        setSolution(response?.data?.data);
+      } catch (error) {
+        console.log(error);
+      }
+
       try {
         if (previousSolution.userId) {
           const profileResponse = await axios.get(`/users/${previousSolution?.userId}`);
           setProfileInnovateur(profileResponse?.data?.data);
         }
-
       } catch (error) {
         console.log(error);
       }
     }
-  };
+  }
 
   const handleNextSolution = async () => {
     const currentIndex = allSolutions.findIndex((sol) => sol.id === solution.id);
+    let nextSolution;
     if (currentIndex < allSolutions?.length - 1) {
-      setSolution(allSolutions[currentIndex + 1]);
-      const nextSolution = allSolutions[currentIndex + 1];
+      try {
+        nextSolution = allSolutions[currentIndex + 1];
+        const response = await axios.get(`/solutions/${nextSolution?.id}`);
+        setSolution(response?.data?.data);
+      } catch (error) {
+        console.log(error);
+      }
+
       try {
         if (nextSolution.userId) {
           const profileResponse = await axios.get(`/users/${nextSolution?.userId}`);
           setProfileInnovateur(profileResponse?.data?.data);
         }
-      } catch (error) {
+      }
+      catch (error) {
         console.log(error);
       }
     }
   };
-
 
 
   return (
@@ -414,6 +443,7 @@ const Solution = () => {
           </Breadcrumb>
         </div>
       </div>
+
       <Row>
         <Col lg={12} md={12}>
 
@@ -440,6 +470,7 @@ const Solution = () => {
             optionsFeedBack={optionsFeedBack}
             profileCurateur={profileCurateur}
             showYoutubeThumbnail={showYoutubeThumbnail}
+            isCommented={isCommented}
           />
           <Col lg={12} md={12} xl={12}>
             <Card>
@@ -470,7 +501,6 @@ const Solution = () => {
                         <div
                           aria-label="Basic example"
                           className="d-flex justify-content-end"
-
                         >
                           <Button
                             onClick={handleNextSolution}
