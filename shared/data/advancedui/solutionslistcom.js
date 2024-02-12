@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Row, Col, Card, Spinner, Modal, FormGroup, Form } from "react-bootstrap";
+import { Button, Row, Col, Card, Spinner, Modal, FormGroup, Form, Tab, Nav } from "react-bootstrap";
 import DataTable from "react-data-table-component";
 import { columns as configureColumns, truncateText } from "./solutionslist";
 import axios from "@/pages/api/axios";
@@ -10,6 +10,10 @@ import { ToastContainer } from "react-toastify";
 const Solutionslistcom = () => {
 
   const [solutions, setSolutions] = useState([]);
+  const [conformedSolutions, setConformedSolutions] = useState([]);
+  const [curratedSolutions, setCurratedSolutions] = useState([]);
+
+
   const [isLoadingSolution, setIsLoadingSolution] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [solutionToDelete, setSolutionToDelete] = useState(null);
@@ -18,8 +22,10 @@ const Solutionslistcom = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [showAlertModal, setShowAlertModal] = useState(false);
   const [optionsThematique, setOptionsThematique] = useState([]);
+
   const [selectedOptionsThematique, setSelectedOptionsThematique] = useState(null);
   const [optionIdThematique, setOptionIdThematique] = useState(null);
+
   const [optionsStatus, setOptionsStatus] = useState([]);
   const [selectedOptionsStatus, setSelectedOptionsStatus] = useState(null);
   const [optionIdStatus, setOptionIdStatus] = useState(null);
@@ -27,12 +33,18 @@ const Solutionslistcom = () => {
   const [isLoadingUsers, setIsLoadingUsers] = useState(false);
   const [profile, setProfile] = useState(null);
   const [dataMerged, setDataMerged] = useState([]);
+  const [dataConformedSolutionsMerged, setDataConformedSolutionsMerged] = useState([]);
+  const [dataCurratedSolutionsMerged, setDataCurratedSolutionsMerged] = useState([]);
+
   const [filters, setFilters] = useState({
     searchText: "",
     statusFilter: "Tous",
     thematicFilter: "Tous",
   });
+
   const [filteredSolutions, setFilteredSolutions] = useState([]);
+  const [filteredCurratedSolutions, setFilteredCurratedSolutions] = useState([]);
+  const [filteredConformedSolutions, setFilteredConformedSolutions] = useState([]);
 
   const [optionPole, setOptionPole] = useState();
   const [selectedSolutions, setSelectedSolutions] = useState(null);
@@ -41,6 +53,7 @@ const Solutionslistcom = () => {
 
 
   useEffect(() => {
+
     const fetchThematique = async () => {
       try {
         const thematiqueResponse = await axios.get("/thematics");
@@ -75,14 +88,11 @@ const Solutionslistcom = () => {
       }
     };
 
-
     const fetchUser = async () => {
       try {
         setIsLoadingUsers(true);
         const responseUser = await axios.get("/users");
         const dataUser = responseUser?.data?.data;
-
-        // setUsers(dataUser.filter(user => user.roles.some(role => role.name === "USER")));
         setUsers(dataUser);
         setIsLoadingUsers(false);
       } catch (error) {
@@ -130,27 +140,34 @@ const Solutionslistcom = () => {
     fetchStatus();
     fetchProfile();
     fetchPole();
+
   }, []);
 
   useEffect(() => {
     const fetchSolution = async () => {
+
       if (profile) {
         try {
           setIsLoadingSolution(true);
           let responseSolution;
           if (isAdmin) {
             responseSolution = await axios.get("/solutions");
-            
+
+            console.log(responseSolution.data)
+
           } else {
             responseSolution = await axios.get(`/solutions/pole/${profile.poleId}`);
           }
           setSolutions(responseSolution?.data?.data);
+          setConformedSolutions(responseSolution?.data?.conforms);
+          setCurratedSolutions(responseSolution?.data?.curated);
           setIsLoadingSolution(false);
         } catch (error) {
           setIsLoadingSolution(false);
           console.error("Erreur lors de la récupération des données :", error);
         }
       }
+
     };
 
     fetchSolution();
@@ -171,9 +188,42 @@ const Solutionslistcom = () => {
       setDataMerged(mergedData);
     };
 
-    mergeData(solutions, users);
+    const mergeDataConfermedSolution = (solutions, users) => {
+      const userMap = {};
+      users.forEach((user) => {
+        userMap[user.id] = user;
+      });
 
-  }, [solutions, users]);
+      const mergedData = solutions.map((solution) => ({
+        ...solution,
+        user: userMap[solution.userId],
+      }));
+
+      setDataConformedSolutionsMerged(mergedData);
+    };
+
+    const mergeDataCurratedSolutions = (solutions, users) => {
+      const userMap = {};
+
+      users.forEach((user) => {
+        userMap[user.id] = user;
+      });
+
+      const mergedData = solutions.map((solution) => ({
+        ...solution,
+        user: userMap[solution.userId],
+      }));
+      setDataCurratedSolutionsMerged(mergedData);
+    };
+
+
+
+
+    mergeData(solutions, users);
+    mergeDataConfermedSolution(conformedSolutions, users);
+    mergeDataCurratedSolutions(curratedSolutions, users);
+
+  }, [solutions, conformedSolutions, curratedSolutions, users]);
 
 
   useEffect(() => {
@@ -194,8 +244,45 @@ const Solutionslistcom = () => {
       return textMatch && statusMatch && thematicMatch;
     });
 
+    const filteredConformedSolutions = dataConformedSolutionsMerged?.filter((solution) => {
+      if (!dataConformedSolutionsMerged) {
+        return false;
+      }
+
+      const textMatch =
+        solution.name.toLowerCase().includes(filters.searchText.toLowerCase()) ||
+        solution.user?.name.toLowerCase().includes(filters.searchText.toLowerCase()) ||
+        solution.user?.email.toLowerCase().includes(filters.searchText.toLowerCase());
+
+      const statusMatch = filters.statusFilter === "Tous" || solution?.status?.name === filters.statusFilter;
+
+      const thematicMatch = filters.thematicFilter === "Tous" || solution?.thematic?.name === filters.thematicFilter;
+
+      return textMatch && statusMatch && thematicMatch;
+    });
+
+    const filteredCurratedSolutions = dataCurratedSolutionsMerged?.filter((solution) => {
+      if (!dataCurratedSolutionsMerged) {
+        return false;
+      }
+
+      const textMatch =
+        solution.name.toLowerCase().includes(filters.searchText.toLowerCase()) ||
+        solution.user?.name.toLowerCase().includes(filters.searchText.toLowerCase()) ||
+        solution.user?.email.toLowerCase().includes(filters.searchText.toLowerCase());
+
+      const statusMatch = filters.statusFilter === "Tous" || solution?.status?.name === filters.statusFilter;
+
+      const thematicMatch = filters.thematicFilter === "Tous" || solution?.thematic?.name === filters.thematicFilter;
+
+      return textMatch && statusMatch && thematicMatch;
+    });
+
     setFilteredSolutions(filteredSolutions);
-  }, [filters, dataMerged]);
+    setFilteredConformedSolutions(filteredConformedSolutions);
+    setFilteredCurratedSolutions(filteredCurratedSolutions);
+  }, [filters, dataMerged, dataConformedSolutionsMerged, dataCurratedSolutionsMerged]);
+
 
   const handleDelete = (solution) => {
     if (isAdmin) {
@@ -205,6 +292,7 @@ const Solutionslistcom = () => {
       setShowAlertModal(true);
     }
   };
+
   const handleDeleteSolution = async () => {
     try {
       await axios.delete(`/solutions/${solutionToDelete.id}`);
@@ -216,23 +304,26 @@ const Solutionslistcom = () => {
       console.error("Erreur lors de la suppression de la solution :", error);
     }
   };
+
   const handleCloseAlertModal = () => {
     setShowAlertModal(false);
   };
+
   const handleShowModalEdit = (solution) => {
     setSelectedSolutions(solution);
     setShowEditModal(true);
   }
+
   const handleCloseModalEdit = () => {
     setShowEditModal(false);
   }
 
   const columns = configureColumns(handleDelete, handleShowModalEdit);
 
-    columns.forEach((column) => {
+  columns.forEach((column) => {
     if (column.name === "Actions") {
       column.width = "30%";
-    } 
+    }
   });
 
   const handleRowSelected = (state) => {
@@ -318,81 +409,346 @@ const Solutionslistcom = () => {
   };
 
 
-console.log(solutions)
-
   return (
     <div>
       <Row className="row-sm">
-        <Col lg={12}>
-          <Card className="custom-card">
-            <Card.Body>
-              {isLoadingSolution ? (
-                <div className="text-center">
-                  <Spinner animation="border" variant="primary" />
-                </div>
-              ) : (
-                <div className="table-responsive ">
-                  <Row>
-                    <Col xs={12} md={12} lg={4} xl={4}>
-                      <Form>
-                        <FormGroup className="form-group">
-                          <Form.Control
-                            type="text"
-                            className="form-control"
-                            placeholder="Recherche par titre de la solution, par le nom ou l'email de l'innovateur"
-                            value={filters.searchText}
-                            onChange={(e) => setFilters({ ...filters, searchText: e.target.value })}
+        {
+          isAdmin ? (
+
+            <div className="profile-tab tab-menu-heading border-bottom-0 col-12" >
+              <Tab.Container defaultActiveKey="About">
+                <Nav
+                  variant="pills"
+                  className="nav profile-tabs main-nav-line tabs-menu profile-nav-line bg-white mb-4 border-0 br-5 mb-0	"
+                >
+                  <Nav.Item className="me-1">
+                    <Nav.Link className=" mb-2 mt-2" eventKey="About">
+                      <Button
+                        variant=""
+                        className="btn w-100 button-icon btn-sm btn-primary m-0"
+                      >
+                        <span className="ps-1 me-3">Toutes les Solutions</span>
+                        <i class="bi bi-bar-chart-steps"></i>
+                      </Button>
+                    </Nav.Link>
+                  </Nav.Item>
+
+                  <Nav.Item className="me-1">
+                    <Nav.Link className="mb-2 mt-2" eventKey="EditProfile">
+
+                      <Button
+                        variant=""
+                        className="btn w-100 button-icon btn-sm btn-primary m-0"
+                      >
+                        <span className="ps-1 me-3">Solutions conformes</span>
+                        <i class="bi bi-list-check"></i>
+                      </Button>
+                    </Nav.Link>
+                  </Nav.Item>
+
+                  <Nav.Item className="me-1">
+                    <Nav.Link className="mb-2 mt-2" eventKey="Timeline">
+
+                      <Button
+                        variant=""
+                        className="btn w-100 button-icon btn-sm btn-primary m-0"
+                      >
+                        <span className="ps-1 me-3">Solutions Currées</span>
+                        <i class="bi bi-chat-left-text"></i>
+                      </Button>
+                    </Nav.Link>
+                  </Nav.Item>
+                </Nav>
+                <Row className=" row-sm ">
+                  <Col lg={12} md={12}>
+                    <div className="custom-card main-content-body-profile">
+                      <Tab.Content>
+                        <Tab.Pane eventKey="About">
+                          <Col lg={12} className="w-full">
+                            <Card className="custom-card">
+                              <Card.Body>
+                                {isLoadingSolution ? (
+                                  <div className="text-center">
+                                    <Spinner animation="border" variant="primary" />
+                                  </div>
+                                ) : (
+                                  <div className="table-responsive ">
+                                    <Row>
+                                      <Col xs={12} md={12} lg={4} xl={4}>
+                                        <Form>
+                                          <FormGroup className="form-group">
+                                            <Form.Control
+                                              type="text"
+                                              className="form-control"
+                                              placeholder="Recherche par titre de la solution, par le nom ou l'email de l'innovateur"
+                                              value={filters.searchText}
+                                              onChange={(e) => setFilters({ ...filters, searchText: e.target.value })}
+                                            />
+                                          </FormGroup>
+                                        </Form>
+                                      </Col>
+
+                                      <Col xs={12} md={12} lg={4} xl={4}>
+                                        <div className=" SlectBox">
+                                          <Select
+                                            classNamePrefix="selectform"
+                                            onChange={handleSelectChangeStatus}
+                                            options={optionsStatus}
+                                            placeholder="Filtre par Status"
+                                          />
+                                        </div>
+                                      </Col>
+
+                                      <Col xs={12} md={12} lg={4} xl={4}>
+                                        <div className=" SlectBox">
+                                          <Select
+                                            classNamePrefix="selectform"
+                                            onChange={handleSelectChangeThematic}
+                                            options={optionsThematique}
+                                            placeholder="Filtre par Thématique"
+                                          />
+                                        </div>
+                                      </Col>
+                                    </Row>
+                                    <span className="datatable">
+                                      <span className="uselistdata">
+                                        <DataTable
+                                          columns={columns}
+                                          data={filteredSolutions}
+                                          actions={actionsMemo}
+                                          contextActions={contextActions}
+                                          onSelectedRowsChange={handleRowSelected}
+                                          clearSelectedRows={toggleCleared}
+                                          defaultSortField="id"
+                                          defaultSortAsc={false}
+                                          selectableRows
+                                          pagination
+                                        />
+                                      </span>
+                                    </span>
+                                  </div>
+                                )}
+                              </Card.Body>
+                            </Card>
+                          </Col>
+                        </Tab.Pane>
+                        <Tab.Pane eventKey="EditProfile">
+                          <Col lg={12} className="w-full">
+                            <Card className="custom-card">
+                              <Card.Body>
+                                {isLoadingSolution ? (
+                                  <div className="text-center">
+                                    <Spinner animation="border" variant="primary" />
+                                  </div>
+                                ) : (
+                                  <div className="table-responsive ">
+                                    <Row>
+                                      <Col xs={12} md={12} lg={4} xl={4}>
+                                        <Form>
+                                          <FormGroup className="form-group">
+                                            <Form.Control
+                                              type="text"
+                                              className="form-control"
+                                              placeholder="Recherche par titre de la solution, par le nom ou l'email de l'innovateur"
+                                              value={filters.searchText}
+                                              onChange={(e) => setFilters({ ...filters, searchText: e.target.value })}
+                                            />
+                                          </FormGroup>
+                                        </Form>
+                                      </Col>
+
+                                      <Col xs={12} md={12} lg={4} xl={4}>
+                                        <div className=" SlectBox">
+                                          <Select
+                                            classNamePrefix="selectform"
+                                            onChange={handleSelectChangeStatus}
+                                            options={optionsStatus}
+                                            placeholder="Filtre par Status"
+                                          />
+                                        </div>
+                                      </Col>
+
+                                      <Col xs={12} md={12} lg={4} xl={4}>
+                                        <div className=" SlectBox">
+                                          <Select
+                                            classNamePrefix="selectform"
+                                            onChange={handleSelectChangeThematic}
+                                            options={optionsThematique}
+                                            placeholder="Filtre par Thématique"
+                                          />
+                                        </div>
+                                      </Col>
+                                    </Row>
+                                    <span className="datatable">
+                                      <span className="uselistdata">
+                                        <DataTable
+                                          columns={columns}
+                                          data={filteredConformedSolutions}
+                                          actions={actionsMemo}
+                                          contextActions={contextActions}
+                                          onSelectedRowsChange={handleRowSelected}
+                                          clearSelectedRows={toggleCleared}
+                                          defaultSortField="id"
+                                          defaultSortAsc={false}
+                                          selectableRows
+                                          pagination
+                                        />
+                                      </span>
+                                    </span>
+                                  </div>
+                                )}
+                              </Card.Body>
+                            </Card>
+                          </Col>
+                        </Tab.Pane>
+                        <Tab.Pane eventKey="Timeline">
+                          <Col lg={12} className="w-full">
+                            <Card className="custom-card">
+                              <Card.Body>
+                                {isLoadingSolution ? (
+                                  <div className="text-center">
+                                    <Spinner animation="border" variant="primary" />
+                                  </div>
+                                ) : (
+                                  <div className="table-responsive ">
+                                    <Row>
+                                      <Col xs={12} md={12} lg={4} xl={4}>
+                                        <Form>
+                                          <FormGroup className="form-group">
+                                            <Form.Control
+                                              type="text"
+                                              className="form-control"
+                                              placeholder="Recherche par titre de la solution, par le nom ou l'email de l'innovateur"
+                                              value={filters.searchText}
+                                              onChange={(e) => setFilters({ ...filters, searchText: e.target.value })}
+                                            />
+                                          </FormGroup>
+                                        </Form>
+                                      </Col>
+
+                                      <Col xs={12} md={12} lg={4} xl={4}>
+                                        <div className=" SlectBox">
+                                          <Select
+                                            classNamePrefix="selectform"
+                                            onChange={handleSelectChangeStatus}
+                                            options={optionsStatus}
+                                            placeholder="Filtre par Status"
+                                          />
+                                        </div>
+                                      </Col>
+
+                                      <Col xs={12} md={12} lg={4} xl={4}>
+                                        <div className=" SlectBox">
+                                          <Select
+                                            classNamePrefix="selectform"
+                                            onChange={handleSelectChangeThematic}
+                                            options={optionsThematique}
+                                            placeholder="Filtre par Thématique"
+                                          />
+                                        </div>
+                                      </Col>
+                                    </Row>
+                                    <span className="datatable">
+                                      <span className="uselistdata">
+                                        <DataTable
+                                          columns={columns}
+                                          data={filteredCurratedSolutions}
+                                          actions={actionsMemo}
+                                          contextActions={contextActions}
+                                          onSelectedRowsChange={handleRowSelected}
+                                          clearSelectedRows={toggleCleared}
+                                          defaultSortField="id"
+                                          defaultSortAsc={false}
+                                          selectableRows
+                                          pagination
+                                        />
+                                      </span>
+                                    </span>
+                                  </div>
+                                )}
+                              </Card.Body>
+                            </Card>
+                          </Col>
+                        </Tab.Pane>
+                      </Tab.Content>
+                    </div>
+                  </Col>
+                </Row>
+              </Tab.Container>
+            </div >
+
+          ) : (
+            <Col lg={12} className="w-full">
+              <Card className="custom-card">
+                <Card.Body>
+                  {isLoadingSolution ? (
+                    <div className="text-center">
+                      <Spinner animation="border" variant="primary" />
+                    </div>
+                  ) : (
+                    <div className="table-responsive ">
+                      <Row>
+                        <Col xs={12} md={12} lg={4} xl={4}>
+                          <Form>
+                            <FormGroup className="form-group">
+                              <Form.Control
+                                type="text"
+                                className="form-control"
+                                placeholder="Recherche par titre de la solution, par le nom ou l'email de l'innovateur"
+                                value={filters.searchText}
+                                onChange={(e) => setFilters({ ...filters, searchText: e.target.value })}
+                              />
+                            </FormGroup>
+                          </Form>
+                        </Col>
+
+                        <Col xs={12} md={12} lg={4} xl={4}>
+                          <div className=" SlectBox">
+                            <Select
+                              classNamePrefix="selectform"
+                              onChange={handleSelectChangeStatus}
+                              options={optionsStatus}
+                              placeholder="Filtre par Status"
+                            />
+                          </div>
+                        </Col>
+
+                        <Col xs={12} md={12} lg={4} xl={4}>
+                          <div className=" SlectBox">
+                            <Select
+                              classNamePrefix="selectform"
+                              onChange={handleSelectChangeThematic}
+                              options={optionsThematique}
+                              placeholder="Filtre par Thématique"
+                            />
+                          </div>
+                        </Col>
+                      </Row>
+                      <span className="datatable">
+                        <span className="uselistdata">
+                          <DataTable
+                            columns={columns}
+                            data={filteredSolutions}
+                            actions={actionsMemo}
+                            contextActions={contextActions}
+                            onSelectedRowsChange={handleRowSelected}
+                            clearSelectedRows={toggleCleared}
+                            defaultSortField="id"
+                            defaultSortAsc={false}
+                            selectableRows
+                            pagination
                           />
-                        </FormGroup>
-                      </Form>
-                    </Col>
+                        </span>
+                      </span>
+                    </div>
+                  )}
+                </Card.Body>
+              </Card>
+            </Col >
+          )
+        }
 
-                    <Col xs={12} md={12} lg={4} xl={4}>
-                      <div className=" SlectBox">
-                        <Select
-                          classNamePrefix="selectform"
-                          // defaultValue={Singleselect}
-                          onChange={handleSelectChangeStatus}
-                          options={optionsStatus}
-                          placeholder="Filtre par Status"
-                        />
-                      </div>
-                    </Col>
-
-                    <Col xs={12} md={12} lg={4} xl={4}>
-                      <div className=" SlectBox">
-                        <Select
-                          classNamePrefix="selectform"
-                          // defaultValue={Singleselect}
-                          onChange={handleSelectChangeThematic}
-                          options={optionsThematique}
-                          placeholder="Filtre par Thématique"
-                        />
-                      </div>
-                    </Col>
-                  </Row>
-                  <span className="datatable">
-                    <span className="uselistdata">
-                      <DataTable
-                        columns={columns}
-                        data={filteredSolutions}
-                        actions={actionsMemo}
-                        contextActions={contextActions}
-                        onSelectedRowsChange={handleRowSelected}
-                        clearSelectedRows={toggleCleared}
-                        defaultSortField="id"
-                        defaultSortAsc={false}
-                        selectableRows
-                        pagination
-                      />
-                    </span>
-                  </span>
-                </div>
-              )}
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
+      </Row >
       <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
         <Modal.Body>
           <div className="tx-center">
@@ -446,7 +802,7 @@ console.log(solutions)
         </Modal.Body>
       </Modal>
       <ToastContainer />
-    </div>
+    </div >
   );
 };
 

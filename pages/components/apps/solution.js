@@ -242,8 +242,6 @@ const Solution = () => {
     
   }, [solution, userConnected, isAdmin]);
 
-  console.log(isCommentedByAnother, "isCommentByAnother");
-  console.log(isExistCommentaire, "isExistCommentaire");
 
   useEffect(() => {
     const fetchAllSolution = async () => {
