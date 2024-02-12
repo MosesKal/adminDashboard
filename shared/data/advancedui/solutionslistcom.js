@@ -140,6 +140,7 @@ const Solutionslistcom = () => {
           let responseSolution;
           if (isAdmin) {
             responseSolution = await axios.get("/solutions");
+            
           } else {
             responseSolution = await axios.get(`/solutions/pole/${profile.poleId}`);
           }
@@ -228,14 +229,10 @@ const Solutionslistcom = () => {
 
   const columns = configureColumns(handleDelete, handleShowModalEdit);
 
-  columns.forEach((column) => {
-    if (column.name === "Titre") {
+    columns.forEach((column) => {
+    if (column.name === "Actions") {
       column.width = "30%";
-    } else if (column.name === "Thématique") {
-      column.width = "20%";
-    } else if (column.name === "Date et Heure de soumission") {
-      column.width = "15%";
-    }
+    } 
   });
 
   const handleRowSelected = (state) => {
@@ -320,6 +317,8 @@ const Solutionslistcom = () => {
     setFilters({ ...filters, thematicFilter: selectedOption?.label || "all" });
   };
 
+
+console.log(solutions)
 
   return (
     <div>

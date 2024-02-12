@@ -59,7 +59,7 @@ const CurratorList = ({ updateUsers }) => {
   };
 
   const getOrganisationNameById = (organisationId) => {
-    const organisation = organisations.find((org) => org.id === organisationId);
+    const organisation = organisations?.find((org) => org.id === organisationId);
     return organisation ? organisation.name : "";
   };
 

@@ -41,11 +41,9 @@ const SolutionTab = (
         options,
         profileCurateur,
         showYoutubeThumbnail,
-        isCommented,
+        isCommentedByAnother,
 
     }) => {
-
-    console.log(solution, "solution Tab")
 
     return (
         <>
@@ -362,7 +360,7 @@ const SolutionTab = (
                                                                             <Row className="row mt-5">
                                                                                 <Col md={6}>{"Sélectionnez votre impression par rapport à la solution"}</Col>
                                                                                 <Col md={6}>
-                                                                                    {isExistCommentaire ? (
+                                                                                    {isExistCommentaire || isCommentedByAnother? (
                                                                                         <Select
                                                                                             options={optionsFeedBack}
                                                                                             onChange={handleSelectChangeFeedBack}
@@ -381,13 +379,13 @@ const SolutionTab = (
                                                                             <Row className="row mt-5">
                                                                                 <Col md={6}>{"Votre commentaire par rapport à la solution"}</Col>
                                                                                 <Col md={6}>
-                                                                                    {isExistCommentaire ? (
+                                                                                    {isExistCommentaire || isCommentedByAnother ? (
                                                                                         <textarea
                                                                                             className="form-control"
                                                                                             placeholder="Votre Commentaire"
                                                                                             onChange={handleChangeCommentUser}
                                                                                             disabled={true}
-                                                                                            value={commentaires && commentaires}
+                                                                                            
                                                                                         >
                                                                                         </textarea>
                                                                                     ) : (
@@ -405,7 +403,7 @@ const SolutionTab = (
                                                                             <Row className="row mt-5">
                                                                                 <Col md={6}></Col>
                                                                                 <Col md={6}>
-                                                                                    {isExistCommentaire ? (<Button
+                                                                                    {isExistCommentaire || isCommentedByAnother ? (<Button
                                                                                         variant=""
                                                                                         className="btn btn-primary"
                                                                                         type="button"
@@ -432,7 +430,7 @@ const SolutionTab = (
                                                             </Col>
 
                                                             {
-                                                                isExistCommentaire || isCommented ? (<Col md={12} xl={4} className="ps-5">
+                                                                isExistCommentaire || isCommentedByAnother ? (<Col md={12} xl={4} className="ps-5">
                                                                     <div className="">
                                                                         <Card className="overflow-hidden">
                                                                             <Card>
@@ -441,56 +439,82 @@ const SolutionTab = (
                                                                                 </Card.Header>
                                                                                 <Card.Body>
                                                                                     {
-                                                                                        commentaires ? (commentaires.map((commentaire)=>(
+                                                                                        commentaires ? (commentaires.map((commentaire) => (
                                                                                             <div key={commentaire.id}
-                                                                                            className="d-sm-flex p-3 mt-4 sub-review-section border subsection-color br-tl-0 br-tr-0">
-                                                                                            <div className="d-flex me-3">
-                                                                                                <img
-                                                                                                    className="media-object brround avatar-md"
-                                                                                                    alt="64x64"
-                                                                                                    // src={`${apiBaseUrl}/uploads/${profileCurateur?.profile}`}
-                                                                                                    src={"../../../assets/img/faces/profile.jpg"}
-                                                                                                />
-                                                                                            </div>
-                                                                                            <div className="media-body">
-    
-                                                                                                <h5 className="mt-0 mb-1 font-weight-semibold">
-                                                                                                    {/* {profileCurateur?.name} */}
-                                                                                                    <span
-                                                                                                        className="tx-14 ms-0  me-1 ms-3"
-                                                                                                        data-bs-toggle="tooltip"
-                                                                                                        data-bs-placement="top"
-                                                                                                        title=""
-                                                                                                        data-original-title="verified"
-                                                                                                    >
-                                                                                                        <i className="fe fe-check-circle text-success tx-12 "></i>
-                                                                                                    </span>
-                                                                                                </h5>
-    
-                                                                                                <p className="font-13  mb-4 mt-2">
-                                                                                                    {/* {
+                                                                                                className="d-sm-flex p-3 mt-4 sub-review-section border subsection-color br-tl-0 br-tr-0">
+                                                                                                <div className="d-flex me-3">
+                                                                                                    {profileCurateur?.profile ? (
+                                                                                                        <img
+                                                                                                            className="media-object brround avatar-md"
+                                                                                                            alt="64x64"
+                                                                                                            src={`${apiBaseUrl}/uploads/${profileCurateur.profile}`}
+
+                                                                                                        />
+                                                                                                    ) : (
+                                                                                                        <img
+                                                                                                            className="media-object brround avatar-md"
+                                                                                                            alt="64x64"
+                                                                                                            src={"../../../assets/img/faces/profile.jpg"}
+                                                                                                        />
+                                                                                                    )}
+
+                                                                                                </div>
+                                                                                                <div className="media-body">
+
+                                                                                                    <h5 className="mt-0 mb-1 font-weight-semibold">
+                                                                                                        {
+                                                                                                            profileCurateur ? (
+                                                                                                                <>
+                                                                                                                    Commenté par : {profileCurateur.name}
+                                                                                                                    <span
+                                                                                                                        className="tx-14 ms-0  me-1 ms-3"
+                                                                                                                        data-bs-toggle="tooltip"
+                                                                                                                        data-bs-placement="top"
+                                                                                                                        title=""
+                                                                                                                        data-original-title="verified"
+                                                                                                                    >
+                                                                                                                        <i className="fe fe-check-circle text-success tx-12 "></i>
+                                                                                                                    </span>
+                                                                                                                </>
+                                                                                                            ) : (
+                                                                                                                <span
+                                                                                                                    className="tx-14 ms-0  me-1 ms-3"
+                                                                                                                    data-bs-toggle="tooltip"
+                                                                                                                    data-bs-placement="top"
+                                                                                                                    title=""
+                                                                                                                    data-original-title="verified"
+                                                                                                                >
+                                                                                                                    <i className="fe fe-check-circle text-success tx-12 "></i>
+                                                                                                                </span>
+                                                                                                            )
+                                                                                                        }
+
+                                                                                                    </h5>
+
+                                                                                                    <p className="font-13  mb-4 mt-2">
+                                                                                                        {/* {
                                                                                                         commentaires && (commentaires)
                                                                                                     } */}
 
-                                                                                                    {
-                                                                                                        commentaire.adminComment
-                                                                                                    }
-                                                                                                </p>
-    
-                                                                                                <Link href="#!" className="me-2 mt-1">
-                                                                                                    <Badge bg="" className=" bg-success ">
-                                                                                                        <span
-                                                                                                            className="me-1 fe fe-edit-2 tx-11 ms-1"></span>
-                                                                                                            {commentaire.labels[0].name }
+                                                                                                        {
+                                                                                                            commentaire.adminComment
+                                                                                                        }
+                                                                                                    </p>
+
+                                                                                                    <Link href="#!" className="me-2 mt-1">
+                                                                                                        <Badge bg="" className=" bg-success ">
+                                                                                                            <span
+                                                                                                                className="me-1 fe fe-edit-2 tx-11 ms-1"></span>
+                                                                                                            {commentaire.labels[0].name}
                                                                                                             {/* {commentaire.feedbacks.map((feedback) =>( <span key={feedback.id}>{feedback.name}</span>))} */}
-    
-                                                                                                    </Badge>
-                                                                                                </Link>
+
+                                                                                                        </Badge>
+                                                                                                    </Link>
+                                                                                                </div>
                                                                                             </div>
-                                                                                        </div>
                                                                                         ))) : ""
                                                                                     }
-                                                                                   
+
                                                                                 </Card.Body>
                                                                             </Card>
                                                                         </Card>

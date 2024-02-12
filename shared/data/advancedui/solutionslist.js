@@ -1,6 +1,6 @@
 import React from "react";
 import moment from "moment";
-import { Row, Col, Button } from "react-bootstrap";
+import { Row, Col, Button, Badge } from "react-bootstrap";
 
 import Link from "next/link";
 
@@ -11,7 +11,25 @@ export const truncateText = (text, maxLength) => {
   return text;
 };
 
-export const columns = (handleDelete, handleShowEditModal)=>[
+export const columns = (handleDelete, handleShowEditModal) => [
+  {
+    name: "Etat",
+    selector: (row) => [row.feedbacks],
+    cell: (row) => <div className={row.class}>
+      {
+        row.feedbacks.length > 0 ? (
+          <Badge pill bg="primary">
+            Déjà currée
+          </Badge>
+        ) : (
+          <Badge pill bg="warning">
+            Non currée
+          </Badge>
+        )
+      }
+
+    </div>,
+  },
   {
     name: "Titre",
     selector: (row) => [row.name],
@@ -54,29 +72,29 @@ export const columns = (handleDelete, handleShowEditModal)=>[
     cell: (row) => (
       <div className="w-100">
         <Row className="justify-content-evenly">
-            <Col xs={12} md={12} lg={12} xl={12} xxl={6}>
+          <Col xs={12} md={12} lg={12} xl={12} xxl={6}>
 
-                <Link
-                    className="btn btn-primary btn-sm w-100 button-icon"
-                    href={`/components/apps/solution?id=${row?.id}&innovateurId=${row?.user?.id}&thematiqueId=${row?.thematic?.id}`}
-                    as="/components/apps/solution"
-                >
-                    {/* <i className="bi bi-card-list"></i> */}
-                    <span className="ps-1">Détails</span>
+            <Link
+              className="btn btn-primary btn-sm w-100 button-icon"
+              href={`/components/apps/solution?id=${row?.id}&innovateurId=${row?.user?.id}&thematiqueId=${row?.thematic?.id}`}
+              as="/components/apps/solution"
+            >
+              {/* <i className="bi bi-card-list"></i> */}
+              <span className="ps-1">Détails</span>
 
-                </Link>
-            </Col>
-            <Col xs={12} md={12} lg={12} xl={12} xxl={6}>
-                <Button
-                    variant=""
-                    type="button"
-                    onClick={() => handleDelete(row)}
-                    className="btn w-100 button-icon btn-sm btn-secondary m-0"
-                >
-                    {/* <i class="bi bi-trash"></i> */}
-                    <span className="ps-1">Supprimer</span>
-                </Button>
-            </Col>
+            </Link>
+          </Col>
+          <Col xs={12} md={12} lg={12} xl={12} xxl={6}>
+            <Button
+              variant=""
+              type="button"
+              onClick={() => handleDelete(row)}
+              className="btn w-100 button-icon btn-sm btn-secondary m-0"
+            >
+              {/* <i class="bi bi-trash"></i> */}
+              <span className="ps-1">Supprimer</span>
+            </Button>
+          </Col>
         </Row>
       </div>
     ),

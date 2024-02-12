@@ -51,11 +51,11 @@ const Solution = () => {
   const [isLoadingSendMail, setIsLoadingSendMail] = useState(false);
 
   const [isAdmin, setIsAdmin] = useState(false);
-  const [isCommented, setIsCommented] = useState(false);
+  const [isCommentedByAnother, setIsCommentedByAnother] = useState(false);
 
   const [isExistCommentaire, setIsExistCommentaire] = useState(false);
   const [commentaires, setCommentaires] = useState();
-  let emailCurateur;
+  let userConnected;
 
   const [allSolutions, setAllSolution] = useState([]);
   const [profile, setProfile] = useState(null);
@@ -63,7 +63,7 @@ const Solution = () => {
   const [isLoadingSolution, setIsLoadingSolution] = useState(false);
 
   if (typeof window !== "undefined") {
-    emailCurateur = JSON.parse(localStorage?.getItem("ACCESS_ACCOUNT"));
+    userConnected = JSON.parse(localStorage?.getItem("ACCESS_ACCOUNT"));
   }
 
   useEffect(() => {
@@ -204,21 +204,24 @@ const Solution = () => {
   useEffect(() => {
 
       if(solution){
-        if (solution.feedbacks && solution.feedbacks.length > 0 && solution.feedbacks[0].userId === emailCurateur.id) {
+        if (solution.feedbacks && solution.feedbacks.length > 0 && solution.feedbacks[0].userId === userConnected.id) {
           setIsExistCommentaire(true);
           setCommentaires(solution.feedbacks);
-        }else if(solution.feedbacks && solution.feedbacks.length > 0 && solution.feedbacks[0].userId !== emailCurateur.id){
-          setIsCommented(true);
+          setIdCurateur(solution?.feedbacks[0].userId)
+        }else if(solution.feedbacks && solution.feedbacks.length > 0 && solution.feedbacks[0].userId !== userConnected.id){
+          setIsCommentedByAnother(true);
           setCommentaires(solution.feedbacks);
+          setIdCurateur(solution?.feedbacks[0].userId)
         }else{
           setIsExistCommentaire(false);
-          setIsCommented(false);
+          setIsCommentedByAnother(false);
         }
+        
       }
 
       // solution.feedbacks.forEach((feedback) => {
       //   if (
-      //     feedback.userId === emailCurateur.id ||
+      //     feedback.userId === userConnected.id ||
       //     isAdmin
       //   ) {
       //     setIdCurateur(feedback.userId);
@@ -227,17 +230,20 @@ const Solution = () => {
       //   }
       //   else if (
       //     solution.feedbacks.length > 0 ||
-      //     feedback.userId !== emailCurateur.id
+      //     feedback.userId !== userConnected.id
       //   ) {
-      //     setIsCommented(true);
+      //     setIsCommentedByAnother(true);
       //   }
       //   else {
       //     setIsExistCommentaire(false);
-      //     setIsCommented(false);
+      //     setIsCommentedByAnother(false);
       //   }
       // });
     
-  }, [solution, emailCurateur, isAdmin]);
+  }, [solution, userConnected, isAdmin]);
+
+  console.log(isCommentedByAnother, "isCommentByAnother");
+  console.log(isExistCommentaire, "isExistCommentaire");
 
   useEffect(() => {
     const fetchAllSolution = async () => {
@@ -313,9 +319,10 @@ const Solution = () => {
     feedbacks.push();
 
     try {
+
       const payload = {
         labels: feedbacks,
-        user: emailCurateur?.email,
+        user: userConnected?.email,
         adminComment: commentUser,
         userComment: "",
       };
@@ -372,6 +379,7 @@ const Solution = () => {
     fetchCurateur();
   }, [idCurateur]);
 
+
   const handleChangeCommentUser = (e) => {
     setCommentUser(e.target.value);
   };
@@ -396,7 +404,7 @@ const Solution = () => {
         }
       } catch (error) {
         console.log(error);
-      }
+      }ProfileCurateur
     }
   }
 
@@ -470,7 +478,7 @@ const Solution = () => {
             optionsFeedBack={optionsFeedBack}
             profileCurateur={profileCurateur}
             showYoutubeThumbnail={showYoutubeThumbnail}
-            isCommented={isCommented}
+            isCommentedByAnother={isCommentedByAnother}
           />
           <Col lg={12} md={12} xl={12}>
             <Card>
