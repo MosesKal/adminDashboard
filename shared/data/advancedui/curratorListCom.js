@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Button, Row, Col, Card, Spinner, Modal, Form, FormGroup } from "react-bootstrap";
 import DataTable from "react-data-table-component";
 import { columns as configureColumns } from "./curratorList";
-import axios, { apiBaseUrl } from "@/pages/api/axios";
+import axios, { apiBaseUrl, imageBaseUrl} from "@/pages/api/axios";
 import moment from "moment";
 import { toast, ToastContainer } from "react-toastify";
 import Select from "react-select";
@@ -158,7 +158,7 @@ const CurratorList = ({ updateUsers }) => {
         const responseUser = await axios.get("/users");
 
         const usersWithImages = responseUser?.data?.data.map((user) => {
-          const profileImage = user.profile ? `${apiBaseUrl}/uploads/${user?.profile}` : "../../../assets/img/faces/4.jpg";
+          const profileImage = user.profile ? `${imageBaseUrl}/${user?.profile}` : "../../../assets/img/faces/4.jpg";
           return {
             ...user,
             img: (
@@ -432,9 +432,9 @@ const CurratorList = ({ updateUsers }) => {
                     <img
                       className="br-5"
                       alt=""
-                      src={selectedUser?.profile ? `${apiBaseUrl}/uploads/${selectedUser.profile}` : "../../../assets/img/faces/profile.jpg"}
+                      src={selectedUser?.profile ? `${imageBaseUrl}/${selectedUser.profile}` : "../../../assets/img/faces/profile.jpg"}
                     />
-                    <span className="bg-success text-white wd-1 ht-1 rounded-pill profile-online"></span>
+                    {/* <span className="bg-success text-white wd-1 ht-1 rounded-pill profile-online"></span> */}
                   </span>
                 </div>
                 <div className="my-md-auto mt-4 prof-details">

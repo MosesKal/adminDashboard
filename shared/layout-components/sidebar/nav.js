@@ -170,7 +170,7 @@ export const MENUITEMS = [
         type: "link",
         selected: false,
         active: false,
-        title: "Impressions",
+        title: "Mentions",
         adminOnly: true,
       },
       {
@@ -191,7 +191,7 @@ export const MENUITEMS = [
         type: "link",
         selected: false,
         active: false,
-        title: "Challenges",
+        title: "Défis",
         adminOnly: true,
       },
       {

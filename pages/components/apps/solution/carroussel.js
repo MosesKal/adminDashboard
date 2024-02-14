@@ -1,5 +1,5 @@
 import React from "react";
-import { apiBaseUrl } from "@/pages/api/axios";
+import { apiBaseUrl, imageBaseUrl } from "@/pages/api/axios";
 import { Image, Card, Col, Button, Breadcrumb, Nav, Row, Tab, Carousel, Badge } from "react-bootstrap";
 
 
@@ -45,7 +45,7 @@ const Carousels = ({ imageLinks }) => {
                                                         <img
                                                             alt="img"
                                                             className="d-block w-100"
-                                                            src={`${apiBaseUrl}/uploads/${imageLink.link}`}
+                                                            src={`${imageBaseUrl}/${imageLink.link}`}
                                                             style={{ height: "500px" }}
                                                         />
                                                     </Carousel.Item>

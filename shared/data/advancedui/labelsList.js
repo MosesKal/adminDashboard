@@ -7,11 +7,21 @@ export const columns = (handleShowModal, handleDelete) => [
 
     {
         name: "Nom",
-        selector: (row) => [row.Name],
+        selector: (row) => [row.mention],
         sortable: false,
         cell: (row) => (
             <div>
-                <p className="tx-14 font-weight-semibold text-dark mb-1">{row.name}</p>
+                <p className="tx-14 font-weight-semibold text-dark mb-1">{row.mention}</p>
+            </div>
+        ),
+    },
+    {
+        name: "Côte",
+        selector: (row) => [row.average],
+        sortable: false,
+        cell: (row) => (
+            <div>
+                <p className="tx-14 font-weight-semibold text-dark mb-1">{row.average}</p>
             </div>
         ),
     },

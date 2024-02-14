@@ -9,7 +9,7 @@ import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
 import { Delete } from "../../redux/actions/action";
 import { useRouter } from "next/router";
-import axios, {apiBaseUrl} from "@/pages/api/axios";
+import axios, {apiBaseUrl, imageBaseUrl} from "@/pages/api/axios";
 
 export default function Header() {
   let { basePath } = useRouter();
@@ -219,7 +219,8 @@ export default function Header() {
                       profile && profile.profile ? (
                           <img
                               alt=""
-                              src={`${apiBaseUrl}/uploads/${profile.profile}`}
+                              // src={`${apiBaseUrl}/uploads/${profile.profile}`}
+                              src={`${imageBaseUrl}/${profile.profile}`}
                               className=""
                           />
                       ) : (
@@ -241,7 +242,8 @@ export default function Header() {
                             profile && profile?.profile ? (
                                 <img
                                     alt=""
-                                    src={`${apiBaseUrl}/uploads/${profile.profile}`}
+                                    // src={`${apiBaseUrl}/uploads/${profile.profile}`}
+                                    src={`${imageBaseUrl}/${profile.profile}`}
                                     className=""
                                 />
                             ) : (

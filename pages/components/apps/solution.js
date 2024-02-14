@@ -73,11 +73,11 @@ const Solution = () => {
     setIsAdmin(userRoles?.some((role) => role.name === "ADMIN"));
 
     if (status.authenticate) {
+
       setDomLoaded(true);
       setParametreId(id);
       setParametreUserId(innovateurId);
       setParametreThematiqueId(thematiqueId);
-
 
       const fetchInnovateur = async () => {
         if (navigate.query.innovateurId) {
@@ -154,16 +154,18 @@ const Solution = () => {
       const fetchFeedBack = async () => {
         let data;
         try {
-          const labelsResponse = await axios.get("/labels");
+          const labelsResponse = await axios.get("/quotations");
 
           data = labelsResponse?.data?.data;
 
           setOptionsFeedBack(
             data.map((option) => ({
               value: option.id,
-              label: option.name,
+              label: `${option.mention} - ${option.average}`,
+              cote: option.average
             }))
           );
+
         } catch (e) {
           console.log(e);
         }
@@ -200,46 +202,22 @@ const Solution = () => {
   ]);
 
 
-
   useEffect(() => {
-
-      if(solution){
-        if (solution.feedbacks && solution.feedbacks.length > 0 && solution.feedbacks[0].userId === userConnected.id) {
-          setIsExistCommentaire(true);
-          setCommentaires(solution.feedbacks);
-          setIdCurateur(solution?.feedbacks[0].userId)
-        }else if(solution.feedbacks && solution.feedbacks.length > 0 && solution.feedbacks[0].userId !== userConnected.id){
-          setIsCommentedByAnother(true);
-          setCommentaires(solution.feedbacks);
-          setIdCurateur(solution?.feedbacks[0].userId)
-        }else{
-          setIsExistCommentaire(false);
-          setIsCommentedByAnother(false);
-        }
-        
+    if (solution) {
+      if (solution.feedbacks && solution.feedbacks.length > 0 && solution.feedbacks[0].userId === userConnected.id) {
+        setIsExistCommentaire(true);
+        setCommentaires(solution.feedbacks);
+        setIdCurateur(solution?.feedbacks[0].userId)
+      } else if (solution.feedbacks && solution.feedbacks.length > 0 && solution.feedbacks[0].userId !== userConnected.id) {
+        setIsCommentedByAnother(true);
+        setCommentaires(solution.feedbacks);
+        setIdCurateur(solution?.feedbacks[0].userId)
+      } else {
+        setIsExistCommentaire(false);
+        setIsCommentedByAnother(false);
       }
 
-      // solution.feedbacks.forEach((feedback) => {
-      //   if (
-      //     feedback.userId === userConnected.id ||
-      //     isAdmin
-      //   ) {
-      //     setIdCurateur(feedback.userId);
-      //     setIsExistCommentaire(true);
-      //     setCommentaires(feedback.adminComment);
-      //   }
-      //   else if (
-      //     solution.feedbacks.length > 0 ||
-      //     feedback.userId !== userConnected.id
-      //   ) {
-      //     setIsCommentedByAnother(true);
-      //   }
-      //   else {
-      //     setIsExistCommentaire(false);
-      //     setIsCommentedByAnother(false);
-      //   }
-      // });
-    
+    }
   }, [solution, userConnected, isAdmin]);
 
 
@@ -325,7 +303,7 @@ const Solution = () => {
         userComment: "",
       };
 
-      const response = await axios.post(
+      await axios.post(
         `/solutions/feedback/${solution?.id}`,
         payload
       );
@@ -402,7 +380,7 @@ const Solution = () => {
         }
       } catch (error) {
         console.log(error);
-      }ProfileCurateur
+      }
     }
   }
 
@@ -437,7 +415,7 @@ const Solution = () => {
       <div className="breadcrumb-header justify-content-between">
         <div className="left-content">
           <span className="main-content-title mg-b-0 mg-b-lg-1">
-            SOLUTION DETAILs
+            DETAILS DE LA SOLUTION
           </span>
         </div>
         <div className="justify-content-center mt-2">
@@ -477,11 +455,11 @@ const Solution = () => {
             profileCurateur={profileCurateur}
             showYoutubeThumbnail={showYoutubeThumbnail}
             isCommentedByAnother={isCommentedByAnother}
+            userConnected={userConnected}
           />
           <Col lg={12} md={12} xl={12}>
             <Card>
               <Card.Body>
-
                 <div className="text-wrap">
                   <div className="example">
                     <Row className="row-sm align-item-center">
@@ -521,7 +499,6 @@ const Solution = () => {
                     </Row>
                   </div>
                 </div>
-
               </Card.Body>
             </Card>
           </Col>

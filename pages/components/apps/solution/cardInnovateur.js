@@ -1,5 +1,5 @@
 import React from "react";
-import { apiBaseUrl } from "@/pages/api/axios";
+import { apiBaseUrl,imageBaseUrl } from "@/pages/api/axios";
 import { Card, Col, Button, Breadcrumb, Row } from "react-bootstrap";
 import moment from "moment";
 
@@ -12,9 +12,9 @@ const CardInnovateur = ({ profileInnovateur }) => {
                         <img
                             className="br-5"
                             alt=""
-                            src={profileInnovateur?.profile ? `${apiBaseUrl}/uploads/${profileInnovateur.profile}` : "../../../assets/img/faces/profile.jpg"}
+                            src={profileInnovateur?.profile ? `${imageBaseUrl}/${profileInnovateur.profile}` : "../../../assets/img/faces/profile.jpg"}
                         />
-                        <span className="bg-success text-white wd-1 ht-1 rounded-pill profile-online"></span>
+                        {/* <span className="bg-success text-white wd-1 ht-1 rounded-pill profile-online"></span> */}
                     </span>
                 </div>
                 <div className="my-md-auto mt-4 prof-details">

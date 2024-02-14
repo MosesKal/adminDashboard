@@ -16,7 +16,8 @@ import {
 
 import Seo from "@/shared/layout-components/seo/seo";
 import axios from "@/pages/api/axios";
-import { apiBaseUrl } from "@/pages/api/axios";
+import { apiBaseUrl, imageBaseUrl } from "@/pages/api/axios";
+
 
 import { useRouter } from "next/router";
 
@@ -137,7 +138,7 @@ const Profile = () => {
                       <img
                         className={"br-5"}
                         alt=""
-                        src={`${apiBaseUrl}/uploads/${profile.profile}`}
+                        src={`${imageBaseUrl}/${profile.profile}`}
                       />
                     ) : (
                       <img

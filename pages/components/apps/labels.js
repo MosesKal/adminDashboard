@@ -1,27 +1,28 @@
-import React, {useState, useEffect, createRef} from "react";
-import {Button, Form, FormGroup, Modal, Breadcrumb,} from "react-bootstrap";
-import {useRouter} from "next/router";
+import React, { useState, useEffect, createRef } from "react";
+import { Button, Form, FormGroup, Modal, Breadcrumb, } from "react-bootstrap";
+import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
 import Seo from "@/shared/layout-components/seo/seo";
 import axios from "@/pages/api/axios";
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const Labelscom = dynamic(
     () => import("@/shared/data/advancedui/labelscom"),
-    {ssr: false}
+    { ssr: false }
 );
 
 const Labels = () => {
     const router = useRouter();
     const [show, setShow] = React.useState(false);
-    const name = createRef();
+    const mention = createRef();
+    const average = createRef();
     const [isLoadingCreating, setIsLoadingCreating] = useState(false);
     const [isAdmin, setIsAdmin] = useState(false);
     const [labels, setLabels] = useState([]);
 
     useEffect(() => {
-        if (JSON.parse(localStorage.getItem("ACCESS_ACCOUNT")).roles.includes("ADMIN") ) {
+        if (JSON.parse(localStorage.getItem("ACCESS_ACCOUNT")).roles.includes("ADMIN")) {
             setIsAdmin(true);
         }
     }, []);
@@ -30,7 +31,7 @@ const Labels = () => {
     const handleShow = () => setShow(true);
 
     const updateRoles = async () => {
-        const {data} = await axios.get("/labels");
+        const { data } = await axios.get("/quotations");
         setLabels(data.data);
     };
 
@@ -40,10 +41,11 @@ const Labels = () => {
         try {
             setIsLoadingCreating(true);
             const payload = {
-                name: name.current.value,
+                mention: mention.current.value,
+                average: parseFloat(average.current.value)
             };
 
-            await axios.post("/labels", JSON.stringify(payload));
+            await axios.post("/quotations", JSON.stringify(payload));
             toast.success("Impression créée avec succès !");
             handleClose();
             setIsLoadingCreating(false);
@@ -58,18 +60,18 @@ const Labels = () => {
 
     return (
         <div>
-            <Seo title={"Liste Impression"}/>
+            <Seo title={"Liste Impression"} />
 
             <div className="breadcrumb-header justify-content-between">
                 <div className="left-content">
-				  <span className="main-content-title mg-b-0 mg-b-lg-1">
-					{"LISTE D'IMPRESSIONS"}
-				  </span>
+                    <span className="main-content-title mg-b-0 mg-b-lg-1">
+                        {"LISTE D'IMPRESSIONS"}
+                    </span>
                 </div>
                 <div className="justify-content-center mt-2">
                     <Breadcrumb className="breadcrumb">
                         <Button variant="" type="button" className="btn button-icon btn-sm btn-outline-secondary me-1"
-                                onClick={() => router.back()}>
+                            onClick={() => router.back()}>
                             <i class="bi bi-arrow-left"></i> <span className="ms-1">{"Retour"}</span>
                         </Button>
                     </Breadcrumb>
@@ -106,8 +108,18 @@ const Labels = () => {
                                             type="text"
                                             className="form-control"
                                             id="inputName"
-                                            placeholder="Nom"
-                                            ref={name}
+                                            placeholder="Mention"
+                                            ref={mention}
+                                        />
+                                    </FormGroup>
+
+                                    <FormGroup className="form-group">
+                                        <Form.Control
+                                            type="number"
+                                            className="form-control"
+                                            id="inputName"
+                                            placeholder="Côte"
+                                            ref={average}
                                         />
                                     </FormGroup>
                                 </Form>
@@ -134,7 +146,7 @@ const Labels = () => {
                 </div>
             </div>
 
-            <Labelscom updateRoles={setLabels}/>
+            <Labelscom updateRoles={setLabels} />
         </div>
     );
 };

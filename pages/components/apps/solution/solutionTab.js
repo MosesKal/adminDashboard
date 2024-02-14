@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Carousels from "./carroussel";
 import { Image, Card, Col, Button, Nav, Row, Tab, Badge } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -6,8 +6,12 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import { faPlay } from "@fortawesome/free-solid-svg-icons";
 import Select from "react-select";
 import moment from "moment";
-import { apiBaseUrl } from "@/pages/api/axios";
+import { imageBaseUrl } from "@/pages/api/axios";
 import Link from "next/link";
+import { ProgressBar } from "react-bootstrap";
+import axios from "@/pages/api/axios";
+import { toast } from "react-toastify";
+import { is } from "immutable";
 
 library.add(faPlay);
 
@@ -19,31 +23,173 @@ const getVideoIdFromUrl = (url) => {
     return match ? match[1] : null;
 };
 
-const SolutionTab = (
-    {
-        solution,
-        thematique,
-        imageLinks,
-        isLoadingupdatePole,
-        handleChangePole,
-        optionsPole,
-        handleSelectChangePole,
-        handleSendFeedBack,
-        isExistCommentaire,
-        handleChangeCommentUser,
-        commentaires,
-        handleSelectChangeFeedBack,
-        handleSelectChange,
-        handleChangeStatus,
-        isLoadingUpdateStatut,
-        optionsFeedBack,
-        isAdmin,
-        options,
-        profileCurateur,
-        showYoutubeThumbnail,
-        isCommentedByAnother,
+const ProgressIndicator = ({ currentCote, maxCote }) => {
+    const progress = (currentCote / maxCote) * 100;
+    let variant;
+    if (progress >= 75) {
+        variant = "success";
+    } else if (progress >= 50) {
+        variant = "warning";
+    } else {
+        variant = "danger";
+    }
 
-    }) => {
+    return (
+        <ProgressBar now={progress} variant={variant} label={`${progress}%`} className="mt-5" />
+    );
+};
+
+const SolutionTab = ({
+    solution,
+    thematique,
+    imageLinks,
+    isLoadingupdatePole,
+    handleChangePole,
+    optionsPole,
+    handleSelectChangePole,
+    isExistCommentaire,
+    handleChangeCommentUser,
+    handleSelectChange,
+    handleChangeStatus,
+    isLoadingUpdateStatut,
+    optionsFeedBack,
+    isAdmin,
+    options,
+    profileCurateur,
+    showYoutubeThumbnail,
+    isCommentedByAnother,
+    userConnected
+}) => {
+    const [cotes, setCotes] = useState({});
+    const [coteIds, setCoteIds] = useState([]);
+    const [latestCoteValues, setLatestCoteValues] = useState({});
+    const [totalCote, setTotalCote] = useState(0);
+
+    const [commentaires, setCommentaires] = useState([]);
+
+    const handleChangeCote = (selectedOption, fieldName) => {
+        const selectedCote = optionsFeedBack.find(option => option.value === selectedOption.value);
+
+        if (selectedCote) {
+            setCotes(prevCotes => ({
+                ...prevCotes,
+                [fieldName]: selectedCote.cote,
+            }));
+
+            setCoteIds(prevCoteIds => {
+                const existingIds = prevCoteIds[fieldName] || [];
+
+                const isIdExists = existingIds.includes(selectedCote.value);
+
+                if (isIdExists) {
+                    return {
+                        ...prevCoteIds,
+                        [fieldName]: existingIds.filter(id => id !== selectedCote.value)
+                    };
+                } else {
+                    return {
+                        ...prevCoteIds,
+                        [fieldName]: [...existingIds, selectedCote.value]
+                    };
+                }
+            });
+        }
+    };
+
+    useEffect(() => {
+        const updatedValues = {};
+
+        Object.keys(coteIds).forEach(field => {
+            const lastId = coteIds[field][coteIds[field].length - 1];
+            updatedValues[field] = lastId;
+        });
+
+        setLatestCoteValues(updatedValues);
+
+    }, [coteIds]);
+
+
+    useEffect(() => {
+        const sum = Object.values(cotes).reduce((acc, current) => acc + current, 0);
+        setTotalCote(sum);
+    }, [cotes]);
+
+    const renderSelect = (label, disabled, index) => {
+        const existingValues = (solution?.feedbacks && solution.feedbacks[0] && solution.feedbacks[0].quotations) ? solution.feedbacks[0].quotations : [];
+    
+        const selectedValue = existingValues[index]?.average || null;
+    
+        const selectedOption = optionsFeedBack?.find(option => option.cote === selectedValue);
+    
+        return (
+            <Row className="mt-3">
+                <Col>{label}</Col>
+                <Col>
+                    <Select
+                        options={optionsFeedBack}
+                        value={selectedOption}
+                        onChange={(selectedOption) => handleChangeCote(selectedOption, label)}
+                        isDisabled={disabled}
+                    />
+                </Col>
+            </Row>
+        );
+    };
+    
+    
+
+    const renderButton = () => (
+        <Col md={6} className="mb-5">
+            <Button
+                variant=""
+                className="btn btn-primary"
+                type="button"
+                onClick={handleSendFeedBack}
+                disabled={isExistCommentaire || isCommentedByAnother}
+            >
+                {"Envoyer la côte"}
+            </Button>
+        </Col>
+    );
+
+    const handleSendFeedBack = async () => {
+
+        let idsToSend = [];
+
+        for (const property in latestCoteValues) {
+            idsToSend.push(latestCoteValues[property]);
+        };
+
+        try {
+
+            const payload = {
+                quotations: idsToSend,
+                user: userConnected?.email,
+                adminComment: commentaires,
+            };
+
+            const response = await axios.post(
+                `/solutions/feedback/${solution?.id}`,
+                payload
+            );
+            toast.success("Feedback envoyé avec succès");
+        } catch (error) {
+            console.error(
+                "Erreur survenue lors de l'envoi de l'impression :",
+                error
+            );
+            toast.error("Erreur survenue lors de l'envoi de l'impression");
+        }
+    }
+
+    useEffect(() => {
+        if (isExistCommentaire || isCommentedByAnother) {
+
+            setTotalCote(solution?.feedbacks[0].quotations.reduce((acc, current) => acc + current.average, 0));
+
+            console.log("solution?.feedbacks[0].quotations", solution?.feedbacks[0].quotations);
+        }
+    }, [isExistCommentaire, isCommentedByAnother, solution]);
 
     return (
         <>
@@ -92,7 +238,7 @@ const SolutionTab = (
                                                                 <Col md={6}>
                                                                     <h4 className="text-primary tx-17 text-uppercase mb-3">
                                                                         <b className="text-primary m-b-5 tx-17 text-uppercase">
-                                                                            Titre
+                                                                            Titre de la solution
                                                                         </b>
                                                                     </h4>
                                                                     <p className="m-b-5 text-justify tx-15 p-10">
@@ -234,7 +380,7 @@ const SolutionTab = (
                                                                                 {thematique ? thematique.name : ""}
                                                                             </p>
                                                                             <h5 className="text-primary m-b-5 tx-17 text-uppercase">
-                                                                                ODD Concerné
+                                                                                {"ODD Concerné(s)"}
                                                                             </h5>
                                                                             <p className="">
                                                                                 {thematique ? thematique.odds : ""}
@@ -318,7 +464,7 @@ const SolutionTab = (
                                                 <Card>
                                                     <Card.Body className=" border-0">
                                                         <Row>
-                                                            <Col md={12} xl={8}>
+                                                            <Col md={12} xl={12}>
                                                                 <div className=" mb-4 main-content-label">
                                                                     Feed-backs solution
                                                                 </div>
@@ -356,73 +502,45 @@ const SolutionTab = (
                                                                             </Row>
                                                                         </>
                                                                     ) : (
+
                                                                         <>
-                                                                            <Row className="row mt-5">
-                                                                                <Col md={6}>{"Sélectionnez votre impression par rapport à la solution"}</Col>
-                                                                                <Col md={6}>
-                                                                                    {isExistCommentaire || isCommentedByAnother? (
-                                                                                        <Select
-                                                                                            options={optionsFeedBack}
-                                                                                            onChange={handleSelectChangeFeedBack}
-                                                                                            isDisabled={true}
-                                                                                        />
-                                                                                    ) : (
-                                                                                        <Select
-                                                                                            options={optionsFeedBack}
-                                                                                            onChange={handleSelectChangeFeedBack}
-                                                                                        />
-                                                                                    )}
+                                                                            <Row md={12} xl={12} className="row mt-5 ms-5 justify-content-between">
+                                                                                <Col md={4}>
+                                                                                    <Row className="mb-5 me-5">
+                                                                                        <Col>{"Votre commentaire par rapport à la solution"}</Col>
+                                                                                    </Row>
+                                                                                    <Row>
+                                                                                        {isExistCommentaire || isCommentedByAnother ? (
+                                                                                            <textarea
+                                                                                                className="form-control"
+                                                                                                placeholder="Votre Commentaire"
+                                                                                                onChange={(e) => setCommentaires(e.target.value)}
+                                                                                                disabled={true}
+                                                                                            ></textarea>
+                                                                                        ) : (
+                                                                                            <textarea
+                                                                                                className="form-control"
+                                                                                                placeholder="Votre Commentaire"
+                                                                                                onChange={(e) => setCommentaires(e.target.value)}
+                                                                                                rows={7}
+                                                                                            ></textarea>
+                                                                                        )}
+                                                                                    </Row>
                                                                                 </Col>
-                                                                                <Col md={4}></Col>
+                                                                                <Col md={8} xl={8} className="ps-5 mt-5">
+                                                                                    
+
+                                                                                    {renderSelect('Pertinence par rapport aux ODD/thématique', isExistCommentaire || isCommentedByAnother, 0)}
+                                                                                    {renderSelect('Impact local', isExistCommentaire || isCommentedByAnother, 1)}
+                                                                                    {renderSelect('Innovation', isExistCommentaire || isCommentedByAnother, 2)}
+                                                                                    {renderSelect('Échelle de mise en œuvre', isExistCommentaire || isCommentedByAnother, 3)}
+
+                                                                                    <ProgressIndicator currentCote={totalCote} maxCote={40} />
+                                                                                </Col>
                                                                             </Row>
 
-                                                                            <Row className="row mt-5">
-                                                                                <Col md={6}>{"Votre commentaire par rapport à la solution"}</Col>
-                                                                                <Col md={6}>
-                                                                                    {isExistCommentaire || isCommentedByAnother ? (
-                                                                                        <textarea
-                                                                                            className="form-control"
-                                                                                            placeholder="Votre Commentaire"
-                                                                                            onChange={handleChangeCommentUser}
-                                                                                            disabled={true}
-                                                                                            
-                                                                                        >
-                                                                                        </textarea>
-                                                                                    ) : (
-                                                                                        <textarea
-                                                                                            className="form-control"
-                                                                                            placeholder="Votre Commentaire"
-                                                                                            onChange={handleChangeCommentUser}
-                                                                                        >
-                                                                                        </textarea>
-                                                                                    )}
-                                                                                </Col>
-                                                                                <Col md={4}></Col>
-                                                                            </Row>
-
-                                                                            <Row className="row mt-5">
-                                                                                <Col md={6}></Col>
-                                                                                <Col md={6}>
-                                                                                    {isExistCommentaire || isCommentedByAnother ? (<Button
-                                                                                        variant=""
-                                                                                        className="btn btn-primary"
-                                                                                        type="button"
-                                                                                        onClick={handleSendFeedBack}
-                                                                                        disabled
-                                                                                    >
-
-                                                                                        {"Envoyer votre impression"}
-                                                                                    </Button>) : (
-                                                                                        <Button
-                                                                                            variant=""
-                                                                                            className="btn btn-primary"
-                                                                                            type="button"
-                                                                                            onClick={handleSendFeedBack}
-                                                                                        >
-                                                                                            {"Envoyer votre impression"}
-                                                                                        </Button>
-                                                                                    )}
-                                                                                </Col>
+                                                                            <Row className="row mt-5 ms-5 mb-5">
+                                                                                {renderButton()}
                                                                             </Row>
                                                                         </>
                                                                     )
@@ -447,7 +565,7 @@ const SolutionTab = (
                                                                                                         <img
                                                                                                             className="media-object brround avatar-md"
                                                                                                             alt="64x64"
-                                                                                                            src={`${apiBaseUrl}/uploads/${profileCurateur.profile}`}
+                                                                                                            src={`${imageBaseUrl}/${profileCurateur.profile}`}
 
                                                                                                         />
                                                                                                     ) : (
@@ -497,7 +615,7 @@ const SolutionTab = (
                                                                                                     } */}
 
                                                                                                         {
-                                                                                                            commentaire.adminComment
+                                                                                                            commentaire?.adminComment
                                                                                                         }
                                                                                                     </p>
 
@@ -505,7 +623,7 @@ const SolutionTab = (
                                                                                                         <Badge bg="" className=" bg-success ">
                                                                                                             <span
                                                                                                                 className="me-1 fe fe-edit-2 tx-11 ms-1"></span>
-                                                                                                            {commentaire.labels[0].name}
+                                                                                                            {/* {commentaire?.labels[0]?.name} */}
                                                                                                             {/* {commentaire.feedbacks.map((feedback) =>( <span key={feedback.id}>{feedback.name}</span>))} */}
 
                                                                                                         </Badge>
@@ -537,6 +655,27 @@ const SolutionTab = (
                                                         <div className="mb-4 main-content-label">
                                                             {"Pôle"}
                                                         </div>
+
+                                                        <Row className="row">
+                                                            <Col md={2}>Pôle actuel</Col>
+                                                            <Col md={6}>
+                                                                <Select
+                                                                    options={optionsPole}
+
+                                                                    // value={
+                                                                    //     solution && solution.status
+                                                                    //         ? {
+                                                                    //             value: solution.status.id,
+                                                                    //             label: solution.status.name,
+                                                                    //         }
+                                                                    //         : null
+                                                                    // }
+                                                                    isDisabled={true}
+                                                                />
+                                                            </Col>
+                                                            <Col md={4}></Col>
+                                                        </Row>
+
                                                         <Row className="row mt-5">
                                                             <Col md={2}>{"Sélectionnez le pôle"}</Col>
                                                             <Col md={6}>

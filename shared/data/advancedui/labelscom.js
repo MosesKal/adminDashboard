@@ -12,7 +12,7 @@ import {
   Spinner,
 } from "react-bootstrap";
 import DataTable from "react-data-table-component";
-import {toast, ToastContainer} from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 
 const Labelscom = ({ updateRoles }) => {
   const [roles, setRoles] = useState([]);
@@ -26,12 +26,14 @@ const Labelscom = ({ updateRoles }) => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedRoleForEdit, setSelectedRoleForEdit] = useState(null);
   const [editedRoleName, setEditedRoleName] = useState("");
+  const [editedMentionName, setEditedMentionName] = useState("");
+  const [editedCote, setEditedCote] = useState();
 
   useEffect(() => {
     const fetchRoles = async () => {
       try {
         setIsLoadingRoles(true);
-        const response = await axios.get("/labels");
+        const response = await axios.get("/quotations");
         setRoles(response.data.data);
         setIsLoadingRoles(false);
       } catch (error) {
@@ -46,7 +48,7 @@ const Labelscom = ({ updateRoles }) => {
     const fetchRole = async () => {
       try {
         setIsLoadingRoles(true);
-        const response = await axios.get("/labels");
+        const response = await axios.get("/quotations");
         setRoles(response.data.data);
         setIsLoadingRoles(false);
         updateRoles((prevRoles) => [...response.data.data]);
@@ -74,7 +76,7 @@ const Labelscom = ({ updateRoles }) => {
     const isAdminUser =
       isAdmin ||
       JSON.parse(localStorage.getItem("ACCESS_ACCOUNT")).roles[0].name ===
-        "ADMIN";
+      "ADMIN";
     if (isAdminUser) {
       setRolesToDelete(role);
       setShowDeleteModal(true);
@@ -88,17 +90,18 @@ const Labelscom = ({ updateRoles }) => {
     try {
       if (editedRoleName !== selectedRoleForEdit.name) {
         const updatedData = {
-          name: editedRoleName,
+          mention: editedMentionName,
+          average: parseFloat(editedCote)
         };
 
-        await axios.patch(`/labels/${selectedRoleForEdit.id}`, updatedData);
+        await axios.patch(`/quotations/${selectedRoleForEdit.id}`, updatedData);
         toast.success("Impression modifiée avec succès !");
 
         updateRoles((prevRoles) => {
           const updatedRoles = prevRoles.map((role) =>
-              role.id === selectedRoleForEdit.id
-                  ? { ...role, name: editedRoleName }
-                  : role
+            role.id === selectedRoleForEdit.id
+              ? { ...role, name: editedRoleName }
+              : role
           );
           return updatedRoles;
         });
@@ -152,7 +155,7 @@ const Labelscom = ({ updateRoles }) => {
               : item[key];
 
           result += value;
-        } catch (e) {}
+        } catch (e) { }
         ctr++;
       });
       result += lineDelimiter;
@@ -196,7 +199,7 @@ const Labelscom = ({ updateRoles }) => {
 
   const handleConfirmDelete = async (role) => {
     try {
-      await axios.delete(`/lables/${role.id}`);
+      await axios.delete(`/quotations/${role.id}`);
       setRoles((previousRoles) =>
         previousRoles.filter((r) => r.id !== role.id)
       );
@@ -204,7 +207,14 @@ const Labelscom = ({ updateRoles }) => {
     } catch (error) {
       console.error(error);
     }
-  };
+  }; <Form.Control
+    type="text"
+    className="form-control"
+    id="inputName"
+    placeholder="Nom"
+    value={editedRoleName}
+    onChange={(e) => setEditedRoleName(e.target.value)}
+  />
 
   const contextActions = React.useMemo(() => {
     const Selectdata = () => {
@@ -275,11 +285,25 @@ const Labelscom = ({ updateRoles }) => {
                   type="text"
                   className="form-control"
                   id="inputName"
-                  placeholder="Nom"
-                  value={editedRoleName}
-                  onChange={(e) => setEditedRoleName(e.target.value)}
+                  placeholder="Mention"
+                  value={editedMentionName}
+                  onChange={(e) => setEditedMentionName(e.target.value)}
                 />
               </FormGroup>
+
+              <FormGroup className="form-group">
+
+                <Form.Control
+                  type="number"
+                  className="form-control"
+                  id="inputName"
+                  placeholder="Côte"
+                  value={editedCote}
+                  onChange={(e) => setEditedCote(e.target.value)}
+                />
+              </FormGroup>
+
+
             </Form>
           </div>
         </Modal.Body>
