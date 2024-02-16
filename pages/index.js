@@ -12,6 +12,9 @@ import Seo from "@/shared/layout-components/seo/seo";
 const LOGIN_URI = "/auth/login";
 export default function Home() {
 
+  const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
   useEffect(() => {
     if (document.body) {
       document
@@ -37,39 +40,46 @@ export default function Home() {
     password: "",
   });
 
-  const [isLoading, setIsLoading] = useState(false);
+  const togglePasswordVisibility = () => {
+    setShowPassword(prevState => !prevState);
+  };
+
   const { email, password } = data;
+
   const changeHandler = (e) => {
     setData({ ...data, [e.target.name]: e.target.value });
     setError("");
   };
+
   let navigate = useRouter();
+
   const routeChange = () => {
     let path = `/components/dashboards/dashboard`;
     navigate.push(path);
   };
+
   const Login = async (e) => {
     e.preventDefault();
     try {
       setIsLoading(true);
       const response = await axios.post(LOGIN_URI, data);
 
-      if(response?.data?.data?.roles[0]?.name === "CURATOR" || response?.data?.data?.roles[0]?.name === "ADMIN" || response?.data?.data?.roles[0]?.name === "EXPLORATOR"){
-          toast.success("Connexion réussie ");
+      if (response?.data?.data?.roles[0]?.name === "CURATOR" || response?.data?.data?.roles[0]?.name === "ADMIN" || response?.data?.data?.roles[0]?.name === "EXPLORATOR") {
+        toast.success("Connexion réussie ");
 
-          localStorage.setItem(
-              "ACCESS_ACCOUNT",
-              JSON.stringify(response.data.data)
-          );
-          localStorage.setItem(
-              "STATUS_ACCOUNT",
-              JSON.stringify({ authenticate: true })
-          );
+        localStorage.setItem(
+          "ACCESS_ACCOUNT",
+          JSON.stringify(response.data.data)
+        );
+        localStorage.setItem(
+          "STATUS_ACCOUNT",
+          JSON.stringify({ authenticate: true })
+        );
 
-          setIsLoading(false);
-          setTimeout(() => {
-              routeChange();
-          }, 2000);
+        setIsLoading(false);
+        setTimeout(() => {
+          routeChange();
+        }, 2000);
       }
       else {
         toast.error("Veuillez vérifier vos identifiants");
@@ -132,32 +142,42 @@ export default function Home() {
                                   <Form.Group className="form-group">
                                     <Form.Label>Adresse Mail</Form.Label>{" "}
                                     <Form.Control
-                                        className="form-control"
-                                        placeholder="Votre adresse email"
-                                        type="email"
-                                        name="email"
-                                        value={email}
-                                        onChange={changeHandler}
-                                        required
+                                      className="form-control"
+                                      placeholder="Votre adresse email"
+                                      type="email"
+                                      name="email"
+                                      value={email}
+                                      onChange={changeHandler}
+                                      required
                                     />
                                   </Form.Group>
+                                  
                                   <Form.Group className="form-group">
                                     <Form.Label>Mot de passe</Form.Label>{" "}
-                                    <Form.Control
+                                    <div className="input-group">
+                                      <Form.Control
                                         className="form-control"
                                         placeholder="Entrez le mot de passe"
-                                        type="password"
+                                        type={showPassword ? "text" : "password"}
                                         name="password"
                                         value={password}
                                         onChange={changeHandler}
                                         required
-                                    />
+                                      />
+                                      <button
+                                        className="btn btn-outline-primary"
+                                        type="button"
+                                        onClick={togglePasswordVisibility}
+                                      >
+                                        <i className={`bi bi-eye${showPassword ? "-slash" : ""}`}></i>
+                                      </button>
+                                    </div>
                                   </Form.Group>
-                                  <div className="btn-animation">
+                                  <div className="btn-animation mt-4">
                                     <Button
-                                        variant=""
-                                        type="submit"
-                                        className={isLoading ? "btn btn-primary btn-block btn-loaders" : "btn btn-primary btn-block"}
+                                      variant=""
+                                      type="submit"
+                                      className={isLoading ? "btn btn-primary btn-block btn-loaders" : "btn btn-primary btn-block"}
                                     >
                                       <span className="loading">{isLoading ? "Connexion en cours..." : "Se connecter"}</span>
                                     </Button>
@@ -166,16 +186,11 @@ export default function Home() {
 
                               </div>
                             </div>
-                            <div className="panel-body tabs-menu-body border-0 p-3">
-                              <div className="tab-content"></div>
-                            </div>
                           </div>
-                          <div className="main-signin-footer text-center mt-3">
-                            <p>
-                              <Link href="" className="mb-3">
-                                Mot de passe oublié ?
-                              </Link>
-                            </p>
+                          <div className=" text-left text-decoration-underline text-primary">
+                            <Link href={`/components/apps/resetPassword`} className="mb-3 text-primary">
+                              Mot de passe oublié ?
+                            </Link>
                           </div>
                         </div>
                       </div>

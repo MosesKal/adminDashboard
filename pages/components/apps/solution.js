@@ -7,6 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Seo from "@/shared/layout-components/seo/seo";
 import { useRouter } from "next/router";
 import axios from "@/pages/api/axios";
+import moment from "moment";
 
 const Solution = () => {
   const router = useRouter();

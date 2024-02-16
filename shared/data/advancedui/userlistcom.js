@@ -3,7 +3,7 @@ import {Button, Row, Col, Card, Spinner, Modal, Form, FormGroup} from "react-boo
 import DataTable from "react-data-table-component";
 import { columns as configureColumns} from "./userlist";
 import axios from "@/pages/api/axios";
-import {apiBaseUrl} from "@/pages/api/axios";
+import {apiBaseUrl, imageBaseUrl} from "@/pages/api/axios";
 
 import moment from "moment";
 import DataTableExtensions from "react-data-table-component-extensions";
@@ -37,7 +37,7 @@ const Userlistcom = () => {
         const responseUser = await axios.get("/users");
 
         const usersWithImages = responseUser.data.data.map((user) => {
-          const profileImage = user.profile ? `${apiBaseUrl}/uploads/${user?.profile}` : "../../../assets/img/faces/4.jpg";
+          const profileImage = user.profile ? `${imageBaseUrl}/${user?.profile}` : "../../../assets/img/faces/4.jpg";
           return {
             ...user,
             img: (
@@ -261,7 +261,7 @@ const Userlistcom = () => {
                   <img
                       className="br-5"
                       alt=""
-                      src={selectedUser?.profile ? `${apiBaseUrl}/uploads/${selectedUser.profile}` :"../../../assets/img/faces/profile.jpg"}
+                      src={selectedUser?.profile ? `${imageBaseUrl}/${selectedUser.profile}` :"../../../assets/img/faces/profile.jpg"}
                   />
                   <span className="bg-success text-white wd-1 ht-1 rounded-pill profile-online"></span>
                 </span>

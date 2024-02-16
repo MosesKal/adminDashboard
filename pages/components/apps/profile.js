@@ -79,9 +79,14 @@ const Profile = () => {
       const identityFormData = new FormData();
       identityFormData.append("name", newName);
       identityFormData.append("address", newAddress);
+      if (newPassword) {
+        identityFormData.append("password", newPassword);
+      }
+      if (oldPassword) {
+        identityFormData.append("oldPassword", oldPassword);
+
+      }
       identityFormData.append("phoneNumber", newNumTel);
-      identityFormData.append("oldPassword", oldPassword);
-      identityFormData.append("password", newPassword);
 
       const imageFormData = new FormData();
 
@@ -127,7 +132,7 @@ const Profile = () => {
             </Breadcrumb>
           </div>
         </div>
-        {/* <!-- breadcrumb --> */}
+
         <Row>
           <Col lg={12} md={12}>
             <Card className="custom-card customs-cards">

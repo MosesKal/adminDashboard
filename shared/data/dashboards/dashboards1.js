@@ -114,12 +114,15 @@ const Statistics = () => {
           try {
               const response = await axios.get('/solutions');
               processSolutions(response.data.data);
+
+              console.log('response.data.data', response.data.data )
           } catch (err) {
               console.error('Error fetching solution data:', err);
           }
     }
     fetchDataSolution();
   }, []);
+
 
   const processSolutions = (solutions) => {
       const groupedData = groupDataByMonthAndStatus(solutions);
