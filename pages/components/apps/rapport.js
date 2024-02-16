@@ -28,6 +28,7 @@ const Rapport = () => {
   });
 
   const [dataSolution, setDataSolution] = useState([]);
+
   const [solutionRegistrationData, setSolutionRegistrationData] = useState({
     labels: [],
     datasets: [
@@ -46,7 +47,7 @@ const Rapport = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("/users");
+        const response = await axios.get("dashboard/users");
         setDataUser(response.data.data);
 
         const registrationData = response.data.data.reduce((acc, user) => {
@@ -85,7 +86,7 @@ const Rapport = () => {
 
     const fetchSolutionData = async () => {
       try {
-        const response = await axios.get("/solutions");
+        const response = await axios.get("dashboard/solutions-thematics");
         setDataSolution(response.data.data);
         const registrationData = response.data.data.reduce((acc, solution) => {
           const registrationMonth = new Date(solution.createdAt).getMonth();
@@ -134,6 +135,8 @@ const Rapport = () => {
     fetchSolutionData();
     fetchThematiqueData();
   }, []);
+
+
 
   const countSolutionsByThematic = () => {
     const solutionsCountByThematic = thematiqueData.reduce((acc, thematic) => {

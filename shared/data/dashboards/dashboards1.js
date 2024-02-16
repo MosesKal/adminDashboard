@@ -112,10 +112,9 @@ const Statistics = () => {
   useEffect(() => {
     const fetchDataSolution = async () => {
           try {
-              const response = await axios.get('/solutions');
+              const response = await axios.get('/dashboard/solutions');
               processSolutions(response.data.data);
 
-              console.log('response.data.data', response.data.data )
           } catch (err) {
               console.error('Error fetching solution data:', err);
           }

@@ -173,7 +173,7 @@ export default function Home() {
                                       </button>
                                     </div>
                                   </Form.Group>
-                                  <div className="btn-animation mt-4">
+                                  <div className="btn-animation mt-5">
                                     <Button
                                       variant=""
                                       type="submit"

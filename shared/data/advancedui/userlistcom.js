@@ -197,7 +197,6 @@ const Userlistcom = () => {
     return <Export onExport={Selectdata} icon="true" />;
   }, [users, selectedRows, toggleCleared]);
 
-  console.log(users);
 
   return (
     <div>
