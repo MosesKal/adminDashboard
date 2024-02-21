@@ -16,13 +16,13 @@ import { columns as configureColumns, truncateText } from "./solutionslist";
 import axios from "@/pages/api/axios";
 import Select from "react-select";
 import { ToastContainer } from "react-toastify";
-import { UseDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 
 const Solutionslistcom = () => {
 
-  const solutionsState = useSelector((state) => state.solutionReducer);
-  const solutionsCuratedState = useSelector((state)=> state.solutionReducer);
-  const solutionsConformedState = useSelector((state)=> state.solutionReducer);
+  const solutionsState = useSelector((state) => state.solutionReducer.solutions);
+  const solutionsCuratedState = useSelector((state)=> state.solutionReducer.curatedSolutions);
+  const solutionsConformedState = useSelector((state)=> state.solutionReducer.conformSolutions);
 
   const [solutions, setSolutions] = useState([]);
   const [conformedSolutions, setConformedSolutions] = useState([]);
@@ -166,9 +166,9 @@ const Solutionslistcom = () => {
           setIsLoadingSolution(true);
 
           if (isAdmin) {
-            setSolutions(solutionsState.data.data);
-            setConformedSolutions(solutionsConformedState.data.data);
-            setCurratedSolutions(solutionsCuratedState.data.data);
+            setSolutions(solutionsState);
+            setConformedSolutions(solutionsConformedState);
+            setCurratedSolutions(solutionsCuratedState);
           } else {
             responseSolution = await axios.get(
               `/solutions/pole/${profile.poleId}`

@@ -7,7 +7,7 @@ import {
 import dynamic from "next/dynamic";
 import Seo from "@/shared/layout-components/seo/seo";
 import {useRouter} from "next/router";
-import { UseDispatch, useSelector } from "react-redux";
+
 
 
 const Solutionslistcom = dynamic(
