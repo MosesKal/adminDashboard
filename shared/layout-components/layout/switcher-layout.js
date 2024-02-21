@@ -30,6 +30,7 @@ const SwitcherLayout = ({ children }) => {
     document.querySelector(".demo_changer").classList.remove("active");
     document.querySelector(".demo_changer").style.right = "-270px";
   };
+  
   function Sidebargone(gone) {
     if (gone.matches) { // If media query matches
       document.querySelector("body").classList.add("sidebar-gone");

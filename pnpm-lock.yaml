@@ -7,7 +7,7 @@ settings:
 dependencies:
   '@coreui/react':
     specifier: ^4.11.1
-    version: 4.11.1(@coreui/coreui@4.3.2)(react-dom@18.2.0)(react@18.2.0)
+    version: 4.11.1(@coreui/coreui@4.3.0)(react-dom@18.2.0)(react@18.2.0)
   '@emotion/react':
     specifier: ^11.11.3
     version: 11.11.3(react@18.2.0)
@@ -50,6 +50,9 @@ dependencies:
   '@mui/material':
     specifier: ^5.15.7
     version: 5.15.7(@emotion/react@11.11.3)(@emotion/styled@11.11.0)(react-dom@18.2.0)(react@18.2.0)
+  '@reduxjs/toolkit':
+    specifier: ^2.2.1
+    version: 2.2.1(react-redux@9.1.0)(react@18.2.0)
   apexcharts:
     specifier: ^3.45.2
     version: 3.45.2
@@ -442,8 +445,8 @@ packages:
       chalk: 4.1.2
     dev: true
 
-  /@coreui/coreui@4.3.2(@popperjs/core@2.11.8)(postcss@8.4.34):
-    resolution: {integrity: sha512-SKGY6E6v7QGq0P3YTnZQRSrU8t0euLQ3UV/FH5j0JmHYBBu7Mv0Hd9g8AESnj8xrCelKZ5bdZKZhmKaIdG5clw==}
+  /@coreui/coreui@4.3.0(@popperjs/core@2.11.8)(postcss@8.4.34):
+    resolution: {integrity: sha512-2bx5E9YT17td4K7hZapudypSPx7a5jYg8NpSCTLRStPTWOBlL5XVF7fz3yUn2S6DQE1VmnbrXQpuS5LzmptRLQ==}
     peerDependencies:
       '@popperjs/core': ^2.11.6
     dependencies:
@@ -453,14 +456,14 @@ packages:
       - postcss
     dev: false
 
-  /@coreui/react@4.11.1(@coreui/coreui@4.3.2)(react-dom@18.2.0)(react@18.2.0):
+  /@coreui/react@4.11.1(@coreui/coreui@4.3.0)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-2EYnV6kpyH8/648+iffRy/I/xCEnD2MnEOuo1LPiUSX7EqoHn5M3fI+sf4vM9Wrqz4Gv2gxCl8DNRpk2xcLANQ==}
     peerDependencies:
       '@coreui/coreui': 4.3.0
       react: '>=17'
       react-dom: '>=17'
     dependencies:
-      '@coreui/coreui': 4.3.2(@popperjs/core@2.11.8)(postcss@8.4.34)
+      '@coreui/coreui': 4.3.0(@popperjs/core@2.11.8)(postcss@8.4.34)
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
     dev: false
@@ -1871,6 +1874,25 @@ packages:
       leaflet: 1.9.4
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
+    dev: false
+
+  /@reduxjs/toolkit@2.2.1(react-redux@9.1.0)(react@18.2.0):
+    resolution: {integrity: sha512-8CREoqJovQW/5I4yvvijm/emUiCCmcs4Ev4XPWd4mizSO+dD3g5G6w34QK5AGeNrSH7qM8Fl66j4vuV7dpOdkw==}
+    peerDependencies:
+      react: ^16.9.0 || ^17.0.0 || ^18
+      react-redux: ^7.2.1 || ^8.1.3 || ^9.0.0
+    peerDependenciesMeta:
+      react:
+        optional: true
+      react-redux:
+        optional: true
+    dependencies:
+      immer: 10.0.3
+      react: 18.2.0
+      react-redux: 9.1.0(react@18.2.0)(redux@5.0.1)
+      redux: 5.0.1
+      redux-thunk: 3.1.0(redux@5.0.1)
+      reselect: 5.1.0
     dev: false
 
   /@restart/hooks@0.4.15(react@18.2.0):
@@ -3968,6 +3990,10 @@ packages:
     engines: {node: '>= 4'}
     dev: false
 
+  /immer@10.0.3:
+    resolution: {integrity: sha512-pwupu3eWfouuaowscykeckFmVTpqbzW+rXFCX8rQLkZzM9ftBmU/++Ra+o+L27mz03zJTlyV4UUr+fdKNffo4A==}
+    dev: false
+
   /immutable@3.7.6:
     resolution: {integrity: sha512-AizQPcaofEtO11RZhPPHBOJRdo/20MKQF9mBLnVkBoyHi1/zXK8fzVdnEpSV9gxqtnh6Qomfp3F0xT5qP/vThw==}
     engines: {node: '>=0.8.0'}
@@ -5606,6 +5632,14 @@ packages:
       strip-indent: 3.0.0
     dev: true
 
+  /redux-thunk@3.1.0(redux@5.0.1):
+    resolution: {integrity: sha512-NW2r5T6ksUKXCabzhL9z+h206HQw/NJkcLm1GPImRQ8IzfXwRGqjVhKJGauHirT0DAuyy6hjdnMZaRoAcy0Klw==}
+    peerDependencies:
+      redux: ^5.0.0
+    dependencies:
+      redux: 5.0.1
+    dev: false
+
   /redux@5.0.1:
     resolution: {integrity: sha512-M9/ELqF6fy8FwmkpnF0S3YKOqMyoWJ4+CS5Efg2ct3oY9daQvd/Pc71FpGZsVsbl3Cpb+IIcjBDUnnyBdQbq4w==}
     dev: false
@@ -5647,6 +5681,10 @@ packages:
 
   /requires-port@1.0.0:
     resolution: {integrity: sha512-KigOCHcocU3XODJxsu8i/j8T9tzT4adHiecwORRQ0ZZFcp7ahwXuRU1m+yuO90C5ZUyGeGfocHDI14M3L3yDAQ==}
+    dev: false
+
+  /reselect@5.1.0:
+    resolution: {integrity: sha512-aw7jcGLDpSgNDyWBQLv2cedml85qd95/iszJjN988zX1t7AVRJi19d9kto5+W7oCfQ94gyo40dVbT6g2k4/kXg==}
     dev: false
 
   /resize-observer-polyfill@1.5.1:

@@ -1,10 +1,9 @@
-import { createStore } from "redux";
+import { configureStore } from "@reduxjs/toolkit";
 import rootred from "../reducers/main";
 
-
-const store = createStore(
-    rootred
-);
-
+const store = configureStore({
+  reducer : rootred,
+  devTools: true,
+});
 
 export default store;

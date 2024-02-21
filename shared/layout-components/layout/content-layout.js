@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import Footer from "../footer/footer";
 import { Provider } from "react-redux";
 import store from "../../redux/store/store";
@@ -7,9 +7,14 @@ import Rightside from "../right-sidebar/right-sidebar";
 import TabToTop from "../tab-to-top/tab-to-top";
 import Head from "next/head";
 import favicon from "../../../public/assets/img/brand/favicon.png";
+
+import { getSolutions, getSolutionsCurated, getSolutionsConforms } from "@/shared/redux/actions/solution/solution.action";
+
 const Header = dynamic(() => import("../header/header"), { ssr: false });
 const Switcher = dynamic(() => import("../switcher/switcher"), { ssr: false });
 const Sidebar = dynamic(() => import("../sidebar/sidebar"), { ssr: false });
+
+
 
 const Contentlayout = ({ children }) => {
   let firstAdd = () => {
@@ -47,6 +52,11 @@ const Contentlayout = ({ children }) => {
   useEffect(() => {
     firstAdd();
   }, []);
+
+  store.dispatch(getSolutions());
+  store.dispatch(getSolutionsCurated());
+  store.dispatch(getSolutionsConforms());
+
 
   return (
     <>

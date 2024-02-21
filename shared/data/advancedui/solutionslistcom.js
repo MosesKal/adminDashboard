@@ -16,8 +16,14 @@ import { columns as configureColumns, truncateText } from "./solutionslist";
 import axios from "@/pages/api/axios";
 import Select from "react-select";
 import { ToastContainer } from "react-toastify";
+import { UseDispatch, useSelector } from "react-redux";
 
 const Solutionslistcom = () => {
+
+  const solutionsState = useSelector((state) => state.solutionReducer);
+  const solutionsCuratedState = useSelector((state)=> state.solutionReducer);
+  const solutionsConformedState = useSelector((state)=> state.solutionReducer);
+
   const [solutions, setSolutions] = useState([]);
   const [conformedSolutions, setConformedSolutions] = useState([]);
   const [curratedSolutions, setCurratedSolutions] = useState([]);
@@ -31,8 +37,7 @@ const Solutionslistcom = () => {
   const [showAlertModal, setShowAlertModal] = useState(false);
   const [optionsThematique, setOptionsThematique] = useState([]);
 
-  const [selectedOptionsThematique, setSelectedOptionsThematique] =
-    useState(null);
+  const [selectedOptionsThematique, setSelectedOptionsThematique] = useState(null);
   const [optionIdThematique, setOptionIdThematique] = useState(null);
 
   const [optionsStatus, setOptionsStatus] = useState([]);
@@ -42,10 +47,8 @@ const Solutionslistcom = () => {
   const [isLoadingUsers, setIsLoadingUsers] = useState(false);
   const [profile, setProfile] = useState(null);
   const [dataMerged, setDataMerged] = useState([]);
-  const [dataConformedSolutionsMerged, setDataConformedSolutionsMerged] =
-    useState([]);
-  const [dataCurratedSolutionsMerged, setDataCurratedSolutionsMerged] =
-    useState([]);
+  const [dataConformedSolutionsMerged, setDataConformedSolutionsMerged] = useState([]);
+  const [dataCurratedSolutionsMerged, setDataCurratedSolutionsMerged] = useState([]);
 
   const [filters, setFilters] = useState({
     searchText: "",
@@ -161,27 +164,17 @@ const Solutionslistcom = () => {
       if (profile) {
         try {
           setIsLoadingSolution(true);
-          let responseSolution;
-          let responseSolutionConforms;
-          let responseSolutionCurated;
 
           if (isAdmin) {
-            responseSolution = await axios.get("/solutions");
-            responseSolutionConforms = await axios.get(
-              "/solutions/conforms/all"
-            );
-            responseSolutionCurated = await axios.get("/solutions/curated/all");
-
+            setSolutions(solutionsState.data.data);
+            setConformedSolutions(solutionsConformedState.data.data);
+            setCurratedSolutions(solutionsCuratedState.data.data);
           } else {
             responseSolution = await axios.get(
               `/solutions/pole/${profile.poleId}`
             );
           }
 
-          setSolutions(responseSolution?.data?.data);
-
-          setConformedSolutions(responseSolutionConforms?.data?.data);
-          setCurratedSolutions(responseSolutionCurated?.data?.data);
           setIsLoadingSolution(false);
         } catch (error) {
           setIsLoadingSolution(false);
