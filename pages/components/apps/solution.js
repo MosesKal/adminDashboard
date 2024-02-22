@@ -391,9 +391,7 @@ const Solution = () => {
   };
 
   const handlePreviousSolution = async () => {
-    const currentIndex = allSolutions.findIndex(
-      (sol) => sol?.id === solution?.id
-    );
+    const currentIndex = allSolutions?.findIndex((sol) => sol?.id === solution?.id);
     let previousSolution;
     if (currentIndex > 0) {
       try {
@@ -406,21 +404,17 @@ const Solution = () => {
 
       try {
         if (previousSolution.userId) {
-          const profileResponse = await axios.get(
-            `/users/${previousSolution?.userId}`
-          );
+          const profileResponse = await axios.get(`/users/${previousSolution?.userId}`);
           setProfileInnovateur(profileResponse?.data?.data);
         }
       } catch (error) {
         console.log(error);
       }
     }
-  };
+  }
 
   const handleNextSolution = async () => {
-    const currentIndex = allSolutions.findIndex(
-      (sol) => sol.id === solution.id
-    );
+    const currentIndex = allSolutions?.findIndex((sol) => sol.id === solution.id);
     let nextSolution;
     if (currentIndex < allSolutions?.length - 1) {
       try {
@@ -433,12 +427,11 @@ const Solution = () => {
 
       try {
         if (nextSolution.userId) {
-          const profileResponse = await axios.get(
-            `/users/${nextSolution?.userId}`
-          );
+          const profileResponse = await axios.get(`/users/${nextSolution?.userId}`);
           setProfileInnovateur(profileResponse?.data?.data);
         }
-      } catch (error) {
+      }
+      catch (error) {
         console.log(error);
       }
     }
@@ -465,7 +458,6 @@ const Solution = () => {
               <span className="ms-1">{"Retour"}</span>
             </Button>
           </Breadcrumb>
-          userState
         </div>
       </div>
 
