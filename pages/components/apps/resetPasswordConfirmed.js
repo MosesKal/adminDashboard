@@ -11,7 +11,6 @@ import Seo from "@/shared/layout-components/seo/seo";
 import { set } from "immutable";
 
 
-
 const LOGIN_URI = "/auth/reset-password";
 
 
@@ -78,7 +77,8 @@ export default function Home() {
 
         const payload = {
           token: data.token,
-          password: data.newPassWord,
+          passwordConfirm: data.newPassWord,
+
         };
         await axios.post(LOGIN_URI, payload);
 

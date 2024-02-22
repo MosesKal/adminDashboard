@@ -13,12 +13,7 @@ const truncateText = (text, maxLength) => {
 };
 
 export const columns = (handleShowModal, handleDelete) => [
-  {
-    name: "Photo",
-    selector: (row) => [row.Photo],
-    sortable: false,
-    cell: (row) => <div className={row.class}>{row.img}</div>,
-  },
+
   {
     name: "Nom",
     selector: (row) => [row.name],
