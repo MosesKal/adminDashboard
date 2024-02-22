@@ -77,7 +77,8 @@ export default function Home() {
 
         const payload = {
           token: data.token,
-          passwordConfirm: data.newPassWord,
+          passwordConfirm: data.newPassWordTow,
+          password: data.newPassWord
 
         };
         await axios.post(LOGIN_URI, payload);
