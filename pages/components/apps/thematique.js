@@ -3,6 +3,7 @@ import {Button, Row, Col, Card, Form, FormGroup, Modal, Breadcrumb} from "react-
 import {useRouter} from "next/router";
 import dynamic from 'next/dynamic';
 import Seo from '@/shared/layout-components/seo/seo';
+import Title from '../components/Title';
 const Thematiquecom = dynamic(() => import('@/shared/data/advancedui/thematiquecom'), { ssr: false })
 
 const Thematique = () => {
@@ -15,21 +16,7 @@ const Thematique = () => {
 		<div>
 			<Seo title={"Thématique List"}/>
 
-			<div className="breadcrumb-header justify-content-between">
-				<div className="left-content">
-				  <span className="main-content-title mg-b-0 mg-b-lg-1">
-					LISTE DES THEMATIQUES
-				  </span>
-				</div>
-				<div className="justify-content-center mt-2">
-					<Breadcrumb className="breadcrumb">
-						<Button variant="" type="button" className="btn button-icon btn-sm btn-outline-secondary me-1"
-								onClick={() => router.back()}>
-							<i class="bi bi-arrow-left"></i> <span className="ms-1">{"Retour"}</span>
-						</Button>
-					</Breadcrumb>
-				</div>
-			</div>
+			<Title title={"LISTE DES THEMATIQUES"}/>
 			<div className="breadcrumb-header justify-content-between">
 				<div className="left-content mt-2">
 					<Button className="btn ripple btn-primary" size="sm" onClick={handleShow}><i

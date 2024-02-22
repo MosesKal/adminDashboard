@@ -23,6 +23,7 @@ import axios from "@/pages/api/axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Select from "react-select";
+import Title from "../components/Title";
 const Settings = () => {
   const router= useRouter();
   const [show, setShow] = React.useState(false);
@@ -78,22 +79,7 @@ const Settings = () => {
   return (
       <div>
         <Seo title={"Paramètre List"}/>
-
-        <div className="breadcrumb-header justify-content-between">
-          <div className="left-content">
-				  <span className="main-content-title mg-b-0 mg-b-lg-1">
-					{"LISTE DES STATUS SOLUTION"}
-				  </span>
-          </div>
-          <div className="justify-content-center mt-2">
-            <Breadcrumb className="breadcrumb">
-              <Button variant="" type="button" className="btn button-icon btn-sm btn-outline-secondary me-1"
-                      onClick={() => router.back()}>
-                <i class="bi bi-arrow-left"></i> <span className="ms-1">{"Retour"}</span>
-              </Button>
-            </Breadcrumb>
-          </div>
-        </div>
+        <Title title={"LISTE DES STATUS"} />
         <div className="breadcrumb-header justify-content-between">
           <div className="left-content mt-2">
             <Button

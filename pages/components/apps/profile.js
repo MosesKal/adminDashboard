@@ -18,20 +18,20 @@ import Seo from "@/shared/layout-components/seo/seo";
 import axios from "@/pages/api/axios";
 import { apiBaseUrl, imageBaseUrl } from "@/pages/api/axios";
 
-
 import { useRouter } from "next/router";
+import Title from "../components/Title";
 
 const Profile = () => {
-
   const [profile, setProfile] = useState();
   const [newName, setNewName] = useState(profile ? profile.name : "");
   const [newAddress, setNewAddress] = useState(profile ? profile.address : "");
-  const [newNumTel, setNewNumTel] = useState(profile ? profile.phoneNumber : "");
+  const [newNumTel, setNewNumTel] = useState(
+    profile ? profile.phoneNumber : ""
+  );
   const [newImage, setNewImage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [oldPassword, setOldPassword] = useState();
   const [newPassword, setNewPassword] = useState();
-
 
   let navigate = useRouter();
   const router = useRouter();
@@ -41,7 +41,6 @@ const Profile = () => {
 
   const [filesimade, setFilesimage] = useState([]);
 
-
   useEffect(() => {
     const status = JSON.parse(localStorage.getItem("STATUS_ACCOUNT"));
 
@@ -49,9 +48,7 @@ const Profile = () => {
       setDomLoaded(true);
       const fecthProfile = async () => {
         try {
-          const profileResponse = await axios.get(
-            `/auth/profile/`
-          );
+          const profileResponse = await axios.get(`/auth/profile/`);
           setProfile(profileResponse.data.data);
         } catch (error) {
           console.log(error);
@@ -73,7 +70,6 @@ const Profile = () => {
 
   const handleProfileUpdate = async () => {
     try {
-
       setIsLoading(true);
 
       const identityFormData = new FormData();
@@ -84,7 +80,6 @@ const Profile = () => {
       }
       if (oldPassword) {
         identityFormData.append("oldPassword", oldPassword);
-
       }
       identityFormData.append("phoneNumber", newNumTel);
 
@@ -95,7 +90,7 @@ const Profile = () => {
       }
 
       await Promise.all([
-        axios.patch(`/auth/profile/${profile.id}`, identityFormData)
+        axios.patch(`/auth/profile/${profile.id}`, identityFormData),
       ]);
 
       setProfile({
@@ -117,21 +112,8 @@ const Profile = () => {
     <>
       <div>
         <Seo title={"Profile"} />
-        <div className="breadcrumb-header justify-content-between">
-          <div className="left-content">
-            <span className="main-content-title mg-b-0 mg-b-lg-1">
-              PROFILE
-            </span>
-          </div>
-          <div className="justify-content-center mt-2">
-            <Breadcrumb className="breadcrumb">
-              <Button variant="" type="button" className="btn button-icon btn-sm btn-outline-secondary me-1"
-                onClick={() => router.back()}>
-                <i class="bi bi-arrow-left"></i> <span className="ms-1">{"Retour"}</span>
-              </Button>
-            </Breadcrumb>
-          </div>
-        </div>
+
+        <Title title={"PROFILE"} />
 
         <Row>
           <Col lg={12} md={12}>
@@ -152,7 +134,6 @@ const Profile = () => {
                         src={"../../../assets/img/faces/profile.jpg"}
                       />
                     )}
-
                   </span>
                 </div>
                 <div className="my-md-auto mt-4 prof-details">
@@ -263,7 +244,10 @@ const Profile = () => {
                                   <div className="mb-4 main-content-label">
                                     Informations personnelles
                                   </div>
-                                  <Form className="form-horizontal" onSubmit={(e) => e.preventDefault()}>
+                                  <Form
+                                    className="form-horizontal"
+                                    onSubmit={(e) => e.preventDefault()}
+                                  >
                                     <FormGroup className="form-group ">
                                       <Row className=" row-sm">
                                         <Col md={3}>
@@ -280,7 +264,9 @@ const Profile = () => {
                                               profile ? profile.name : ""
                                             }
                                             value={newName}
-                                            onChange={(e) => setNewName(e.target.value)}
+                                            onChange={(e) =>
+                                              setNewName(e.target.value)
+                                            }
                                           />
                                         </Col>
                                       </Row>
@@ -301,7 +287,9 @@ const Profile = () => {
                                               profile ? profile.address : ""
                                             }
                                             value={newAddress}
-                                            onChange={(e) => setNewAddress(e.target.value)}
+                                            onChange={(e) =>
+                                              setNewAddress(e.target.value)
+                                            }
                                           />
                                         </Col>
                                       </Row>
@@ -322,7 +310,9 @@ const Profile = () => {
                                               profile ? profile.phoneNumber : ""
                                             }
                                             value={newNumTel}
-                                            onChange={(e) => setNewNumTel(e.target.value)}
+                                            onChange={(e) =>
+                                              setNewNumTel(e.target.value)
+                                            }
                                           />
                                         </Col>
                                       </Row>
@@ -340,7 +330,9 @@ const Profile = () => {
                                             type="password"
                                             className="form-control"
                                             placeholder="Ancien mot de passe"
-                                            onChange={(e) => setOldPassword(e.target.value)}
+                                            onChange={(e) =>
+                                              setOldPassword(e.target.value)
+                                            }
                                           />
                                         </Col>
                                       </Row>
@@ -358,7 +350,9 @@ const Profile = () => {
                                             type="password"
                                             className="form-control"
                                             placeholder="Nouveau mot de passe"
-                                            onChange={(e) => setNewPassword(e.target.value)}
+                                            onChange={(e) =>
+                                              setNewPassword(e.target.value)
+                                            }
                                           />
                                         </Col>
                                       </Row>
@@ -383,7 +377,7 @@ const Profile = () => {
                                               process: {
                                                 url: `${apiBaseUrl}/users/${profile?.id}/image`,
                                                 withCredentials: true,
-                                              }
+                                              },
                                             }}
                                             name={"thumb"}
                                           />
@@ -399,13 +393,19 @@ const Profile = () => {
                                             onClick={handleProfileUpdate}
                                             variant=""
                                             type="button"
-                                            className={isLoading ? "btn btn-primary btn-block btn-loaders" : "btn btn-primary btn-block"}
+                                            className={
+                                              isLoading
+                                                ? "btn btn-primary btn-block btn-loaders"
+                                                : "btn btn-primary btn-block"
+                                            }
                                             disabled={isLoading}
                                           >
-                                            <span
-                                              className="loading">{isLoading ? "Modification en cours..." : "Modifier le profil"}</span>
+                                            <span className="loading">
+                                              {isLoading
+                                                ? "Modification en cours..."
+                                                : "Modifier le profil"}
+                                            </span>
                                           </Button>
-
                                         </div>
                                       </Col>
                                     </Row>

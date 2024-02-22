@@ -9,8 +9,7 @@ import {
   Modal,
   Breadcrumb,
 } from "react-bootstrap";
-import Link from "next/link";
-import {useRouter} from "next/router";
+import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
 import Seo from "@/shared/layout-components/seo/seo";
 const Settingscom = dynamic(
@@ -21,14 +20,15 @@ import axios from "@/pages/api/axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Select from "react-select";
+import Title from "../components/Title";
+
 const Settings = () => {
-  const router= useRouter();
+  const router = useRouter();
   const [show, setShow] = React.useState(false);
   const name = createRef();
   const [isLoadingCreating, setIsLoadingCreating] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [roles, setRoles] = useState([]);
-
 
   useEffect(() => {
     if (
@@ -74,84 +74,69 @@ const Settings = () => {
   };
 
   return (
-      <div>
-        <Seo title={"List Organisations"}/>
-
-        <div className="breadcrumb-header justify-content-between">
-          <div className="left-content">
-				  <span className="main-content-title mg-b-0 mg-b-lg-1">
-					LISTE DES RÔLES
-				  </span>
-          </div>
-          <div className="justify-content-center mt-2">
-            <Breadcrumb className="breadcrumb">
-              <Button variant="" type="button" className="btn button-icon btn-sm btn-outline-secondary me-1"
-                      onClick={() => router.back()}>
-                <i class="bi bi-arrow-left"></i> <span className="ms-1">{"Retour"}</span>
+    <div>
+      <Seo title={"List Organisations"} />
+      <Title title={"LISTE DES ORGANISATIONS"} />
+      <div className="breadcrumb-header justify-content-between">
+        <div className="left-content mt-2">
+          <Button
+            className="btn ripple btn-primary"
+            onClick={handleShow}
+            size="sm"
+          >
+            <i className="fe fe-plus me-2"></i>
+            {"Nouvelle Organisation"}
+          </Button>
+          <Modal show={show} onHide={handleClose}>
+            <Modal.Header className="modal-header">
+              <h6 className="modal-title">{"Ajouter Organisation"}</h6>
+              <Button
+                variant=""
+                className="btn-close"
+                type="button"
+                onClick={handleClose}
+              >
+                <span aria-hidden="true">×</span>
               </Button>
-            </Breadcrumb>
-          </div>
-        </div>
-        <div className="breadcrumb-header justify-content-between">
-          <div className="left-content mt-2">
-            <Button
-                className="btn ripple btn-primary"
-                onClick={handleShow}
-                size="sm"
-            >
-              <i className="fe fe-plus me-2"></i>
-              {"Nouvelle Organisation"}
-            </Button>
-            <Modal show={show} onHide={handleClose}>
-              <Modal.Header className="modal-header">
-                <h6 className="modal-title">{"Ajouter Organisation"}</h6>
-                <Button
-                    variant=""
-                    className="btn-close"
-                    type="button"
-                    onClick={handleClose}
-                >
-                  <span aria-hidden="true">×</span>
-                </Button>
-              </Modal.Header>
+            </Modal.Header>
 
-              <Modal.Body className="modal-body">
-                <div className="p-4">
-                  <Form className="form-horizontal">
-                    <FormGroup className="form-group">
-                      <Form.Control
-                          type="text"
-                          className="form-control"
-                          id="inputName"
-                          placeholder="Nom"
-                          ref={name}
-                      />
-                    </FormGroup>
-                  </Form>
-                </div>
-              </Modal.Body>
-              <Modal.Footer>
-                <Button
-                    variant=""
-                    className="btn ripple btn-primary"
-                    type="button"
-                    onClick={handleCreateRole}
-                >
-                  {isLoadingCreating ? "Ajout en cour..." : "Ajouter"}
-                </Button>
-                <Button
-                    variant=""
-                    className="btn ripple btn-secondary"
-                    onClick={handleClose}
-                >
-                  Fermer
-                </Button>
-              </Modal.Footer>
-            </Modal>
-          </div>
+            <Modal.Body className="modal-body">
+              <div className="p-4">
+                <Form className="form-horizontal">
+                  <FormGroup className="form-group">
+                    <Form.Control
+                      type="text"
+                      className="form-control"
+                      id="inputName"
+                      placeholder="Nom"
+                      ref={name}
+                    />
+                  </FormGroup>
+                </Form>
+              </div>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button
+                variant=""
+                className="btn ripple btn-primary"
+                type="button"
+                onClick={handleCreateRole}
+              >
+                {isLoadingCreating ? "Ajout en cour..." : "Ajouter"}
+              </Button>
+              <Button
+                variant=""
+                className="btn ripple btn-secondary"
+                onClick={handleClose}
+              >
+                Fermer
+              </Button>
+            </Modal.Footer>
+          </Modal>
         </div>
-        <Settingscom updateRoles={setRoles}/>
       </div>
+      <Settingscom updateRoles={setRoles} />
+    </div>
   );
 };
 
