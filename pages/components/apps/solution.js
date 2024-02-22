@@ -98,20 +98,10 @@ const Solution = () => {
       setParametreThematiqueId(thematiqueId);
 
       const fetchInnovateur = async () => {
-        if (innovateurId) {
+        if (navigate.query.innovateurId) {
           try {
-            const innovateurId = parseInt(innovateurId);
-
-            const innovateur = userState.find(
-              (innovateur) => innovateur.id === innovateurId
-            );
-
-            if (innovateur) {
-              setProfileInnovateur(innovateur);
-              console.log(innovateur, "innovateur");
-            } else {
-              console.log("Aucun innovateur trouvé avec l'ID", innovateurId);
-            }
+            const profileResponse = await axios.get(`/users/${navigate?.query?.innovateurId}`);
+            setProfileInnovateur(profileResponse?.data?.data);
           } catch (error) {
             console.log(error);
           }
@@ -242,9 +232,9 @@ const Solution = () => {
     thematicsState,
     solutionsState,
     userState,
-    navigate.query.id,
-    navigate.query.innovateurId,
-    navigate.query.thematiqueId,
+    // navigate.query.id,
+    // navigate.query.innovateurId,
+    // navigate.query.thematiqueId,
   ]);
 
   useEffect(() => {
@@ -401,7 +391,7 @@ const Solution = () => {
   };
 
   const handlePreviousSolution = async () => {
-    const currentIndex = allSolutions?.findIndex(
+    const currentIndex = allSolutions.findIndex(
       (sol) => sol?.id === solution?.id
     );
     let previousSolution;
@@ -428,7 +418,7 @@ const Solution = () => {
   };
 
   const handleNextSolution = async () => {
-    const currentIndex = allSolutions?.findIndex(
+    const currentIndex = allSolutions.findIndex(
       (sol) => sol.id === solution.id
     );
     let nextSolution;
