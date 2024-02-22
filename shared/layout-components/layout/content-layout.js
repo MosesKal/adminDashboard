@@ -9,6 +9,10 @@ import Head from "next/head";
 import favicon from "../../../public/assets/img/brand/favicon.png";
 
 import { getSolutions, getSolutionsCurated, getSolutionsConforms } from "@/shared/redux/actions/solution/solution.action";
+import {getThematics} from "@/shared/redux/actions/thematics/thematics.action";
+import { getStatus } from "@/shared/redux/actions/status/status.action";
+import { getUsers } from "@/shared/redux/actions/user/users.action";
+import { getPoles } from "@/shared/redux/actions/poles/poles.actions";
 
 const Header = dynamic(() => import("../header/header"), { ssr: false });
 const Switcher = dynamic(() => import("../switcher/switcher"), { ssr: false });
@@ -18,7 +22,7 @@ const Sidebar = dynamic(() => import("../sidebar/sidebar"), { ssr: false });
 
 const Contentlayout = ({ children }) => {
   let firstAdd = () => {
-    //The created store
+    
     document
       .querySelector("body")
       .classList.add("ltr", "main-body", "app", "sidebar-mini");
@@ -56,6 +60,10 @@ const Contentlayout = ({ children }) => {
   store.dispatch(getSolutions());
   store.dispatch(getSolutionsCurated());
   store.dispatch(getSolutionsConforms());
+  store.dispatch(getThematics());
+  store.dispatch(getStatus());
+  store.dispatch(getUsers());
+  store.dispatch(getPoles());
 
 
   return (

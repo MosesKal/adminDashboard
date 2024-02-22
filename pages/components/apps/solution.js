@@ -7,11 +7,27 @@ import "react-toastify/dist/ReactToastify.css";
 import Seo from "@/shared/layout-components/seo/seo";
 import { useRouter } from "next/router";
 import axios from "@/pages/api/axios";
-import moment from "moment";
+import { useSelector } from "react-redux";
 
 const Solution = () => {
   const router = useRouter();
+
   const [profileInnovateur, setProfileInnovateur] = useState();
+
+  const solutionsState = useSelector(
+    (state) => state.solutionReducer.solutions
+  );
+
+  const statusState = useSelector((state) => state.statusReducer.status);
+
+  const thematicsState = useSelector(
+    (state) => state.thematicsReducer.thematics
+  );
+
+  const polesState = useSelector((state) => state.polesReducer.poles);
+
+  const userState = useSelector((state) => state.usersReducer.users);
+
   const [solution, setSolution] = useState();
   const [thematique, setThematique] = useState();
   const [domLoaded, setDomLoaded] = useState(false);
@@ -20,6 +36,7 @@ const Solution = () => {
   const [parametreThematiqueId, setParametreThematiqueId] = useState(null);
 
   const navigate = useRouter();
+
   const id = navigate?.query?.id;
   const innovateurId = navigate?.query?.innovateurId;
   const thematiqueId = navigate?.query?.thematiqueId;
@@ -69,44 +86,86 @@ const Solution = () => {
 
   useEffect(() => {
     const status = JSON.parse(localStorage?.getItem("STATUS_ACCOUNT"));
-    const userRoles = JSON.parse(localStorage?.getItem("ACCESS_ACCOUNT"))
-      ?.roles;
+    const userRoles = JSON.parse(
+      localStorage?.getItem("ACCESS_ACCOUNT")
+    )?.roles;
     setIsAdmin(userRoles?.some((role) => role.name === "ADMIN"));
 
     if (status.authenticate) {
-
       setDomLoaded(true);
       setParametreId(id);
       setParametreUserId(innovateurId);
       setParametreThematiqueId(thematiqueId);
 
       const fetchInnovateur = async () => {
-        if (navigate.query.innovateurId) {
+        if (innovateurId) {
           try {
-            const profileResponse = await axios.get(`/users/${navigate?.query?.innovateurId}`);
-            setProfileInnovateur(profileResponse?.data?.data);
+            const innovateurId = parseInt(innovateurId);
+
+            const innovateur = userState.find(
+              (innovateur) => innovateur.id === innovateurId
+            );
+
+            if (innovateur) {
+              setProfileInnovateur(innovateur);
+              console.log(innovateur, "innovateur");
+            } else {
+              console.log("Aucun innovateur trouvé avec l'ID", innovateurId);
+            }
           } catch (error) {
             console.log(error);
           }
         }
       };
 
+      // const fetchSolution = async () => {
+      //   if (navigate.query.id) {
+      //     try {
+      //       const solutionId = parseInt(navigate.query.id);
+
+      //       const solution = solutionsState.find(
+      //         (solution) => solution.id === solutionId
+      //       );
+
+      //       if (solution) {
+      //         setSolution(solution);
+      //       } else {
+      //         console.log("Aucune solution trouvée avec l'ID", solutionId);
+      //       }
+      //     } catch (error) {
+      //       console.log(error);
+      //     }
+      //   }
+      // };
+
       const fetchSolution = async () => {
         if (navigate.query.id) {
           try {
-            const solutionResponse = await axios.get(`/solutions/${navigate?.query?.id}`);
+            const solutionResponse = await axios.get(
+              `/solutions/${navigate?.query?.id}`
+            );
             setSolution(solutionResponse?.data?.data);
           } catch (error) {
             console.log(error);
           }
         }
-
       };
 
+      // const fetchThematique = async () => {
+      //   if (navigate.query.thematiqueId) {
+      //     try {
+      //       const thematiqueResponse = await axios.get(
+      //         `/thematics/${navigate?.query?.thematiqueId}`
+      //       );
+      //       setThematique(thematiqueResponse?.data?.data);
+      //     } catch (error) {
+      //       console.log(error);
+      //     }
+      //   }
+      // };
+
       const fetchThematique = async () => {
-
         if (navigate.query.thematiqueId) {
-
           try {
             const thematiqueResponse = await axios.get(
               `/thematics/${navigate?.query?.thematiqueId}`
@@ -119,37 +178,21 @@ const Solution = () => {
       };
 
       const fetchStatus = async () => {
-        let data;
-        try {
-          const statusResponse = await axios.get("/status");
-          data = statusResponse?.data?.data;
-
-          setOptions(
-            data.map((option) => ({
-              value: option.id,
-              label: option.name,
-            }))
-          );
-        } catch (error) {
-          console.log(error);
-        }
+        setOptions(
+          statusState.map((option) => ({
+            value: option.id,
+            label: option.name,
+          }))
+        );
       };
+
       const fetchPole = async () => {
-        let data;
-        try {
-          const poleResponse = await axios.get("/poles");
-
-          data = poleResponse?.data?.data;
-
-          setOptionsPole(
-            data.map((option) => ({
-              value: option.id,
-              label: option.name,
-            }))
-          );
-        } catch (e) {
-          console.log(e);
-        }
+        setOptionsPole(
+          polesState.map((option) => ({
+            value: option.id,
+            label: option.name,
+          }))
+        );
       };
 
       const fetchFeedBack = async () => {
@@ -163,10 +206,9 @@ const Solution = () => {
             data.map((option) => ({
               value: option.id,
               label: `${option.mention} - ${option.average}`,
-              cote: option.average
+              cote: option.average,
             }))
           );
-
         } catch (e) {
           console.log(e);
         }
@@ -188,8 +230,6 @@ const Solution = () => {
       fetchPole();
       fetchFeedBack();
       fetchProfile();
-    } else {
-      navigate.push("/");
     }
   }, [
     id,
@@ -197,30 +237,40 @@ const Solution = () => {
     navigate,
     isAdmin,
     thematiqueId,
-    // navigate.query.id,
-    // navigate.query.innovateurId,
-    // navigate.query.thematiqueId,
+    statusState,
+    polesState,
+    thematicsState,
+    solutionsState,
+    userState,
+    navigate.query.id,
+    navigate.query.innovateurId,
+    navigate.query.thematiqueId,
   ]);
-
 
   useEffect(() => {
     if (solution) {
-      if (solution.feedbacks && solution.feedbacks.length > 0 && solution.feedbacks[0].userId === userConnected.id) {
+      if (
+        solution.feedbacks &&
+        solution.feedbacks.length > 0 &&
+        solution.feedbacks[0].userId === userConnected.id
+      ) {
         setIsExistCommentaire(true);
         setCommentaires(solution.feedbacks);
-        setIdCurateur(solution?.feedbacks[0].userId)
-      } else if (solution.feedbacks && solution.feedbacks.length > 0 && solution.feedbacks[0].userId !== userConnected.id) {
+        setIdCurateur(solution?.feedbacks[0].userId);
+      } else if (
+        solution.feedbacks &&
+        solution.feedbacks.length > 0 &&
+        solution.feedbacks[0].userId !== userConnected.id
+      ) {
         setIsCommentedByAnother(true);
         setCommentaires(solution.feedbacks);
-        setIdCurateur(solution?.feedbacks[0].userId)
+        setIdCurateur(solution?.feedbacks[0].userId);
       } else {
         setIsExistCommentaire(false);
         setIsCommentedByAnother(false);
       }
-
     }
   }, [solution, userConnected, isAdmin]);
-
 
   useEffect(() => {
     const fetchAllSolution = async () => {
@@ -229,7 +279,7 @@ const Solution = () => {
           setIsLoadingSolution(true);
           let responseSolution;
           if (isAdmin) {
-            responseSolution = await axios.get("/solutions");
+            setAllSolution(solutionsState);
           } else {
             responseSolution = await axios.get(
               `/solutions/pole/${profile?.poleId}`
@@ -240,10 +290,7 @@ const Solution = () => {
           setIsLoadingSolution(false);
         } catch (error) {
           setIsLoadingSolution(false);
-          console.error(
-            "Erreur lors de la récupération des données :",
-            error
-          );
+          console.error("Erreur lors de la récupération des données :", error);
         }
       }
     };
@@ -296,7 +343,6 @@ const Solution = () => {
     feedbacks.push();
 
     try {
-
       const payload = {
         labels: feedbacks,
         user: userConnected?.email,
@@ -304,16 +350,10 @@ const Solution = () => {
         userComment: "",
       };
 
-      await axios.post(
-        `/solutions/feedback/${solution?.id}`,
-        payload
-      );
+      await axios.post(`/solutions/feedback/${solution?.id}`, payload);
       toast.success("Feedback envoyé avec succès");
     } catch (error) {
-      console.error(
-        "Erreur survenue lors de l'envoi de l'impression :",
-        error
-      );
+      console.error("Erreur survenue lors de l'envoi de l'impression :", error);
       toast.error("Erreur survenue lors de l'envoi de l'impression");
     }
   };
@@ -356,14 +396,14 @@ const Solution = () => {
     fetchCurateur();
   }, [idCurateur]);
 
-
   const handleChangeCommentUser = (e) => {
     setCommentUser(e.target.value);
   };
 
-
   const handlePreviousSolution = async () => {
-    const currentIndex = allSolutions.findIndex((sol) => sol?.id === solution?.id);
+    const currentIndex = allSolutions?.findIndex(
+      (sol) => sol?.id === solution?.id
+    );
     let previousSolution;
     if (currentIndex > 0) {
       try {
@@ -376,17 +416,21 @@ const Solution = () => {
 
       try {
         if (previousSolution.userId) {
-          const profileResponse = await axios.get(`/users/${previousSolution?.userId}`);
+          const profileResponse = await axios.get(
+            `/users/${previousSolution?.userId}`
+          );
           setProfileInnovateur(profileResponse?.data?.data);
         }
       } catch (error) {
         console.log(error);
       }
     }
-  }
+  };
 
   const handleNextSolution = async () => {
-    const currentIndex = allSolutions.findIndex((sol) => sol.id === solution.id);
+    const currentIndex = allSolutions?.findIndex(
+      (sol) => sol.id === solution.id
+    );
     let nextSolution;
     if (currentIndex < allSolutions?.length - 1) {
       try {
@@ -399,16 +443,16 @@ const Solution = () => {
 
       try {
         if (nextSolution.userId) {
-          const profileResponse = await axios.get(`/users/${nextSolution?.userId}`);
+          const profileResponse = await axios.get(
+            `/users/${nextSolution?.userId}`
+          );
           setProfileInnovateur(profileResponse?.data?.data);
         }
-      }
-      catch (error) {
+      } catch (error) {
         console.log(error);
       }
     }
   };
-
 
   return (
     <div>
@@ -421,17 +465,22 @@ const Solution = () => {
         </div>
         <div className="justify-content-center mt-2">
           <Breadcrumb className="breadcrumb">
-            <Button variant="" type="button" className="btn button-icon btn-sm btn-outline-secondary me-1"
-              onClick={() => router.back()}>
-              <i class="bi bi-arrow-left"></i> <span className="ms-1">{"Retour"}</span>
+            <Button
+              variant=""
+              type="button"
+              className="btn button-icon btn-sm btn-outline-secondary me-1"
+              onClick={() => router.back()}
+            >
+              <i class="bi bi-arrow-left"></i>{" "}
+              <span className="ms-1">{"Retour"}</span>
             </Button>
           </Breadcrumb>
+          userState
         </div>
       </div>
 
       <Row>
         <Col lg={12} md={12}>
-
           <CardInnovateur profileInnovateur={profileInnovateur} />
 
           <SolutionTab
@@ -468,7 +517,6 @@ const Solution = () => {
                         <div
                           aria-label="Basic example"
                           className="d-flex justify-content-start"
-
                         >
                           <Button
                             onClick={handlePreviousSolution}
@@ -478,7 +526,6 @@ const Solution = () => {
                             <i class="bi bi-chevron-double-left"></i>
                             <span>Solution Précedente</span>
                           </Button>
-
                         </div>
                       </Col>
 
@@ -503,15 +550,15 @@ const Solution = () => {
               </Card.Body>
             </Card>
           </Col>
-        </Col >
-      </Row >
+        </Col>
+      </Row>
       <Row className=" row-sm">
         <Col lg={12} md={12}>
           <div className="tab-content"></div>
         </Col>
       </Row>
       <ToastContainer />
-    </div >
+    </div>
   );
 };
 

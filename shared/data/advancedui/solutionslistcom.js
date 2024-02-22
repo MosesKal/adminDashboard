@@ -19,10 +19,25 @@ import { ToastContainer } from "react-toastify";
 import { useSelector } from "react-redux";
 
 const Solutionslistcom = () => {
+  const solutionsState = useSelector(
+    (state) => state.solutionReducer.solutions
+  );
+  const solutionsCuratedState = useSelector(
+    (state) => state.solutionReducer.curatedSolutions
+  );
+  const solutionsConformedState = useSelector(
+    (state) => state.solutionReducer.conformSolutions
+  );
 
-  const solutionsState = useSelector((state) => state.solutionReducer.solutions);
-  const solutionsCuratedState = useSelector((state)=> state.solutionReducer.curatedSolutions);
-  const solutionsConformedState = useSelector((state)=> state.solutionReducer.conformSolutions);
+  const thematicState = useSelector(
+    (state) => state.thematicsReducer.thematics
+  );
+
+  const usersState = useSelector((state) => state.usersReducer.users);
+
+  const statusState = useSelector((state) => state.statusReducer.status);
+
+  const poleState = useSelector((state) => state.polesReducer.poles);
 
   const [solutions, setSolutions] = useState([]);
   const [conformedSolutions, setConformedSolutions] = useState([]);
@@ -37,7 +52,8 @@ const Solutionslistcom = () => {
   const [showAlertModal, setShowAlertModal] = useState(false);
   const [optionsThematique, setOptionsThematique] = useState([]);
 
-  const [selectedOptionsThematique, setSelectedOptionsThematique] = useState(null);
+  const [selectedOptionsThematique, setSelectedOptionsThematique] =
+    useState(null);
   const [optionIdThematique, setOptionIdThematique] = useState(null);
 
   const [optionsStatus, setOptionsStatus] = useState([]);
@@ -47,8 +63,10 @@ const Solutionslistcom = () => {
   const [isLoadingUsers, setIsLoadingUsers] = useState(false);
   const [profile, setProfile] = useState(null);
   const [dataMerged, setDataMerged] = useState([]);
-  const [dataConformedSolutionsMerged, setDataConformedSolutionsMerged] = useState([]);
-  const [dataCurratedSolutionsMerged, setDataCurratedSolutionsMerged] = useState([]);
+  const [dataConformedSolutionsMerged, setDataConformedSolutionsMerged] =
+    useState([]);
+  const [dataCurratedSolutionsMerged, setDataCurratedSolutionsMerged] =
+    useState([]);
 
   const [filters, setFilters] = useState({
     searchText: "",
@@ -70,46 +88,32 @@ const Solutionslistcom = () => {
   const [showEditModal, setShowEditModal] = useState(false);
 
   useEffect(() => {
-    const fetchThematique = async () => {
-      try {
-        const thematiqueResponse = await axios.get("/thematics");
-        const data = thematiqueResponse?.data?.data;
-        const allThematiqueOption = { value: "Tous", label: "Tous" };
-        setOptionsThematique([
-          allThematiqueOption,
-          ...data.map((option) => ({
-            value: option.id,
-            label: option.name,
-          })),
-        ]);
-      } catch (error) {
-        console.log(error);
-      }
+    const fetchThematique = () => {
+      const allThematiqueOption = { value: "Tous", label: "Tous" };
+      setOptionsThematique([
+        allThematiqueOption,
+        ...thematicState.map((option) => ({
+          value: option.id,
+          label: option.name,
+        })),
+      ]);
     };
 
-    const fetchStatus = async () => {
-      try {
-        const statusResponse = await axios.get("/status");
-        const data = statusResponse?.data?.data;
-        const allStatusOption = { value: "Tous", label: "Tous" };
-        setOptionsStatus([
-          allStatusOption,
-          ...data.map((option) => ({
-            value: option.id,
-            label: option.name,
-          })),
-        ]);
-      } catch (error) {
-        console.log(error);
-      }
+    const fetchStatus = () => {
+      const allStatusOption = { value: "Tous", label: "Tous" };
+      setOptionsStatus([
+        allStatusOption,
+        ...statusState.map((option) => ({
+          value: option.id,
+          label: option.name,
+        })),
+      ]);
     };
 
     const fetchUser = async () => {
       try {
         setIsLoadingUsers(true);
-        const responseUser = await axios.get("/users");
-        const dataUser = responseUser?.data?.data;
-        setUsers(dataUser);
+        setUsers(usersState);
         setIsLoadingUsers(false);
       } catch (error) {
         setIsLoadingUsers(false);
@@ -127,22 +131,12 @@ const Solutionslistcom = () => {
     };
 
     const fetchPole = async () => {
-      let data;
-
-      try {
-        const poleResponse = await axios.get("/poles");
-
-        data = poleResponse?.data?.data;
-
-        setOptionPole(
-          data.map((option) => ({
-            value: option.id,
-            label: option.name,
-          }))
-        );
-      } catch (e) {
-        console.log(e);
-      }
+      setOptionPole(
+        poleState.map((option) => ({
+          value: option.id,
+          label: option.name,
+        }))
+      );
     };
 
     if (localStorage?.getItem("ACCESS_ACCOUNT")) {
