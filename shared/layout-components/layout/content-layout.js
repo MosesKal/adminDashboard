@@ -17,6 +17,7 @@ import { getThematics } from "@/shared/redux/actions/thematics/thematics.action"
 import { getStatus } from "@/shared/redux/actions/status/status.action";
 import { getUsers } from "@/shared/redux/actions/user/users.action";
 import { getPoles } from "@/shared/redux/actions/poles/poles.actions";
+import { getRoles } from "@/shared/redux/actions/roles/roles.actions";
 
 const Header = dynamic(() => import("../header/header"), { ssr: false });
 const Switcher = dynamic(() => import("../switcher/switcher"), { ssr: false });
@@ -31,20 +32,20 @@ const Contentlayout = ({ children }) => {
       .querySelector("body")
       .classList.remove("error-page1", "bg-primary");
     var gone = window.matchMedia("(max-width: 1024px)");
-    Sidebargone(gone); // Call listener function at run time
+    Sidebargone(gone);
     gone.addListener(Sidebargone);
   };
   const responsiveSidebarclose = () => {
-    //leftsidemenu
     if (window.innerWidth < 992) {
       document.querySelector(".app").classList.remove("sidenav-toggled");
     }
-    //rightsidebar
+
     document.querySelector(".sidebar-right").classList.remove("sidebar-open");
-    //swichermainright
+
     document.querySelector(".demo_changer").classList.remove("active");
     document.querySelector(".demo_changer").style.right = "-270px";
   };
+
   function Sidebargone(gone) {
     if (gone.matches) {
       document.querySelector("body").classList.add("sidebar-gone");
@@ -65,6 +66,7 @@ const Contentlayout = ({ children }) => {
   store.dispatch(getStatus());
   store.dispatch(getUsers());
   store.dispatch(getPoles());
+  store.dispatch(getRoles());
 
   return (
     <>

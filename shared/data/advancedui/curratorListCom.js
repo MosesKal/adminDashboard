@@ -1,13 +1,27 @@
 import React, { useState, useEffect } from "react";
-import { Button, Row, Col, Card, Spinner, Modal, Form, FormGroup } from "react-bootstrap";
+import {
+  Button,
+  Row,
+  Col,
+  Card,
+  Spinner,
+  Modal,
+  Form,
+  FormGroup,
+} from "react-bootstrap";
 import DataTable from "react-data-table-component";
 import { columns as configureColumns } from "./curratorList";
-import axios, { apiBaseUrl, imageBaseUrl} from "@/pages/api/axios";
+import axios, { apiBaseUrl, imageBaseUrl } from "@/pages/api/axios";
 import moment from "moment";
 import { toast, ToastContainer } from "react-toastify";
 import Select from "react-select";
+import { useSelector } from "react-redux";
 
 const CurratorList = ({ updateUsers }) => {
+  const usersState = useSelector((state) => state.usersReducer.users);
+  const rolesState = useSelector((state) => state.rolesReducer.roles);
+  const polesState = useSelector((state) => state.polesReducer.poles);
+
   const [users, setUsers] = useState([]);
   const [isLoadingUsers, setIsLoadingUsers] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -42,16 +56,15 @@ const CurratorList = ({ updateUsers }) => {
 
   const [mergedUsers, setMergedUsers] = useState([]);
 
-
   const mergeUserData = () => {
     const mergedData = users.map((user) => ({
       ...user,
       poleName: getPoleNameById(user.poleId),
-      organisationName: getOrganisationNameById(user.organisationId)
+      organisationName: getOrganisationNameById(user.organisationId),
     }));
 
     setMergedUsers(mergedData);
-  }
+  };
 
   const getPoleNameById = (poleId) => {
     const pole = poles?.find((p) => p.id === poleId);
@@ -59,70 +72,57 @@ const CurratorList = ({ updateUsers }) => {
   };
 
   const getOrganisationNameById = (organisationId) => {
-    const organisation = organisations?.find((org) => org.id === organisationId);
+    const organisation = organisations?.find(
+      (org) => org.id === organisationId
+    );
     return organisation ? organisation.name : "";
   };
 
   useEffect(() => {
     const fetchUser = async () => {
-      try {
-        setIsLoadingUsers(true);
-        const responseUser = await axios.get("/users");
-        const usersWithImages = responseUser.data.data.map((user) => {
-          const profileImage = user.profile ? `${apiBaseUrl}/uploads/${user?.profile}` : "../../../assets/img/faces/4.jpg";
-          return {
-            ...user,
-            img: (
-              <img
-                src={profileImage}
-                className="rounded-circle w-100 h-100"
-                alt=""
-              />
-            ),
-            class: "avatar-md rounded-circle",
-          };
-        });
-        const allowedRoles = ["CURATOR", "ADMIN", "EXPLORATOR"];
-        setUsers(usersWithImages.filter(user => user.roles.some(role => allowedRoles.includes(role.name))));
-        setIsLoadingUsers(false);
-      } catch (error) {
-        setIsLoadingUsers(false);
-        console.error("Erreur lors de la récupération des données :", error);
-      }
+      setIsLoadingUsers(true);
+      const usersWithImages = usersState.map((user) => {
+        const profileImage = user.profile
+          ? `${apiBaseUrl}/uploads/${user?.profile}`
+          : "../../../assets/img/faces/4.jpg";
+        return {
+          ...user,
+          img: (
+            <img
+              src={profileImage}
+              className="rounded-circle w-100 h-100"
+              alt=""
+            />
+          ),
+          class: "avatar-md rounded-circle",
+        };
+      });
+      const allowedRoles = ["CURATOR", "ADMIN", "EXPLORATOR"];
+      setUsers(
+        usersWithImages.filter((user) =>
+          user.roles.some((role) => allowedRoles.includes(role.name))
+        )
+      );
+      setIsLoadingUsers(false);
     };
+
     const fetchRole = async () => {
-      let data;
-      try {
-        const roleResponse = await axios.get("/roles");
-        data = roleResponse.data.data;
-        setOptionsRoles(
-          data.map((option) => ({
-            value: option.id,
-            label: option.name
-          }))
-        );
-      } catch (e) {
-        console.log(e);
-      }
-    }
+      setOptionsRoles(
+        rolesState.map((option) => ({
+          value: option.id,
+          label: option.name,
+        }))
+      );
+    };
     const fetchPole = async () => {
-      let data;
-      try {
-        const poleResponse = await axios.get("/poles");
-        data = poleResponse.data.data;
-
-        setOptionsPoles(
-          data.map((option) => ({
-            value: option.id,
-            label: option.name
-          }))
-        );
-
-        setPoles(data);
-      } catch (e) {
-        console.log(e)
-      }
-    }
+      setOptionsPoles(
+        polesState.map((option) => ({
+          value: option.id,
+          label: option.name,
+        }))
+      );
+      setPoles(polesState);
+    };
 
     const fetchOrganisations = async () => {
       let data;
@@ -133,65 +133,64 @@ const CurratorList = ({ updateUsers }) => {
         setOptionsOrganisations(
           data.map((option) => ({
             value: option.id,
-            label: option.name
+            label: option.name,
           }))
         );
 
         setOrganisations(data);
-
       } catch (e) {
-        console.log
+        console.log;
       }
-    }
+    };
 
     fetchUser();
     fetchRole();
     fetchPole();
     fetchOrganisations();
-
   }, []);
 
   useEffect(() => {
     const fetchUser = async () => {
-      try {
-        setIsLoadingUsers(true);
-        const responseUser = await axios.get("/users");
+      setIsLoadingUsers(true);
 
-        const usersWithImages = responseUser?.data?.data.map((user) => {
-          const profileImage = user.profile ? `${imageBaseUrl}/${user?.profile}` : "../../../assets/img/faces/4.jpg";
-          return {
-            ...user,
-            img: (
-              <img
-                src={profileImage}
-                className="rounded-circle w-100 h-100"
-                alt=""
-              />
-            ),
-            class: "avatar-md rounded-circle",
-          };
-        });
+      const usersWithImages = usersState.map((user) => {
+        const profileImage = user.profile
+          ? `${imageBaseUrl}/${user?.profile}`
+          : "../../../assets/img/faces/4.jpg";
+        return {
+          ...user,
+          img: (
+            <img
+              src={profileImage}
+              className="rounded-circle w-100 h-100"
+              alt=""
+            />
+          ),
+          class: "avatar-md rounded-circle",
+        };
+      });
 
-        const allowedRoles = ["CURATOR", "ADMIN", "EXPLORATOR"];
-        setUsers(usersWithImages.filter(user => user.roles.some(role => allowedRoles.includes(role.name))));
-        setIsLoadingUsers(false);
-      } catch (error) {
-        setIsLoadingUsers(false);
-        console.error("Erreur lors de la récupération des données :", error);
-      }
+      const allowedRoles = ["CURATOR", "ADMIN", "EXPLORATOR"];
+      setUsers(
+        usersWithImages.filter((user) =>
+          user.roles.some((role) => allowedRoles.includes(role.name))
+        )
+      );
+      setIsLoadingUsers(false);
     };
 
     fetchUser();
-
   }, [updateUsers]);
 
   useEffect(() => {
     mergeUserData();
-  }, [users, poles, organisations])
+  }, [users, poles, organisations]);
 
   const handleSelectChangeRole = (selectedOptionsRoles) => {
     setSelectedOptionsRoles(selectedOptionsRoles);
-    const selectedOptionIds = selectedOptionsRoles.map((option) => option.value);
+    const selectedOptionIds = selectedOptionsRoles.map(
+      (option) => option.value
+    );
     setOptionRoleId(selectedOptionIds);
   };
 
@@ -200,7 +199,9 @@ const CurratorList = ({ updateUsers }) => {
     setOptionPoleId(selectedOptionsPoles.value);
   };
 
-  const handleSelectChangeOrganisation = async (selectedOptionsOrganisation) => {
+  const handleSelectChangeOrganisation = async (
+    selectedOptionsOrganisation
+  ) => {
     setSelectedOrganisations(selectedOptionsOrganisation);
     setOptionOrganisationId(selectedOptionsOrganisation.value);
   };
@@ -209,7 +210,7 @@ const CurratorList = ({ updateUsers }) => {
     setSelectedUser(user);
     setEditedCuratorId(user.id || null);
     setShowModal(true);
-  }
+  };
 
   const handleShowEditModal = (user) => {
     setSelectedUser(user);
@@ -219,35 +220,43 @@ const CurratorList = ({ updateUsers }) => {
     setEditedCuratorPhone(user.phoneNumber || null);
     setEditedCuratorAdress(user.address || null);
 
-    const currentRoleIds = user.roles.map(role => ({ value: role.id, label: role.name }));
+    const currentRoleIds = user.roles.map((role) => ({
+      value: role.id,
+      label: role.name,
+    }));
     setSelectedOptionsRoles(currentRoleIds);
 
-
-    const currentPole = user.pole ? optionsPoles.find(pole => pole.value === user.pole.id) : null;
+    const currentPole = user.pole
+      ? optionsPoles.find((pole) => pole.value === user.pole.id)
+      : null;
     setSelectedOptionsPoles(currentPole);
 
-
-    const currentOrganisation = user.organisation ? optionsOrganisations.find(org => org.value === user.organisation.id) : null;
+    const currentOrganisation = user.organisation
+      ? optionsOrganisations.find((org) => org.value === user.organisation.id)
+      : null;
     setSelectedOrganisations(currentOrganisation);
 
     setShowEditModal(true);
-  }
+  };
 
   const handleCloseEditModal = () => {
     setSelectedOptionsRoles([]);
     setSelectedOptionsPoles(null);
-    setSelectedOrganisations(null)
+    setSelectedOrganisations(null);
     setShowEditModal(false);
     setSelectedUser(null);
-  }
+  };
 
   const handleCloseModal = () => {
     setShowModal(false);
     setSelectedUser(null);
-  }
+  };
 
   const handleDelete = (user) => {
-    const isAdminUser = isAdmin || JSON.parse(localStorage.getItem("ACCESS_ACCOUNT")).roles[0].name === "ADMIN";
+    const isAdminUser =
+      isAdmin ||
+      JSON.parse(localStorage.getItem("ACCESS_ACCOUNT")).roles[0].name ===
+        "ADMIN";
     if (isAdminUser) {
       setUserToDelete(user);
       setShowDeleteModal(true);
@@ -261,7 +270,6 @@ const CurratorList = ({ updateUsers }) => {
   };
 
   const handleEditCurateur = async () => {
-
     try {
       const updatedData = {
         name: editedCuratorName,
@@ -283,7 +291,11 @@ const CurratorList = ({ updateUsers }) => {
     }
   };
 
-  const columns = configureColumns(handleShowModal, handleDelete, handleShowEditModal);
+  const columns = configureColumns(
+    handleShowModal,
+    handleDelete,
+    handleShowEditModal
+  );
 
   columns.forEach((column) => {
     if (column.name === "Actions") {
@@ -318,9 +330,7 @@ const CurratorList = ({ updateUsers }) => {
               : item[key];
 
           result += value;
-        } catch (e) {
-
-        }
+        } catch (e) {}
         ctr++;
       });
       result += lineDelimiter;
@@ -365,25 +375,28 @@ const CurratorList = ({ updateUsers }) => {
   const handleConfirmDelete = async (user) => {
     try {
       await axios.delete(`/users/${user.id}`);
-      setUsers((previousUsers) => previousUsers.filter((u) => u.id !== user.id));
+      setUsers((previousUsers) =>
+        previousUsers.filter((u) => u.id !== user.id)
+      );
       setShowDeleteModal(false);
     } catch (error) {
       console.error(error);
     }
-  }
+  };
 
   const contextActions = React.useMemo(() => {
     const Selectdata = () => {
       if (window.confirm(`download:\r ${selectedRows.map((r) => r.id)}?`)) {
         setToggleCleared(!toggleCleared);
-        const selectdata = users.filter((e) => selectedRows.some((sr) => e.id === sr.id));
+        const selectdata = users.filter((e) =>
+          selectedRows.some((sr) => e.id === sr.id)
+        );
         downloadCSV(selectdata);
       }
     };
 
     return <Export onExport={Selectdata} icon="true" />;
   }, [users, selectedRows, toggleCleared]);
-
 
   return (
     <div>
@@ -432,7 +445,11 @@ const CurratorList = ({ updateUsers }) => {
                     <img
                       className="br-5"
                       alt=""
-                      src={selectedUser?.profile ? `${imageBaseUrl}/${selectedUser.profile}` : "../../../assets/img/faces/profile.jpg"}
+                      src={
+                        selectedUser?.profile
+                          ? `${imageBaseUrl}/${selectedUser.profile}`
+                          : "../../../assets/img/faces/profile.jpg"
+                      }
                     />
                     {/* <span className="bg-success text-white wd-1 ht-1 rounded-pill profile-online"></span> */}
                   </span>
@@ -443,7 +460,8 @@ const CurratorList = ({ updateUsers }) => {
                   </h4>
                   <p className="tx-13 text-muted ms-md-4 ms-0 mb-2 pb-2 ">
                     <span className="me-3">
-                      <i className="far fa-address-card me-2"></i>{selectedUser ? selectedUser.roles[0].name : ""}
+                      <i className="far fa-address-card me-2"></i>
+                      {selectedUser ? selectedUser.roles[0].name : ""}
                     </span>
                     <span className="me-3">
                       <i class="bi bi-geo-alt-fill me-2"></i>
@@ -458,27 +476,21 @@ const CurratorList = ({ updateUsers }) => {
                       <i className="fa fa-phone me-3"></i>
                     </span>
                     <span className="font-weight-semibold me-2">Phone:</span>
-                    <span>
-                      {selectedUser ? selectedUser.phoneNumber : ""}
-                    </span>
+                    <span>{selectedUser ? selectedUser.phoneNumber : ""}</span>
                   </p>
                   <p className="text-muted ms-md-4 ms-0 mb-2">
                     <span>
                       <i className="fa fa-envelope me-3"></i>
                     </span>
                     <span className="font-weight-semibold me-2">Email:</span>
-                    <span>
-                      {selectedUser ? selectedUser.email : ""}
-                    </span>
+                    <span>{selectedUser ? selectedUser.email : ""}</span>
                   </p>
                   <p className="text-muted ms-md-4 ms-0 mb-2">
                     <span>
                       <i class="bi bi-geo-fill me-3"></i>
                     </span>
                     <span className="font-weight-semibold ">Pôle:</span>
-                    <span>
-                      {selectedUser ? selectedUser.poleName : ""}
-                    </span>
+                    <span>{selectedUser ? selectedUser.poleName : ""}</span>
                   </p>
                   <p className="text-muted ms-md-4 ms-0 mb-2">
                     <span>
@@ -499,8 +511,8 @@ const CurratorList = ({ updateUsers }) => {
                     <span>
                       {selectedUser
                         ? moment(selectedUser.createdAt).format(
-                          "DD MMMM YYYY [à] HH:mm"
-                        )
+                            "DD MMMM YYYY [à] HH:mm"
+                          )
                         : ""}
                     </span>
                   </p>
@@ -520,7 +532,9 @@ const CurratorList = ({ updateUsers }) => {
           <div className="tx-center">
             <i className="icon icon ion-ios-close-circle-outline tx-100 tx-danger lh-1 mg-t-20 d-inline-block"></i>{" "}
             <h4 className="tx-danger mg-b-20">
-              {"Vous n'avez pas les droits nécessaires pour effectuer cette action."}
+              {
+                "Vous n'avez pas les droits nécessaires pour effectuer cette action."
+              }
             </h4>
           </div>
         </Modal.Body>
@@ -535,21 +549,28 @@ const CurratorList = ({ updateUsers }) => {
           <div className="tx-center">
             <i className="icon icon ion-ios-close-circle-outline tx-100 tx-danger lh-1 mg-t-20 d-inline-block"></i>{" "}
             <h4 className="tx-danger mg-b-20">
-              {"Êtes - vous sûr de vouloir supprimer"} <span className="badge bg-danger">{userToDelete?.name} ?</span>
+              {"Êtes - vous sûr de vouloir supprimer"}{" "}
+              <span className="badge bg-danger">{userToDelete?.name} ?</span>
             </h4>
           </div>
         </Modal.Body>
         <Modal.Footer>
-          <Button size={"sm"} variant="primary" onClick={() => setShowDeleteModal(false)}>
+          <Button
+            size={"sm"}
+            variant="primary"
+            onClick={() => setShowDeleteModal(false)}
+          >
             Annuler
           </Button>
-          <Button size={"sm"} variant="danger" onClick={() => handleConfirmDelete(userToDelete)}>
+          <Button
+            size={"sm"}
+            variant="danger"
+            onClick={() => handleConfirmDelete(userToDelete)}
+          >
             Supprimer
           </Button>
         </Modal.Footer>
       </Modal>
-
-
 
       <Modal show={showEditModal} onHide={handleCloseEditModal}>
         <Modal.Header className="modal-header">
@@ -611,19 +632,34 @@ const CurratorList = ({ updateUsers }) => {
               </FormGroup>
 
               <FormGroup className="form-group">
-                <Select options={optionsRoles} onChange={handleSelectChangeRole} value={selectedOptionsRoles} placeholder={"Selectionner le rôle"} isMulti />
+                <Select
+                  options={optionsRoles}
+                  onChange={handleSelectChangeRole}
+                  value={selectedOptionsRoles}
+                  placeholder={"Selectionner le rôle"}
+                  isMulti
+                />
               </FormGroup>
 
               <FormGroup className="form-group">
-                <Select options={optionsPoles} onChange={handleSelectChangePole} value={selectedOptionsPoles} placeholder={"Selectionner le pôle"} />
+                <Select
+                  options={optionsPoles}
+                  onChange={handleSelectChangePole}
+                  value={selectedOptionsPoles}
+                  placeholder={"Selectionner le pôle"}
+                />
               </FormGroup>
 
               <FormGroup className="form-group">
-                <Select options={optionsOrganisations} onChange={handleSelectChangeOrganisation} value={setSelectedOrganisations} placeholder={"Selectionner l'organisation"} />
+                <Select
+                  options={optionsOrganisations}
+                  onChange={handleSelectChangeOrganisation}
+                  value={setSelectedOrganisations}
+                  placeholder={"Selectionner l'organisation"}
+                />
               </FormGroup>
             </Form>
           </div>
-
         </Modal.Body>
         <Modal.Footer>
           <Button

@@ -33,21 +33,3 @@ export const getSolutionsConforms = () => async (dispatch) => {
   }
 }
 
-
-export const addSolution = (solution) => async (dispatch) => {
-  try {
-    const response = await axios.post("/solutions", solution);
-    dispatch({ type: ADD_SOLUTION, payload: response.data });
-  } catch (error) {
-    console.error(error);
-  }
-};
-
-export const updateSolution = (solution) => async (dispatch) => {
-  try {
-    const response = await axios.put(`/solutions/${solution.id}`, solution);
-    dispatch({ type: UPDATE_SOLUTION, payload: response.data });
-  } catch (error) {
-    console.error(error);
-  }
-};

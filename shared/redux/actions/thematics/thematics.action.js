@@ -16,26 +16,3 @@ export const getThematics = () => async (dispatch) => {
   }
 };
 
-export const addThematic = (thematic) => async (dispatch) => {
-  try {
-    const res = await axios.post("/thematics", thematic);
-    dispatch({
-      type: ADD_THEMATIC,
-      payload: res.data,
-    });
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-export const updateThematic = (thematic) => async (dispatch) => {
-  try {
-    const res = await axios.put(`/thematics/${thematic.id}`, thematic);
-    dispatch({
-      type: UPDATE_THEMATIC,
-      payload: res.data,
-    });
-  } catch (error) {
-    console.log(error);
-  }
-}

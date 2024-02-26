@@ -9,6 +9,7 @@ import {
   FormGroup,
   Form,
   Tab,
+  Tabs,
   Nav,
 } from "react-bootstrap";
 import DataTable from "react-data-table-component";
@@ -22,9 +23,11 @@ const Solutionslistcom = () => {
   const solutionsState = useSelector(
     (state) => state.solutionReducer.solutions
   );
+
   const solutionsCuratedState = useSelector(
     (state) => state.solutionReducer.curatedSolutions
   );
+
   const solutionsConformedState = useSelector(
     (state) => state.solutionReducer.conformSolutions
   );
@@ -460,290 +463,256 @@ const Solutionslistcom = () => {
 
   return (
     <div>
-      <Row className="row-sm">
+      <Row className="row-sm col-12">
         {isAdmin ? (
-          <div className="profile-tab tab-menu-heading border-bottom-0 col-12">
-            <Tab.Container defaultActiveKey="About">
-              <Nav
-                variant="pills"
-                className="nav profile-tabs main-nav-line tabs-menu profile-nav-line bg-white mb-4 border-0 br-5 mb-0	"
-              >
-                <Nav.Item className="me-1">
-                  <Nav.Link className=" mb-2 mt-2" eventKey="About">
-                    <Button
-                      variant=""
-                      className="btn w-100 button-icon btn-sm btn-primary m-0"
+          <div className="panel panel-primary tabs-style-2 col-12">
+            <div className="tab-menu-heading">
+              <div className="tabs-menu1">
+                <Tabs
+                  defaultActiveKey="Tab 01"
+                  className=" panel-tabs main-nav-line "
+                >
+                  <Tab eventKey="Tab 01" title="Solutions Currées">
+                    <div
+                      className="panel-body tabs-menu-body main-content-body-right"
+                      id="tab4"
                     >
-                      <span className="ps-1 me-3">Toutes les Solutions</span>
-                      <i class="bi bi-bar-chart-steps"></i>
-                    </Button>
-                  </Nav.Link>
-                </Nav.Item>
+                      <Col lg={12} className="w-full">
+                        <Card className="custom-card">
+                          <Card.Body>
+                            {isLoadingSolution ? (
+                              <div className="text-center">
+                                <Spinner animation="border" variant="primary" />
+                              </div>
+                            ) : (
+                              <div className="table-responsive ">
+                                <Row>
+                                  <Col xs={12} md={12} lg={4} xl={4}>
+                                    <Form>
+                                      <FormGroup className="form-group">
+                                        <Form.Control
+                                          type="text"
+                                          className="form-control"
+                                          placeholder="Recherche par titre de la solution, par le nom ou l'email de l'innovateur"
+                                          value={filters.searchText}
+                                          onChange={(e) =>
+                                            setFilters({
+                                              ...filters,
+                                              searchText: e.target.value,
+                                            })
+                                          }
+                                        />
+                                      </FormGroup>
+                                    </Form>
+                                  </Col>
 
-                <Nav.Item className="me-1">
-                  <Nav.Link className="mb-2 mt-2" eventKey="EditProfile">
-                    <Button
-                      variant=""
-                      className="btn w-100 button-icon btn-sm btn-primary m-0"
+                                  <Col xs={12} md={12} lg={4} xl={4}>
+                                    <div className=" SlectBox">
+                                      <Select
+                                        classNamePrefix="selectform"
+                                        onChange={handleSelectChangeStatus}
+                                        options={optionsStatus}
+                                        placeholder="Filtre par Status"
+                                      />
+                                    </div>
+                                  </Col>
+
+                                  <Col xs={12} md={12} lg={4} xl={4}>
+                                    <div className=" SlectBox">
+                                      <Select
+                                        classNamePrefix="selectform"
+                                        onChange={handleSelectChangeThematic}
+                                        options={optionsThematique}
+                                        placeholder="Filtre par Thématique"
+                                      />
+                                    </div>
+                                  </Col>
+                                </Row>
+                                <span className="datatable">
+                                  <span className="uselistdata">
+                                    <DataTable
+                                      columns={columns}
+                                      data={filteredCurratedSolutions}
+                                      actions={actionsMemo}
+                                      contextActions={contextActions}
+                                      onSelectedRowsChange={handleRowSelected}
+                                      clearSelectedRows={toggleCleared}
+                                      defaultSortField="id"
+                                      defaultSortAsc={false}
+                                      selectableRows
+                                      pagination
+                                    />
+                                  </span>
+                                </span>
+                              </div>
+                            )}
+                          </Card.Body>
+                        </Card>
+                      </Col>
+                    </div>
+                  </Tab>
+
+                  <Tab eventKey="Tab 02" title="Solutions conformes">
+                    <div
+                      className="panel-body tabs-menu-body main-content-body-right "
+                      id="tab5"
                     >
-                      <span className="ps-1 me-3">Solutions conformes</span>
-                      <i class="bi bi-list-check"></i>
-                    </Button>
-                  </Nav.Link>
-                </Nav.Item>
+                      <Col lg={12} className="w-full">
+                        <Card className="custom-card">
+                          <Card.Body>
+                            {isLoadingSolution ? (
+                              <div className="text-center">
+                                <Spinner animation="border" variant="primary" />
+                              </div>
+                            ) : (
+                              <div className="table-responsive ">
+                                <Row>
+                                  <Col xs={12} md={12} lg={4} xl={4}>
+                                    <Form>
+                                      <FormGroup className="form-group">
+                                        <Form.Control
+                                          type="text"
+                                          className="form-control"
+                                          placeholder="Recherche par titre de la solution, par le nom ou l'email de l'innovateur"
+                                          value={filters.searchText}
+                                          onChange={(e) =>
+                                            setFilters({
+                                              ...filters,
+                                              searchText: e.target.value,
+                                            })
+                                          }
+                                        />
+                                      </FormGroup>
+                                    </Form>
+                                  </Col>
 
-                <Nav.Item className="me-1">
-                  <Nav.Link className="mb-2 mt-2" eventKey="Timeline">
-                    <Button
-                      variant=""
-                      className="btn w-100 button-icon btn-sm btn-primary m-0"
+                                  <Col xs={12} md={12} lg={4} xl={4}>
+                                    <div className=" SlectBox">
+                                      <Select
+                                        classNamePrefix="selectform"
+                                        onChange={handleSelectChangeStatus}
+                                        options={optionsStatus}
+                                        placeholder="Filtre par Status"
+                                      />
+                                    </div>
+                                  </Col>
+
+                                  <Col xs={12} md={12} lg={4} xl={4}>
+                                    <div className=" SlectBox">
+                                      <Select
+                                        classNamePrefix="selectform"
+                                        onChange={handleSelectChangeThematic}
+                                        options={optionsThematique}
+                                        placeholder="Filtre par Thématique"
+                                      />
+                                    </div>
+                                  </Col>
+                                </Row>
+                                <span className="datatable">
+                                  <span className="uselistdata">
+                                    <DataTable
+                                      columns={columns}
+                                      data={filteredConformedSolutions}
+                                      actions={actionsMemo}
+                                      contextActions={contextActions}
+                                      onSelectedRowsChange={handleRowSelected}
+                                      clearSelectedRows={toggleCleared}
+                                      defaultSortField="id"
+                                      defaultSortAsc={false}
+                                      selectableRows
+                                      pagination
+                                    />
+                                  </span>
+                                </span>
+                              </div>
+                            )}
+                          </Card.Body>
+                        </Card>
+                      </Col>
+                    </div>
+                  </Tab>
+                  <Tab eventKey="Tab 03" title="Toutes les Solutions">
+                    <div
+                      className="panel-body tabs-menu-body main-content-body-right "
+                      id="tab6"
                     >
-                      <span className="ps-1 me-3">Solutions Currées</span>
-                      <i class="bi bi-chat-left-text"></i>
-                    </Button>
-                  </Nav.Link>
-                </Nav.Item>
-              </Nav>
-              <Row className=" row-sm ">
-                <Col lg={12} md={12}>
-                  <div className="custom-card main-content-body-profile">
-                    <Tab.Content>
-                      <Tab.Pane eventKey="About">
-                        <Col lg={12} className="w-full">
-                          <Card className="custom-card">
-                            <Card.Body>
-                              {isLoadingSolution ? (
-                                <div className="text-center">
-                                  <Spinner
-                                    animation="border"
-                                    variant="primary"
-                                  />
-                                </div>
-                              ) : (
-                                <div className="table-responsive ">
-                                  <Row>
-                                    <Col xs={12} md={12} lg={4} xl={4}>
-                                      <Form>
-                                        <FormGroup className="form-group">
-                                          <Form.Control
-                                            type="text"
-                                            className="form-control"
-                                            placeholder="Recherche par titre de la solution, par le nom ou l'email de l'innovateur"
-                                            value={filters.searchText}
-                                            onChange={(e) =>
-                                              setFilters({
-                                                ...filters,
-                                                searchText: e.target.value,
-                                              })
-                                            }
-                                          />
-                                        </FormGroup>
-                                      </Form>
-                                    </Col>
-
-                                    <Col xs={12} md={12} lg={4} xl={4}>
-                                      <div className=" SlectBox">
-                                        <Select
-                                          classNamePrefix="selectform"
-                                          onChange={handleSelectChangeStatus}
-                                          options={optionsStatus}
-                                          placeholder="Filtre par Status"
+                      <Col lg={12} className="w-full">
+                        <Card className="custom-card">
+                          <Card.Body>
+                            {isLoadingSolution ? (
+                              <div className="text-center">
+                                <Spinner animation="border" variant="primary" />
+                              </div>
+                            ) : (
+                              <div className="table-responsive ">
+                                <Row>
+                                  <Col xs={12} md={12} lg={4} xl={4}>
+                                    <Form>
+                                      <FormGroup className="form-group">
+                                        <Form.Control
+                                          type="text"
+                                          className="form-control"
+                                          placeholder="Recherche par titre de la solution, par le nom ou l'email de l'innovateur"
+                                          value={filters.searchText}
+                                          onChange={(e) =>
+                                            setFilters({
+                                              ...filters,
+                                              searchText: e.target.value,
+                                            })
+                                          }
                                         />
-                                      </div>
-                                    </Col>
+                                      </FormGroup>
+                                    </Form>
+                                  </Col>
 
-                                    <Col xs={12} md={12} lg={4} xl={4}>
-                                      <div className=" SlectBox">
-                                        <Select
-                                          classNamePrefix="selectform"
-                                          onChange={handleSelectChangeThematic}
-                                          options={optionsThematique}
-                                          placeholder="Filtre par Thématique"
-                                        />
-                                      </div>
-                                    </Col>
-                                  </Row>
-                                  <span className="datatable">
-                                    <span className="uselistdata">
-                                      <DataTable
-                                        columns={columns}
-                                        data={filteredSolutions}
-                                        actions={actionsMemo}
-                                        contextActions={contextActions}
-                                        onSelectedRowsChange={handleRowSelected}
-                                        clearSelectedRows={toggleCleared}
-                                        defaultSortField="id"
-                                        defaultSortAsc={false}
-                                        selectableRows
-                                        pagination
+                                  <Col xs={12} md={12} lg={4} xl={4}>
+                                    <div className=" SlectBox">
+                                      <Select
+                                        classNamePrefix="selectform"
+                                        onChange={handleSelectChangeStatus}
+                                        options={optionsStatus}
+                                        placeholder="Filtre par Status"
                                       />
-                                    </span>
-                                  </span>
-                                </div>
-                              )}
-                            </Card.Body>
-                          </Card>
-                        </Col>
-                      </Tab.Pane>
-                      <Tab.Pane eventKey="EditProfile">
-                        <Col lg={12} className="w-full">
-                          <Card className="custom-card">
-                            <Card.Body>
-                              {isLoadingSolution ? (
-                                <div className="text-center">
-                                  <Spinner
-                                    animation="border"
-                                    variant="primary"
-                                  />
-                                </div>
-                              ) : (
-                                <div className="table-responsive ">
-                                  <Row>
-                                    <Col xs={12} md={12} lg={4} xl={4}>
-                                      <Form>
-                                        <FormGroup className="form-group">
-                                          <Form.Control
-                                            type="text"
-                                            className="form-control"
-                                            placeholder="Recherche par titre de la solution, par le nom ou l'email de l'innovateur"
-                                            value={filters.searchText}
-                                            onChange={(e) =>
-                                              setFilters({
-                                                ...filters,
-                                                searchText: e.target.value,
-                                              })
-                                            }
-                                          />
-                                        </FormGroup>
-                                      </Form>
-                                    </Col>
+                                    </div>
+                                  </Col>
 
-                                    <Col xs={12} md={12} lg={4} xl={4}>
-                                      <div className=" SlectBox">
-                                        <Select
-                                          classNamePrefix="selectform"
-                                          onChange={handleSelectChangeStatus}
-                                          options={optionsStatus}
-                                          placeholder="Filtre par Status"
-                                        />
-                                      </div>
-                                    </Col>
-
-                                    <Col xs={12} md={12} lg={4} xl={4}>
-                                      <div className=" SlectBox">
-                                        <Select
-                                          classNamePrefix="selectform"
-                                          onChange={handleSelectChangeThematic}
-                                          options={optionsThematique}
-                                          placeholder="Filtre par Thématique"
-                                        />
-                                      </div>
-                                    </Col>
-                                  </Row>
-                                  <span className="datatable">
-                                    <span className="uselistdata">
-                                      <DataTable
-                                        columns={columns}
-                                        data={filteredConformedSolutions}
-                                        actions={actionsMemo}
-                                        contextActions={contextActions}
-                                        onSelectedRowsChange={handleRowSelected}
-                                        clearSelectedRows={toggleCleared}
-                                        defaultSortField="id"
-                                        defaultSortAsc={false}
-                                        selectableRows
-                                        pagination
+                                  <Col xs={12} md={12} lg={4} xl={4}>
+                                    <div className=" SlectBox">
+                                      <Select
+                                        classNamePrefix="selectform"
+                                        onChange={handleSelectChangeThematic}
+                                        options={optionsThematique}
+                                        placeholder="Filtre par Thématique"
                                       />
-                                    </span>
+                                    </div>
+                                  </Col>
+                                </Row>
+                                <span className="datatable">
+                                  <span className="uselistdata">
+                                    <DataTable
+                                      columns={columns}
+                                      data={filteredSolutions}
+                                      actions={actionsMemo}
+                                      contextActions={contextActions}
+                                      onSelectedRowsChange={handleRowSelected}
+                                      clearSelectedRows={toggleCleared}
+                                      defaultSortField="id"
+                                      defaultSortAsc={false}
+                                      selectableRows
+                                      pagination
+                                    />
                                   </span>
-                                </div>
-                              )}
-                            </Card.Body>
-                          </Card>
-                        </Col>
-                      </Tab.Pane>
-                      <Tab.Pane eventKey="Timeline">
-                        <Col lg={12} className="w-full">
-                          <Card className="custom-card">
-                            <Card.Body>
-                              {isLoadingSolution ? (
-                                <div className="text-center">
-                                  <Spinner
-                                    animation="border"
-                                    variant="primary"
-                                  />
-                                </div>
-                              ) : (
-                                <div className="table-responsive ">
-                                  <Row>
-                                    <Col xs={12} md={12} lg={4} xl={4}>
-                                      <Form>
-                                        <FormGroup className="form-group">
-                                          <Form.Control
-                                            type="text"
-                                            className="form-control"
-                                            placeholder="Recherche par titre de la solution, par le nom ou l'email de l'innovateur"
-                                            value={filters.searchText}
-                                            onChange={(e) =>
-                                              setFilters({
-                                                ...filters,
-                                                searchText: e.target.value,
-                                              })
-                                            }
-                                          />
-                                        </FormGroup>
-                                      </Form>
-                                    </Col>
-
-                                    <Col xs={12} md={12} lg={4} xl={4}>
-                                      <div className=" SlectBox">
-                                        <Select
-                                          classNamePrefix="selectform"
-                                          onChange={handleSelectChangeStatus}
-                                          options={optionsStatus}
-                                          placeholder="Filtre par Status"
-                                        />
-                                      </div>
-                                    </Col>
-
-                                    <Col xs={12} md={12} lg={4} xl={4}>
-                                      <div className=" SlectBox">
-                                        <Select
-                                          classNamePrefix="selectform"
-                                          onChange={handleSelectChangeThematic}
-                                          options={optionsThematique}
-                                          placeholder="Filtre par Thématique"
-                                        />
-                                      </div>
-                                    </Col>
-                                  </Row>
-                                  <span className="datatable">
-                                    <span className="uselistdata">
-                                      <DataTable
-                                        columns={columns}
-                                        data={filteredCurratedSolutions}
-                                        actions={actionsMemo}
-                                        contextActions={contextActions}
-                                        onSelectedRowsChange={handleRowSelected}
-                                        clearSelectedRows={toggleCleared}
-                                        defaultSortField="id"
-                                        defaultSortAsc={false}
-                                        selectableRows
-                                        pagination
-                                      />
-                                    </span>
-                                  </span>
-                                </div>
-                              )}
-                            </Card.Body>
-                          </Card>
-                        </Col>
-                      </Tab.Pane>
-                    </Tab.Content>
-                  </div>
-                </Col>
-              </Row>
-            </Tab.Container>
+                                </span>
+                              </div>
+                            )}
+                          </Card.Body>
+                        </Card>
+                      </Col>
+                    </div>
+                  </Tab>
+                </Tabs>
+              </div>
+            </div>
           </div>
         ) : (
           <Col lg={12} className="w-full">

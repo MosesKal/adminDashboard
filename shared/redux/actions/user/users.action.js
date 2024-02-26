@@ -15,27 +15,3 @@ export const getUsers = () => async (dispatch) => {
     console.log(error);
   }
 }
-
-export const addUser = (user) => async (dispatch) => {
-  try {
-    const res = await axios.post("/users", user);
-    dispatch({
-      type: ADD_USER,
-      payload: res.data,
-    });
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-export const updateUser = (user) => async (dispatch) => {
-  try {
-    const res = await axios.put(`/users/${user.id}`, user);
-    dispatch({
-      type: UPDATE_USER,
-      payload: res.data,
-    });
-  } catch (error) {
-    console.log(error);
-  }
-}

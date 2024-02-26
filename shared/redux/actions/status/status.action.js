@@ -15,27 +15,3 @@ export const getStatus = () => async (dispatch) => {
     console.log(error);
   }
 };
-
-export const addStatus = (status) => async (dispatch) => {
-  try {
-    const res = await axios.post("/status", status);
-    dispatch({
-      type: ADD_STATUS,
-      payload: res.data,
-    });
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-export const updateStatus = (status) => async (dispatch) => {
-  try {
-    const res = await axios.put(`/status/${status.id}`, status);
-    dispatch({
-      type: UPDATE_STATUS,
-      payload: res.data,
-    });
-  } catch (error) {
-    console.log(error);
-  }
-};

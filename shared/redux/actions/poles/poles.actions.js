@@ -13,20 +13,3 @@ export const getPoles = () => async (dispatch) => {
   }
 };
 
-export const addPole = (pole) => async (dispatch) => {
-  try {
-    const response = await axios.post("/poles", pole);
-    dispatch({ type: ADD_POLE, payload: response.data });
-  } catch (error) {
-    console.error(error);
-  }
-};
-
-export const updatePole = (pole) => async (dispatch) => {
-  try {
-    const response = await axios.put(`/poles/${pole.id}`, pole);
-    dispatch({ type: UPDATE_POLE, payload: response.data });
-  } catch (error) {
-    console.error(error);
-  }
-};

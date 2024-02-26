@@ -5,6 +5,7 @@ import thematicsReducer from "./thematics/thematics.reducer";
 import statusReducer from "./status/status.reducer";
 import usersReducer from "./user/users.reducer";
 import polesReducer from "./poles/poles.reducer";
+import rolesReducer from "./roles/roles.reducer";
 
 const rootred = combineReducers({
   cartreducer,
@@ -13,6 +14,7 @@ const rootred = combineReducers({
   statusReducer,
   usersReducer,
   polesReducer,
+  rolesReducer,
 });
 
 export default rootred;
