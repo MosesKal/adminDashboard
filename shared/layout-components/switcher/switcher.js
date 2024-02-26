@@ -477,7 +477,7 @@ export default function Switcher() {
                   </div>
 
                   <div className="swichermainleft header-styles">
-                    <h4>Styles d'en-tête</h4>
+                    <h4>{"Styles d'en-tête"}</h4>
                     <div className="skin-body">
                       <div className="switch_section">
                         <div className="switch-toggle d-flex">

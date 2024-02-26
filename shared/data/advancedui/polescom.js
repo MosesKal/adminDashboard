@@ -13,11 +13,8 @@ import {
 } from "react-bootstrap";
 import DataTable from "react-data-table-component";
 import { toast, ToastContainer } from "react-toastify";
-import { useSelector } from "react-redux";
-import { set } from "immutable";
 
 const Polescom = ({ updateRoles }) => {
-  const poleState = useSelector((state) => state.polesReducer.poles);
   const [roles, setRoles] = useState([]);
   const [isLoadingRoles, setIsLoadingRoles] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -34,13 +31,19 @@ const Polescom = ({ updateRoles }) => {
   const [editedRoleName, setEditedRoleName] = useState("");
 
   useEffect(() => {
-    const fetchPoles = async () => {
-      setIsLoadingRoles(true);
-      setRoles(poleState);
-      setIsLoadingRoles(false);
+    const fetchRoles = async () => {
+      try {
+        setIsLoadingRoles(true);
+        const response = await axios.get("/poles");
+        setRoles(response.data.data);
+        setIsLoadingRoles(false);
+      } catch (error) {
+        setIsLoadingRoles(false);
+        console.error("Erreur lors de la récupération des données :", error);
+      }
     };
 
-    fetchPoles();
+    fetchRoles();
   }, []);
 
   useEffect(() => {
@@ -50,12 +53,14 @@ const Polescom = ({ updateRoles }) => {
         const response = await axios.get("/poles");
         setRoles(response.data.data);
         setIsLoadingRoles(false);
+        // Calling updateRoles with the correct function to update the parent state
         updateRoles((prevRoles) => [...response.data.data]);
       } catch (error) {
         setIsLoadingRoles(false);
         console.error("Erreur lors de la récupération des données :", error);
       }
     };
+
     fetchRole();
   }, [updateRoles]);
 
@@ -93,6 +98,7 @@ const Polescom = ({ updateRoles }) => {
         await axios.patch(`/poles/${selectedRoleForEdit.id}`, updatedData);
         toast.success("Rôle modifié avec succès !");
 
+        // Mettez à jour l'état local des rôles dans le composant parent
         updateRoles((prevRoles) => {
           const updatedRoles = prevRoles.map((role) =>
             role.id === selectedRoleForEdit.id
@@ -102,6 +108,7 @@ const Polescom = ({ updateRoles }) => {
           return updatedRoles;
         });
       } else {
+        // Le nom du rôle n'a pas été modifié
       }
     } catch (error) {
       toast.error(error.response.data.message);

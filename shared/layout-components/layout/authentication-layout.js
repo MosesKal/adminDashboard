@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-import dynamic from "next/dynamic";
 import Head from "next/head";
 import favicon from "../../../public/assets/img/brand/favicon.png";
 

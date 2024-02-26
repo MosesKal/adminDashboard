@@ -3,11 +3,11 @@ import Footer from "../footer/footer";
 import { Provider } from "react-redux";
 import store from "../../redux/store/store";
 import dynamic from "next/dynamic";
-import Rightside from "../right-sidebar/right-sidebar";
-import TabToTop from "../tab-to-top/tab-to-top";
+// import Rightside from "../right-sidebar/right-sidebar";
+// import TabToTop from "../tab-to-top/tab-to-top";
 import { useRouter } from "next/router";
-import Header from "../header/header2";
-const Switcher = dynamic(() => import("../switcher/switcher"), { ssr: false });
+// import Header from "../header/header2";
+// const Switcher = dynamic(() => import("../switcher/switcher"), { ssr: false });
 const Sidebar = dynamic(() => import("../sidebar/sidebar"), { ssr: false });
 
 const SwitcherLayout = ({ children }) => {
@@ -48,10 +48,10 @@ const SwitcherLayout = ({ children }) => {
     <>
       <Provider store={store}>
         <div className="horizontalMenucontainer">
-          <TabToTop />
+          {/* <TabToTop /> */}
           <div className="page">
             <div className="open">
-              <Header />
+              {/* <Header /> */}
               <Sidebar />
             </div>
             <div className="main-content app-content" onClick={() => {
@@ -63,8 +63,8 @@ const SwitcherLayout = ({ children }) => {
                 </div>
               </div>
             </div>
-            <Rightside />
-            <Switcher />
+            {/* <Rightside /> */}
+            {/* <Switcher /> */}
             <Footer />
           </div>
         </div>

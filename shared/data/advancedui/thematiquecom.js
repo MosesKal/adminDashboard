@@ -2,18 +2,13 @@ import React, { useState, useEffect } from "react";
 import { Button, Row, Col, Card, Spinner, Modal } from "react-bootstrap";
 import DataTable from "react-data-table-component";
 import { columns as configureColumns } from "./thematiquelist ";
-import { useSelector } from "react-redux";
 
 import axios from "@/pages/api/axios";
 import { truncateText } from "@/shared/data/advancedui/solutionslist";
 import { ToastContainer } from "react-toastify";
 
 const Thematiquecom = () => {
-  const thematicState = useSelector(
-    (state) => state.thematicsReducer.thematics
-  );
-
-  const [thematiques, setThematiques] = useState(thematicState);
+  const [thematiques, setThematiques] = useState();
   const [isLoadingThematique, setIsLoadingThematique] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [selectedThematique, setSelectedThematique] = useState(null);
@@ -30,8 +25,31 @@ const Thematiquecom = () => {
     ) {
       setIsAdmin(true);
     }
-  }, []);
+    const fetchData = async () => {
+      try {
+        setIsLoadingThematique(true);
+        const response = await axios.get("/thematics");
+        const thematiqueWithImages = response.data.data.map((thematique) => ({
+          ...thematique,
+          img: (
+            <img
+              src={"../../../assets/img/faces/4.jpg"}
+              className="rounded-circle"
+              alt=""
+            />
+          ),
+          class: "avatar-md rounded-circle",
+        }));
+        setThematiques(thematiqueWithImages);
+        setIsLoadingThematique(false);
+      } catch (error) {
+        setIsLoadingThematique(false);
+        console.error("Erreur lors de la récupération des données :", error);
+      }
+    };
 
+    fetchData();
+  }, []);
   const handleShowModal = (thematique) => {
     setSelectedThematique(thematique);
     setShowModal(true);

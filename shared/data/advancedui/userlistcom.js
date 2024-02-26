@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Button,
   Row,
@@ -12,13 +12,13 @@ import {
 import DataTable from "react-data-table-component";
 import { columns as configureColumns } from "./userlist";
 import axios from "@/pages/api/axios";
-import { imageBaseUrl } from "@/pages/api/axios";
+import { apiBaseUrl, imageBaseUrl } from "@/pages/api/axios";
+
 import moment from "moment";
+
 import { ToastContainer } from "react-toastify";
-import { useSelector } from "react-redux";
 
 const Userlistcom = () => {
-  const usersState = useSelector((state) => state.usersReducer.users);
   const [users, setUsers] = useState([]);
   const [isLoadingUsers, setIsLoadingUsers] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -32,7 +32,6 @@ const Userlistcom = () => {
   const [filters, setFilters] = useState({
     searchText: "",
   });
-
   const [filteredUsers, setFilteredUsers] = useState([]);
 
   useEffect(() => {
@@ -40,32 +39,38 @@ const Userlistcom = () => {
     setIsAdmin(userRoles.some((role) => role.name === "ADMIN"));
 
     const fetchUser = async () => {
-      setIsLoadingUsers(true);
-      const usersWithImages = usersState.map((user) => {
-        const profileImage = user.profile
-          ? `${imageBaseUrl}/${user?.profile}`
-          : "../../../assets/img/faces/4.jpg";
-        return {
-          ...user,
-          img: (
-            <img
-              src={profileImage}
-              className="rounded-circle w-100 h-100"
-              alt=""
-            />
-          ),
-          class: "avatar-md rounded-circle",
-        };
-      });
+      try {
+        setIsLoadingUsers(true);
+        const responseUser = await axios.get("/users");
 
-      setUsers(
-        usersWithImages.filter((user) =>
-          user.roles.some((role) => role.name === "USER")
-        )
-      );
-      setIsLoadingUsers(false);
+        const usersWithImages = responseUser.data.data.map((user) => {
+          const profileImage = user.profile
+            ? `${imageBaseUrl}/${user?.profile}`
+            : "../../../assets/img/faces/4.jpg";
+          return {
+            ...user,
+            img: (
+              <img
+                src={profileImage}
+                className="rounded-circle w-100 h-100"
+                alt=""
+              />
+            ),
+            class: "avatar-md rounded-circle",
+          };
+        });
+
+        setUsers(
+          usersWithImages.filter((user) =>
+            user.roles.some((role) => role.name === "USER")
+          )
+        );
+        setIsLoadingUsers(false);
+      } catch (error) {
+        setIsLoadingUsers(false);
+        console.error("Erreur lors de la récupération des données :", error);
+      }
     };
-
     fetchUser();
   }, []);
 
@@ -88,7 +93,6 @@ const Userlistcom = () => {
     setSelectedUser(user);
     setShowModal(true);
   };
-
   const handleCloseModal = () => {
     setShowModal(false);
     setSelectedUser(null);
@@ -108,6 +112,11 @@ const Userlistcom = () => {
   };
 
   const columns = configureColumns(handleShowModal, handleDelete);
+
+  const tableDatas = {
+    columns,
+    users,
+  };
 
   function convertArrayOfObjectsToCSV(array) {
     if (!array || array.length === 0) {

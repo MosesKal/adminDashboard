@@ -3,24 +3,11 @@ import Footer from "../footer/footer";
 import { Provider } from "react-redux";
 import store from "../../redux/store/store";
 import dynamic from "next/dynamic";
-import Rightside from "../right-sidebar/right-sidebar";
-import TabToTop from "../tab-to-top/tab-to-top";
 import Head from "next/head";
 import favicon from "../../../public/assets/img/brand/favicon.png";
 
-import {
-  getSolutions,
-  getSolutionsCurated,
-  getSolutionsConforms,
-} from "@/shared/redux/actions/solution/solution.action";
-import { getThematics } from "@/shared/redux/actions/thematics/thematics.action";
-import { getStatus } from "@/shared/redux/actions/status/status.action";
-import { getUsers } from "@/shared/redux/actions/user/users.action";
-import { getPoles } from "@/shared/redux/actions/poles/poles.actions";
-import { getRoles } from "@/shared/redux/actions/roles/roles.actions";
-
 const Header = dynamic(() => import("../header/header"), { ssr: false });
-const Switcher = dynamic(() => import("../switcher/switcher"), { ssr: false });
+// const Switcher = dynamic(() => import("../switcher/switcher"), { ssr: false });
 const Sidebar = dynamic(() => import("../sidebar/sidebar"), { ssr: false });
 
 const Contentlayout = ({ children }) => {
@@ -40,10 +27,10 @@ const Contentlayout = ({ children }) => {
       document.querySelector(".app").classList.remove("sidenav-toggled");
     }
 
-    document.querySelector(".sidebar-right").classList.remove("sidebar-open");
+    // document.querySelector(".sidebar-right").classList.remove("sidebar-open");
 
-    document.querySelector(".demo_changer").classList.remove("active");
-    document.querySelector(".demo_changer").style.right = "-270px";
+    //document.querySelector(".demo_changer").classList.remove("active");
+    // document.querySelector(".demo_changer").style.right = "-270px";
   };
 
   function Sidebargone(gone) {
@@ -59,15 +46,6 @@ const Contentlayout = ({ children }) => {
     firstAdd();
   }, []);
 
-  store.dispatch(getSolutions());
-  store.dispatch(getSolutionsCurated());
-  store.dispatch(getSolutionsConforms());
-  store.dispatch(getThematics());
-  store.dispatch(getStatus());
-  store.dispatch(getUsers());
-  store.dispatch(getPoles());
-  store.dispatch(getRoles());
-
   return (
     <>
       <Head>
@@ -78,7 +56,6 @@ const Contentlayout = ({ children }) => {
 
       <Provider store={store}>
         <div className="horizontalMenucontainer">
-          <TabToTop />
           <div className="page">
             <div className="open">
               <Header />
@@ -94,8 +71,7 @@ const Contentlayout = ({ children }) => {
                 <div className="main-container container-fluid">{children}</div>
               </div>
             </div>
-            <Rightside />
-            <Switcher />
+            {/* <Switcher /> */}
             <Footer />
           </div>
         </div>

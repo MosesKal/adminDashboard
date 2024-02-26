@@ -9,7 +9,6 @@ import {
   Row,
   Tab,
   Badge,
-  Tabs,
 } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
@@ -221,6 +220,8 @@ const SolutionTab = ({
       );
     }
   }, [isExistCommentaire, isCommentedByAnother, solution]);
+
+  console.log(solution);
 
   return (
     <>
@@ -544,16 +545,13 @@ const SolutionTab = ({
                                                           <div className="d-sm-flex p-3 sub-review-section border subsection-color br-tl-0 br-tr-0">
                                                             <div className="d-flex me-3">
                                                               {solution
-                                                                .feedbacks
-                                                                .lenght > 0 &&
-                                                              solution
                                                                 .feedbacks[0]
                                                                 .user
                                                                 .profile ? (
                                                                 <img
                                                                   className="media-object brround avatar-md"
                                                                   alt="64x64"
-                                                                  src={`${imageBaseUrl}/${solution?.feedbacks[0]?.user?.profile}`}
+                                                                  src={`${imageBaseUrl}/${solution.feedbacks[0].user.profile}`}
                                                                 />
                                                               ) : (
                                                                 <img
@@ -773,14 +771,6 @@ const SolutionTab = ({
                               <Col md={6}>
                                 <Select
                                   options={optionsPole}
-                                  // value={
-                                  //     solution && solution.status
-                                  //         ? {
-                                  //             value: solution.status.id,
-                                  //             label: solution.status.name,
-                                  //         }
-                                  //         : null
-                                  // }
                                   isDisabled={true}
                                 />
                               </Col>

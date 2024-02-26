@@ -15,13 +15,8 @@ import axios, { apiBaseUrl, imageBaseUrl } from "@/pages/api/axios";
 import moment from "moment";
 import { toast, ToastContainer } from "react-toastify";
 import Select from "react-select";
-import { useSelector } from "react-redux";
 
 const CurratorList = ({ updateUsers }) => {
-  const usersState = useSelector((state) => state.usersReducer.users);
-  const rolesState = useSelector((state) => state.rolesReducer.roles);
-  const polesState = useSelector((state) => state.polesReducer.poles);
-
   const [users, setUsers] = useState([]);
   const [isLoadingUsers, setIsLoadingUsers] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -80,48 +75,69 @@ const CurratorList = ({ updateUsers }) => {
 
   useEffect(() => {
     const fetchUser = async () => {
-      setIsLoadingUsers(true);
-      const usersWithImages = usersState.map((user) => {
-        const profileImage = user.profile
-          ? `${apiBaseUrl}/uploads/${user?.profile}`
-          : "../../../assets/img/faces/4.jpg";
-        return {
-          ...user,
-          img: (
-            <img
-              src={profileImage}
-              className="rounded-circle w-100 h-100"
-              alt=""
-            />
-          ),
-          class: "avatar-md rounded-circle",
-        };
-      });
-      const allowedRoles = ["CURATOR", "ADMIN", "EXPLORATOR"];
-      setUsers(
-        usersWithImages.filter((user) =>
-          user.roles.some((role) => allowedRoles.includes(role.name))
-        )
-      );
-      setIsLoadingUsers(false);
+      try {
+        setIsLoadingUsers(true);
+        const responseUser = await axios.get("/users");
+        const usersWithImages = responseUser.data.data.map((user) => {
+          const profileImage = user.profile
+            ? `${apiBaseUrl}/uploads/${user?.profile}`
+            : "../../../assets/img/faces/4.jpg";
+          return {
+            ...user,
+            img: (
+              <img
+                src={profileImage}
+                className="rounded-circle w-100 h-100"
+                alt=""
+              />
+            ),
+            class: "avatar-md rounded-circle",
+          };
+        });
+        const allowedRoles = ["CURATOR", "ADMIN", "EXPLORATOR"];
+        setUsers(
+          usersWithImages.filter((user) =>
+            user.roles.some((role) => allowedRoles.includes(role.name))
+          )
+        );
+        setIsLoadingUsers(false);
+      } catch (error) {
+        setIsLoadingUsers(false);
+        console.error("Erreur lors de la récupération des données :", error);
+      }
     };
-
     const fetchRole = async () => {
-      setOptionsRoles(
-        rolesState.map((option) => ({
-          value: option.id,
-          label: option.name,
-        }))
-      );
+      let data;
+      try {
+        const roleResponse = await axios.get("/roles");
+        data = roleResponse.data.data;
+        setOptionsRoles(
+          data.map((option) => ({
+            value: option.id,
+            label: option.name,
+          }))
+        );
+      } catch (e) {
+        console.log(e);
+      }
     };
     const fetchPole = async () => {
-      setOptionsPoles(
-        polesState.map((option) => ({
-          value: option.id,
-          label: option.name,
-        }))
-      );
-      setPoles(polesState);
+      let data;
+      try {
+        const poleResponse = await axios.get("/poles");
+        data = poleResponse.data.data;
+
+        setOptionsPoles(
+          data.map((option) => ({
+            value: option.id,
+            label: option.name,
+          }))
+        );
+
+        setPoles(data);
+      } catch (e) {
+        console.log(e);
+      }
     };
 
     const fetchOrganisations = async () => {
@@ -151,32 +167,38 @@ const CurratorList = ({ updateUsers }) => {
 
   useEffect(() => {
     const fetchUser = async () => {
-      setIsLoadingUsers(true);
+      try {
+        setIsLoadingUsers(true);
+        const responseUser = await axios.get("/users");
 
-      const usersWithImages = usersState.map((user) => {
-        const profileImage = user.profile
-          ? `${imageBaseUrl}/${user?.profile}`
-          : "../../../assets/img/faces/4.jpg";
-        return {
-          ...user,
-          img: (
-            <img
-              src={profileImage}
-              className="rounded-circle w-100 h-100"
-              alt=""
-            />
-          ),
-          class: "avatar-md rounded-circle",
-        };
-      });
+        const usersWithImages = responseUser?.data?.data.map((user) => {
+          const profileImage = user.profile
+            ? `${imageBaseUrl}/${user?.profile}`
+            : "../../../assets/img/faces/4.jpg";
+          return {
+            ...user,
+            img: (
+              <img
+                src={profileImage}
+                className="rounded-circle w-100 h-100"
+                alt=""
+              />
+            ),
+            class: "avatar-md rounded-circle",
+          };
+        });
 
-      const allowedRoles = ["CURATOR", "ADMIN", "EXPLORATOR"];
-      setUsers(
-        usersWithImages.filter((user) =>
-          user.roles.some((role) => allowedRoles.includes(role.name))
-        )
-      );
-      setIsLoadingUsers(false);
+        const allowedRoles = ["CURATOR", "ADMIN", "EXPLORATOR"];
+        setUsers(
+          usersWithImages.filter((user) =>
+            user.roles.some((role) => allowedRoles.includes(role.name))
+          )
+        );
+        setIsLoadingUsers(false);
+      } catch (error) {
+        setIsLoadingUsers(false);
+        console.error("Erreur lors de la récupération des données :", error);
+      }
     };
 
     fetchUser();
@@ -683,4 +705,5 @@ const CurratorList = ({ updateUsers }) => {
     </div>
   );
 };
+
 export default CurratorList;

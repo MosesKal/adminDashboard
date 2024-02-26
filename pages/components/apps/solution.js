@@ -7,27 +7,11 @@ import "react-toastify/dist/ReactToastify.css";
 import Seo from "@/shared/layout-components/seo/seo";
 import { useRouter } from "next/router";
 import axios from "@/pages/api/axios";
-import { useSelector } from "react-redux";
-import Title from "../components/Title";
+import moment from "moment";
 
 const Solution = () => {
-
+  const router = useRouter();
   const [profileInnovateur, setProfileInnovateur] = useState();
-
-  const solutionsState = useSelector(
-    (state) => state.solutionReducer.solutions
-  );
-
-  const statusState = useSelector((state) => state.statusReducer.status);
-
-  const thematicsState = useSelector(
-    (state) => state.thematicsReducer.thematics
-  );
-
-  const polesState = useSelector((state) => state.polesReducer.poles);
-
-  const userState = useSelector((state) => state.usersReducer.users);
-
   const [solution, setSolution] = useState();
   const [thematique, setThematique] = useState();
   const [domLoaded, setDomLoaded] = useState(false);
@@ -36,7 +20,6 @@ const Solution = () => {
   const [parametreThematiqueId, setParametreThematiqueId] = useState(null);
 
   const navigate = useRouter();
-
   const id = navigate?.query?.id;
   const innovateurId = navigate?.query?.innovateurId;
   const thematiqueId = navigate?.query?.thematiqueId;
@@ -63,8 +46,10 @@ const Solution = () => {
 
   const [isLoadingUpdateStatut, setIsLoadingUpdateStatut] = useState(false);
   const [isLoadingupdatePole, setIsLoadingUpdatePole] = useState(false);
+  const [showYoutubeModal, setShowYoutubeModal] = useState(false);
   const [showYoutubeThumbnail, setShowYoutubeThumbnail] = useState(true);
   const imageLinks = [];
+  const [isLoadingSendMail, setIsLoadingSendMail] = useState(false);
 
   const [isAdmin, setIsAdmin] = useState(false);
   const [isCommentedByAnother, setIsCommentedByAnother] = useState(false);
@@ -75,6 +60,7 @@ const Solution = () => {
 
   const [allSolutions, setAllSolution] = useState([]);
   const [profile, setProfile] = useState(null);
+  const [solutions, setSolutions] = useState([]);
   const [isLoadingSolution, setIsLoadingSolution] = useState(false);
 
   if (typeof window !== "undefined") {
@@ -96,24 +82,26 @@ const Solution = () => {
 
       const fetchInnovateur = async () => {
         if (navigate.query.innovateurId) {
-          const id = parseInt(navigate.query.innovateurId);
-          const profileInnovateur = userState.find(
-            (innovateur) => innovateur.id === id
-          );
-          if (profileInnovateur) {
-            setProfileInnovateur(profileInnovateur);
+          try {
+            const profileResponse = await axios.get(
+              `/users/${navigate?.query?.innovateurId}`
+            );
+            setProfileInnovateur(profileResponse?.data?.data);
+          } catch (error) {
+            console.log(error);
           }
         }
       };
 
       const fetchSolution = async () => {
         if (navigate.query.id) {
-          const id = parseInt(navigate.query.id);
-          const solution = solutionsState.find(
-            (solution) => solution.id === id
-          );
-          if (solution) {
-            setSolution(solution);
+          try {
+            const solutionResponse = await axios.get(
+              `/solutions/${navigate?.query?.id}`
+            );
+            setSolution(solutionResponse?.data?.data);
+          } catch (error) {
+            console.log(error);
           }
         }
       };
@@ -132,21 +120,37 @@ const Solution = () => {
       };
 
       const fetchStatus = async () => {
-        setOptions(
-          statusState.map((option) => ({
-            value: option.id,
-            label: option.name,
-          }))
-        );
-      };
+        let data;
+        try {
+          const statusResponse = await axios.get("/status");
+          data = statusResponse?.data?.data;
 
+          setOptions(
+            data.map((option) => ({
+              value: option.id,
+              label: option.name,
+            }))
+          );
+        } catch (error) {
+          console.log(error);
+        }
+      };
       const fetchPole = async () => {
-        setOptionsPole(
-          polesState.map((option) => ({
-            value: option.id,
-            label: option.name,
-          }))
-        );
+        let data;
+        try {
+          const poleResponse = await axios.get("/poles");
+
+          data = poleResponse?.data?.data;
+
+          setOptionsPole(
+            data.map((option) => ({
+              value: option.id,
+              label: option.name,
+            }))
+          );
+        } catch (e) {
+          console.log(e);
+        }
       };
 
       const fetchFeedBack = async () => {
@@ -184,6 +188,8 @@ const Solution = () => {
       fetchPole();
       fetchFeedBack();
       fetchProfile();
+    } else {
+      navigate.push("/");
     }
   }, [
     id,
@@ -191,11 +197,9 @@ const Solution = () => {
     navigate,
     isAdmin,
     thematiqueId,
-    statusState,
-    polesState,
-    thematicsState,
-    solutionsState,
-    userState,
+    // navigate.query.id,
+    // navigate.query.innovateurId,
+    // navigate.query.thematiqueId,
   ]);
 
   useEffect(() => {
@@ -230,14 +234,14 @@ const Solution = () => {
           setIsLoadingSolution(true);
           let responseSolution;
           if (isAdmin) {
-            setAllSolution(solutionsState);
+            responseSolution = await axios.get("/solutions");
           } else {
             responseSolution = await axios.get(
               `/solutions/pole/${profile?.poleId}`
             );
-            setAllSolution(responseSolution?.data?.data);
           }
 
+          setAllSolution(responseSolution?.data?.data);
           setIsLoadingSolution(false);
         } catch (error) {
           setIsLoadingSolution(false);
@@ -335,15 +339,15 @@ const Solution = () => {
   useEffect(() => {
     const fetchCurateur = async () => {
       if (idCurateur) {
-        let id = parseInt(idCurateur);
-        const profileCurateur = userState.find(
-          (profileCurateur) => profileCurateur.id === id
-        );
-        if (profileCurateur) {
-          setProfileCurateur(profileCurateur);
+        try {
+          const curateurResponse = await axios.get(`/users/${idCurateur}`);
+          setProfileCurateur(curateurResponse?.data?.data);
+        } catch (error) {
+          console.log(error);
         }
       }
     };
+
     fetchCurateur();
   }, [idCurateur]);
 
@@ -352,53 +356,55 @@ const Solution = () => {
   };
 
   const handlePreviousSolution = async () => {
-    const currentIndex = allSolutions?.findIndex(
+    const currentIndex = allSolutions.findIndex(
       (sol) => sol?.id === solution?.id
     );
     let previousSolution;
     if (currentIndex > 0) {
-      previousSolution = allSolutions[currentIndex - 1];
-
-      const id = parseInt(previousSolution.id);
-      const userId = parseInt(previousSolution?.userId);
-      const solution = solutionsState.find((solution) => solution.id === id);
-      if (solution) {
-        setSolution(solution);
+      try {
+        previousSolution = allSolutions[currentIndex - 1];
+        const response = await axios.get(`/solutions/${previousSolution?.id}`);
+        setSolution(response?.data?.data);
+      } catch (error) {
+        console.log(error);
       }
 
-      if (userId) {
-        const profileInnovateur = userState.find(
-          (innovateur) => innovateur.id === userId
-        );
-        if (profileInnovateur) {
-          setProfileInnovateur(profileInnovateur);
+      try {
+        if (previousSolution.userId) {
+          const profileResponse = await axios.get(
+            `/users/${previousSolution?.userId}`
+          );
+          setProfileInnovateur(profileResponse?.data?.data);
         }
+      } catch (error) {
+        console.log(error);
       }
     }
   };
 
   const handleNextSolution = async () => {
-    const currentIndex = allSolutions?.findIndex(
+    const currentIndex = allSolutions.findIndex(
       (sol) => sol.id === solution.id
     );
     let nextSolution;
     if (currentIndex < allSolutions?.length - 1) {
-      nextSolution = allSolutions[currentIndex + 1];
-      const id = parseInt(nextSolution.id);
-      const userId = parseInt(nextSolution?.userId);
-
-      const solution = solutionsState.find((solution) => solution.id === id);
-      if (solution) {
-        setSolution(solution);
+      try {
+        nextSolution = allSolutions[currentIndex + 1];
+        const response = await axios.get(`/solutions/${nextSolution?.id}`);
+        setSolution(response?.data?.data);
+      } catch (error) {
+        console.log(error);
       }
 
-      if (userId) {
-        const profileInnovateur = userState.find(
-          (innovateur) => innovateur.id === userId
-        );
-        if (profileInnovateur) {
-          setProfileInnovateur(profileInnovateur);
+      try {
+        if (nextSolution.userId) {
+          const profileResponse = await axios.get(
+            `/users/${nextSolution?.userId}`
+          );
+          setProfileInnovateur(profileResponse?.data?.data);
         }
+      } catch (error) {
+        console.log(error);
       }
     }
   };
@@ -406,7 +412,27 @@ const Solution = () => {
   return (
     <div>
       <Seo title={"Profile"} />
-      <Title title="DETAILS DE LA SOLUTION" />
+      <div className="breadcrumb-header justify-content-between">
+        <div className="left-content">
+          <span className="main-content-title mg-b-0 mg-b-lg-1">
+            DETAILS DE LA SOLUTION
+          </span>
+        </div>
+        <div className="justify-content-center mt-2">
+          <Breadcrumb className="breadcrumb">
+            <Button
+              variant=""
+              type="button"
+              className="btn button-icon btn-sm btn-outline-secondary me-1"
+              onClick={() => router.back()}
+            >
+              <i class="bi bi-arrow-left"></i>{" "}
+              <span className="ms-1">{"Retour"}</span>
+            </Button>
+          </Breadcrumb>
+        </div>
+      </div>
+
       <Row>
         <Col lg={12} md={12}>
           <CardInnovateur profileInnovateur={profileInnovateur} />

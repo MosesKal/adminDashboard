@@ -1,15 +1,12 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 
-import {
-  Navbar,
-  Dropdown,
-} from "react-bootstrap";
+import { Navbar, Dropdown } from "react-bootstrap";
 
 import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
 import { Delete } from "../../redux/actions/action";
 import { useRouter } from "next/router";
-import axios, {apiBaseUrl, imageBaseUrl} from "@/pages/api/axios";
+import axios, { imageBaseUrl } from "@/pages/api/axios";
 
 export default function Header() {
   let { basePath } = useRouter();
@@ -19,23 +16,18 @@ export default function Header() {
 
   const [profile, setProfile] = useState();
 
-
   useEffect(() => {
-      const fecthProfile = async () => {
-        try {
-          const profileResponse = await axios.get(
-              `/auth/profile/`
-          );
-          setProfile(profileResponse.data.data);
-        } catch (error) {
-          console.log(error);
-        }
+    const fecthProfile = async () => {
+      try {
+        const profileResponse = await axios.get(`/auth/profile/`);
+        setProfile(profileResponse.data.data);
+      } catch (error) {
+        console.log(error);
       }
+    };
 
-      fecthProfile();
-
+    fecthProfile();
   }, []);
-
 
   const openCloseSidebar = () => {
     document.querySelector("body").classList.toggle("sidenav-toggled");
@@ -48,8 +40,6 @@ export default function Header() {
 
   const [price, setPrice] = React.useState(0);
 
-
-
   let getdata = useSelector((state) => state.cartreducer.carts);
 
   const dispatch = useDispatch();
@@ -58,11 +48,9 @@ export default function Header() {
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
-
   };
 
   const [Data, setData] = React.useState([]);
-
 
   const { id } = "";
 
@@ -76,7 +64,6 @@ export default function Header() {
 
   React.useEffect(() => {
     compare();
-    // eslint-disable-next-line
   }, [id]);
   const ondelete = (id) => {
     dispatch(Delete(id));
@@ -96,20 +83,18 @@ export default function Header() {
   });
 
   React.useEffect(() => {
-    
     let navigate;
     const routeChange = () => {
       let path = `/`;
       navigate(path);
     };
     const status = JSON.parse(localStorage.getItem("STATUS_ACCOUNT"));
-    if(status.authenticate){
+    if (status.authenticate) {
       setAccount(JSON.parse(localStorage.getItem("ACCESS_ACCOUNT")));
-    }else{
-      routeChange()
+    } else {
+      routeChange();
     }
   }, []);
-
 
   return (
     <Navbar className="main-header side-header sticky nav nav-item">
@@ -166,8 +151,7 @@ export default function Header() {
               />
             </Link>
           </div>
-          <div className="main-header-center ms-4 d-sm-none d-md-none d-lg-block form-group">
-          </div>
+          <div className="main-header-center ms-4 d-sm-none d-md-none d-lg-block form-group"></div>
         </div>
         <div className="main-header-right">
           <Navbar.Toggle
@@ -215,47 +199,45 @@ export default function Header() {
                     className="new nav-link profile-user d-flex"
                     variant=""
                   >
-                    {
-                      profile && profile.profile ? (
-                          <img
-                              alt=""
-                              // src={`${apiBaseUrl}/uploads/${profile.profile}`}
-                              src={`${imageBaseUrl}/${profile.profile}`}
-                              className=""
-                          />
-                      ) : (
-                          <img
-                              alt=""
-                              src={`${
-                                  process.env.NODE_ENV === "production" ? basePath : ""
-                              }/assets/img/faces/2.png`}
-                              className=""
-                          />
-                      )
-                    }
+                    {profile && profile.profile ? (
+                      <img
+                        alt=""
+                        // src={`${apiBaseUrl}/uploads/${profile.profile}`}
+                        src={`${imageBaseUrl}/${profile.profile}`}
+                        className=""
+                      />
+                    ) : (
+                      <img
+                        alt=""
+                        src={`${
+                          process.env.NODE_ENV === "production" ? basePath : ""
+                        }/assets/img/faces/2.png`}
+                        className=""
+                      />
+                    )}
                   </Dropdown.Toggle>
                   <Dropdown.Menu>
                     <div className="menu-header-content p-3 border-bottom">
                       <div className="d-flex wd-100p">
                         <div className="main-img-user">
-                          {
-                            profile && profile?.profile ? (
-                                <img
-                                    alt=""
-                                    // src={`${apiBaseUrl}/uploads/${profile.profile}`}
-                                    src={`${imageBaseUrl}/${profile.profile}`}
-                                    className=""
-                                />
-                            ) : (
-                                <img
-                                    alt=""
-                                    src={`${
-                                        process.env.NODE_ENV === "production" ? basePath : ""
-                                    }/assets/img/faces/2.png`}
-                                    className=""
-                                />
-                            )
-                          }
+                          {profile && profile?.profile ? (
+                            <img
+                              alt=""
+                              // src={`${apiBaseUrl}/uploads/${profile.profile}`}
+                              src={`${imageBaseUrl}/${profile.profile}`}
+                              className=""
+                            />
+                          ) : (
+                            <img
+                              alt=""
+                              src={`${
+                                process.env.NODE_ENV === "production"
+                                  ? basePath
+                                  : ""
+                              }/assets/img/faces/2.png`}
+                              className=""
+                            />
+                          )}
                         </div>
                         <div className="ms-3 my-auto">
                           <h6 className="tx-15 font-weight-semibold mb-0">
