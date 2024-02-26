@@ -662,8 +662,6 @@ const SolutionTab = ({
                                           variant=""
                                           className="btn btn-primary"
                                           type="button"
-                                          // onClick={handleSendFeedBack}
-                                          // disabled
                                           commentaires
                                         >
                                           {"Envoyer le commentaire"}
