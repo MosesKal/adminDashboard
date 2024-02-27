@@ -1,12 +1,6 @@
 import React from "react";
-
-import {
-  Breadcrumb, Button
-} from "react-bootstrap";
-
 import dynamic from "next/dynamic";
 import Seo from "@/shared/layout-components/seo/seo";
-import {useRouter} from "next/router";
 import Title from "../components/Title";
 
 
@@ -17,7 +11,6 @@ const Solutionslistcom = dynamic(
 );
 
 const Solutionlist = () => {
-  const router = useRouter()
 
   return (
     <div>

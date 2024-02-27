@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import {
   Button,
@@ -33,8 +32,7 @@ const Solutionslistcom = () => {
   const [showAlertModal, setShowAlertModal] = useState(false);
   const [optionsThematique, setOptionsThematique] = useState([]);
 
-  const [selectedOptionsThematique, setSelectedOptionsThematique] =
-    useState(null);
+  const [selectedOptionsThematique, setSelectedOptionsThematique] = useState(null);
   const [optionIdThematique, setOptionIdThematique] = useState(null);
 
   const [optionsStatus, setOptionsStatus] = useState([]);
@@ -44,10 +42,9 @@ const Solutionslistcom = () => {
   const [isLoadingUsers, setIsLoadingUsers] = useState(false);
   const [profile, setProfile] = useState(null);
   const [dataMerged, setDataMerged] = useState([]);
-  const [dataConformedSolutionsMerged, setDataConformedSolutionsMerged] =
-    useState([]);
-  const [dataCurratedSolutionsMerged, setDataCurratedSolutionsMerged] =
-    useState([]);
+
+  const [dataConformedSolutionsMerged, setDataConformedSolutionsMerged] = useState([]);
+  const [dataCurratedSolutionsMerged, setDataCurratedSolutionsMerged] = useState([]);
 
   const [filters, setFilters] = useState({
     searchText: "",
@@ -56,12 +53,8 @@ const Solutionslistcom = () => {
   });
 
   const [filteredSolutions, setFilteredSolutions] = useState([]);
-  const [filteredCurratedSolutions, setFilteredCurratedSolutions] = useState(
-    []
-  );
-  const [filteredConformedSolutions, setFilteredConformedSolutions] = useState(
-    []
-  );
+  const [filteredCurratedSolutions, setFilteredCurratedSolutions] = useState([]);
+  const [filteredConformedSolutions, setFilteredConformedSolutions] = useState([]);
 
   const [optionPole, setOptionPole] = useState();
   const [selectedSolutions, setSelectedSolutions] = useState(null);
@@ -130,9 +123,7 @@ const Solutionslistcom = () => {
 
       try {
         const poleResponse = await axios.get("/poles");
-
         data = poleResponse?.data?.data;
-
         setOptionPole(
           data.map((option) => ({
             value: option.id,
@@ -190,7 +181,6 @@ const Solutionslistcom = () => {
         }
       }
     };
-
     fetchSolution();
   }, [profile]);
 
@@ -338,24 +328,26 @@ const Solutionslistcom = () => {
     dataCurratedSolutionsMerged,
   ]);
 
-  const handleDelete = (solution) => {
+  const handleDelete = async (s) => {
     if (isAdmin) {
-      setSolutionToDelete(solution);
+      setSolutionToDelete(s);
       setShowDeleteModal(true);
+
+      const id = parseInt(solutionToDelete?.id, 10);
+      try {
+        await axios.delete(`/solutions/${id}`);
+        setShowDeleteModal(false);
+
+        setSolutions((prevSolutions) =>
+          prevSolutions.filter((solutionToDelete) => solutionToDelete.id !== id)
+        );
+
+        setShowDeleteModal(false);
+      } catch (error) {
+        console.error("Erreur lors de la suppression de la solution :", error);
+      }
     } else {
       setShowAlertModal(true);
-    }
-  };
-
-  const handleDeleteSolution = async () => {
-    try {
-      await axios.delete(`/solutions/${solutionToDelete.id}`);
-      setShowDeleteModal(false);
-      setSolutions((prevSolutions) =>
-        prevSolutions.filter((solution) => solution.id !== solutionToDelete.id)
-      );
-    } catch (error) {
-      console.error("Erreur lors de la suppression de la solution :", error);
     }
   };
 
@@ -363,23 +355,17 @@ const Solutionslistcom = () => {
     setShowAlertModal(false);
   };
 
-  const handleShowModalEdit = (solution) => {
-    setSelectedSolutions(solution);
-    setShowEditModal(true);
-  };
-
   const handleCloseModalEdit = () => {
     setShowEditModal(false);
   };
 
-  const columns = configureColumns(handleDelete, handleShowModalEdit);
+  const columns = configureColumns(handleDelete);
 
   columns.forEach((column) => {
     if (column.name === "Actions") {
       column.width = "30%";
     }
   });
-
 
   const handleRowSelected = (state) => {
     setSelectedRows(state.selectedRows);
@@ -821,7 +807,7 @@ const Solutionslistcom = () => {
           >
             Annuler
           </Button>
-          <Button size={"sm"} variant="danger" onClick={handleDeleteSolution}>
+          <Button size={"sm"} variant="danger" onClick={handleDelete}>
             Supprimer
           </Button>
         </Modal.Footer>

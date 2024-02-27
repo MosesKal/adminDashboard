@@ -11,7 +11,7 @@ export const truncateText = (text, maxLength) => {
   return text;
 };
 
-export const columns = (handleDelete, handleShowEditModal) => [
+export const columns = (handleDelete) => [
   {
     name: "Etat",
     selector: (row) => [row.feedbacks],
@@ -73,15 +73,12 @@ export const columns = (handleDelete, handleShowEditModal) => [
       <div className="w-100">
         <Row className="justify-content-evenly">
           <Col xs={12} md={12} lg={12} xl={12} xxl={6}>
-
             <Link
               className="btn btn-primary btn-sm w-100 button-icon"
               href={`/components/apps/solution?id=${row?.id}&innovateurId=${row?.user?.id}&thematiqueId=${row?.thematic?.id}`}
               as="/components/apps/solution"
             >
-              {/* <i className="bi bi-card-list"></i> */}
               <span className="ps-1">Détails</span>
-
             </Link>
           </Col>
           <Col xs={12} md={12} lg={12} xl={12} xxl={6}>
@@ -91,7 +88,6 @@ export const columns = (handleDelete, handleShowEditModal) => [
               onClick={() => handleDelete(row)}
               className="btn w-100 button-icon btn-sm btn-secondary m-0"
             >
-              {/* <i class="bi bi-trash"></i> */}
               <span className="ps-1">Supprimer</span>
             </Button>
           </Col>

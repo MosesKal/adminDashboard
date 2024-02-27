@@ -32,9 +32,6 @@ const CurratorList = ({ updateUsers }) => {
   const [editedCuratorEmail, setEditedCuratorEmail] = useState("");
   const [editedCuratorAdress, setEditedCuratorAdress] = useState("");
 
-  const [editedCuratorPole, setEditedCuratorPole] = useState("");
-  const [editedCuratorRole, setEditedCuratorRole] = useState("");
-
   const [optionsRoles, setOptionsRoles] = useState();
   const [selectedOptionsRoles, setSelectedOptionsRoles] = useState([]);
   const [optionRoleId, setOptionRoleId] = useState();

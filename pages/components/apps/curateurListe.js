@@ -39,6 +39,7 @@ const CurrateurList = () => {
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
+
     const userRoles = JSON.parse(localStorage.getItem("ACCESS_ACCOUNT")).roles;
     setIsAdmin(userRoles.some((role) => role.name === "ADMIN"));
 
@@ -57,6 +58,7 @@ const CurrateurList = () => {
         console.log(e);
       }
     };
+
     const fetchPole = async () => {
       let data;
       try {
@@ -73,6 +75,7 @@ const CurrateurList = () => {
         console.log(e);
       }
     };
+    
     const fetchOrganisations = async () => {
       let data;
       try {
