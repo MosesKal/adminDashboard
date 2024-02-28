@@ -18,6 +18,7 @@ const Solution = () => {
   const [parametreId, setParametreId] = useState(null);
   const [parametreUserId, setParametreUserId] = useState(null);
   const [parametreThematiqueId, setParametreThematiqueId] = useState(null);
+  const [cotation, setCotation] = useState();
 
   const navigate = useRouter();
   const id = navigate?.query?.id;
@@ -227,28 +228,41 @@ const Solution = () => {
   ]);
 
   useEffect(() => {
-    if (solution) {
-      if (
-        solution.feedbacks &&
-        solution.feedbacks.length > 0 &&
-        solution.feedbacks[0].userId === userConnected.id
-      ) {
-        setIsExistCommentaire(true);
-        setCommentaires(solution.feedbacks);
-        setIdCurateur(solution?.feedbacks[0].userId);
-      } else if (
-        solution.feedbacks &&
-        solution.feedbacks.length > 0 &&
-        solution.feedbacks[0].userId !== userConnected.id
-      ) {
-        setIsCommentedByAnother(true);
-        setCommentaires(solution.feedbacks);
-        setIdCurateur(solution?.feedbacks[0].userId);
-      } else {
-        setIsExistCommentaire(false);
-        setIsCommentedByAnother(false);
+    const fetchFeedBack = async () => {
+      try {
+        const responseFeedbacks = await axios.get(
+          `solutions/feedbacks/quotations/${solution.id}`
+        );
+
+        setCotation(responseFeedbacks?.data?.data);
+
+        if (
+          solution.feedbacks &&
+          solution.feedbacks.length > 0 &&
+          solution.feedbacks[0].userId === userConnected.id
+        ) {
+          setIsExistCommentaire(true);
+          setCommentaires(solution.feedbacks);
+          setIdCurateur(solution?.feedbacks[0].userId);
+        } else if (
+          solution.feedbacks &&
+          solution.feedbacks.length > 0 &&
+          solution.feedbacks[0].userId !== userConnected.id
+        ) {
+          setIsCommentedByAnother(true);
+          setCommentaires(solution.feedbacks);
+          setIdCurateur(solution?.feedbacks[0].userId);
+        } else {
+          setIsExistCommentaire(false);
+          setIsCommentedByAnother(false);
+        }
+       
+      } catch (e) {
+        console.log(e);
       }
-    }
+    };
+
+    fetchFeedBack();
   }, [solution, userConnected, isAdmin]);
 
   useEffect(() => {
@@ -435,6 +449,8 @@ const Solution = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+
+
   return (
     <div>
       <Seo title={"Profile"} />
@@ -486,6 +502,7 @@ const Solution = () => {
             showYoutubeThumbnail={showYoutubeThumbnail}
             isCommentedByAnother={isCommentedByAnother}
             userConnected={userConnected}
+            cotations={cotation}
           />
           <Col lg={12} md={12} xl={12}>
             <Card>

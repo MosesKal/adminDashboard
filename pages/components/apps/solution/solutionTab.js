@@ -1,14 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Carousels from "./carroussel";
-import {
-  Image,
-  Card,
-  Col,
-  Button,
-  Nav,
-  Row,
-  Tab,
-} from "react-bootstrap";
+import { Image, Card, Col, Button, Nav, Row, Tab } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faPlay } from "@fortawesome/free-solid-svg-icons";
@@ -60,7 +52,6 @@ const SolutionTab = ({
   optionsPole,
   handleSelectChangePole,
   isExistCommentaire,
-  handleChangeCommentUser,
   handleSelectChange,
   handleChangeStatus,
   isLoadingUpdateStatut,
@@ -71,6 +62,7 @@ const SolutionTab = ({
   showYoutubeThumbnail,
   isCommentedByAnother,
   userConnected,
+  cotations,
 }) => {
   const [cotes, setCotes] = useState({});
   const [coteIds, setCoteIds] = useState([]);
@@ -80,6 +72,7 @@ const SolutionTab = ({
   const [commentaires, setCommentaires] = useState([]);
 
   const handleChangeCote = (selectedOption, fieldName) => {
+    
     const selectedCote = optionsFeedBack.find(
       (option) => option.value === selectedOption.value
     );
@@ -127,12 +120,7 @@ const SolutionTab = ({
   }, [cotes]);
 
   const renderSelect = (label, disabled, index) => {
-    const existingValues =
-      solution?.feedbacks &&
-      solution.feedbacks[0] &&
-      solution.feedbacks[0].quotations
-        ? solution.feedbacks[0].quotations
-        : [];
+    const existingValues = cotations && cotations[0] ? cotations[0] : [];
 
     const selectedValue = existingValues[index]?.average || null;
 
@@ -164,7 +152,6 @@ const SolutionTab = ({
           variant=""
           className="btn btn-primary"
           type="button"
-          // onClick={handleSendFeedBack}
           disabled={isCommentedByAnother}
         >
           {"Modifier la côte"}
@@ -220,15 +207,10 @@ const SolutionTab = ({
   useEffect(() => {
     if (isExistCommentaire || isCommentedByAnother) {
       setTotalCote(
-        solution?.feedbacks[0]?.quotations.reduce(
-          (acc, current) => acc + current.average,
-          0
-        )
+        cotations[0]?.reduce((acc, current) => acc + current.average, 0)
       );
     }
-  }, [isExistCommentaire, isCommentedByAnother, solution]);
-
-  console.log(solution)
+  }, [isExistCommentaire, isCommentedByAnother, solution, cotations]);
 
   return (
     <>
