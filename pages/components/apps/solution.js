@@ -68,6 +68,30 @@ const Solution = () => {
   }
 
   useEffect(() => {
+    const storedSolution = localStorage.getItem("solution");
+    const storedProfileInnovateur = localStorage.getItem("profileInnovateur");
+
+    if (storedSolution) {
+      setSolution(JSON.parse(storedSolution));
+    }
+    if (storedProfileInnovateur) {
+      setProfileInnovateur(JSON.parse(storedProfileInnovateur));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (solution) {
+      localStorage.setItem("solution", JSON.stringify(solution));
+    }
+    if (profileInnovateur) {
+      localStorage.setItem(
+        "profileInnovateur",
+        JSON.stringify(profileInnovateur)
+      );
+    }
+  }, [solution, profileInnovateur]);
+
+  useEffect(() => {
     const status = JSON.parse(localStorage?.getItem("STATUS_ACCOUNT"));
     const userRoles = JSON.parse(
       localStorage?.getItem("ACCESS_ACCOUNT")
@@ -380,6 +404,7 @@ const Solution = () => {
         console.log(error);
       }
     }
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleNextSolution = async () => {
@@ -407,6 +432,7 @@ const Solution = () => {
         console.log(error);
       }
     }
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (

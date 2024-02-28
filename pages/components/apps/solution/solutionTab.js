@@ -8,7 +8,6 @@ import {
   Nav,
   Row,
   Tab,
-  Badge,
 } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
@@ -16,11 +15,9 @@ import { faPlay } from "@fortawesome/free-solid-svg-icons";
 import Select from "react-select";
 import moment from "moment";
 import { imageBaseUrl } from "@/pages/api/axios";
-import Link from "next/link";
 import { ProgressBar } from "react-bootstrap";
 import axios from "@/pages/api/axios";
 import { toast } from "react-toastify";
-import { is } from "immutable";
 
 library.add(faPlay);
 
@@ -35,6 +32,7 @@ const getVideoIdFromUrl = (url) => {
 const ProgressIndicator = ({ currentCote, maxCote }) => {
   const progress = (currentCote / maxCote) * 100;
   let variant;
+
   if (progress >= 75) {
     variant = "success";
   } else if (progress >= 50) {
@@ -192,13 +190,22 @@ const SolutionTab = ({
       idsToSend.push(latestCoteValues[property]);
     }
 
-    try {
-      const payload = {
+    let payload;
+
+    if (commentaires.length > 0) {
+      payload = {
         quotations: idsToSend,
         user: userConnected?.email,
         adminComment: commentaires,
       };
+    } else {
+      payload = {
+        quotations: idsToSend,
+        user: userConnected?.email,
+      };
+    }
 
+    try {
       const response = await axios.post(
         `/solutions/feedback/${solution?.id}`,
         payload
@@ -221,7 +228,7 @@ const SolutionTab = ({
     }
   }, [isExistCommentaire, isCommentedByAnother, solution]);
 
-  console.log(solution);
+  console.log(solution)
 
   return (
     <>

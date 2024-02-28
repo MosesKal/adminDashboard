@@ -470,7 +470,6 @@ const CurratorList = ({ updateUsers }) => {
                           : "../../../assets/img/faces/profile.jpg"
                       }
                     />
-                    {/* <span className="bg-success text-white wd-1 ht-1 rounded-pill profile-online"></span> */}
                   </span>
                 </div>
                 <div className="my-md-auto mt-4 prof-details">
