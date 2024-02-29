@@ -15,8 +15,11 @@ import axios, { apiBaseUrl, imageBaseUrl } from "@/pages/api/axios";
 import moment from "moment";
 import { toast, ToastContainer } from "react-toastify";
 import Select from "react-select";
+import { useRouter } from "next/router";
 
-const CurratorList = ({ updateUsers }) => {
+const CurratorList = () => {
+  const router = useRouter();
+
   const [users, setUsers] = useState([]);
   const [isLoadingUsers, setIsLoadingUsers] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -24,7 +27,9 @@ const CurratorList = ({ updateUsers }) => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
+
   const [isAdmin, setIsAdmin] = useState(false);
+
   const [showAlertModal, setShowAlertModal] = useState(false);
   const [editedCuratorId, setEditedCuratorId] = useState("");
   const [editedCuratorName, setEditedCuratorName] = useState("");
@@ -103,6 +108,7 @@ const CurratorList = ({ updateUsers }) => {
         console.error("Erreur lors de la récupération des données :", error);
       }
     };
+
     const fetchRole = async () => {
       let data;
       try {
@@ -118,6 +124,7 @@ const CurratorList = ({ updateUsers }) => {
         console.log(e);
       }
     };
+
     const fetchPole = async () => {
       let data;
       try {
@@ -152,7 +159,7 @@ const CurratorList = ({ updateUsers }) => {
 
         setOrganisations(data);
       } catch (e) {
-        console.log;
+        console.log(e);
       }
     };
 
@@ -161,45 +168,6 @@ const CurratorList = ({ updateUsers }) => {
     fetchPole();
     fetchOrganisations();
   }, []);
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        setIsLoadingUsers(true);
-        const responseUser = await axios.get("/users");
-
-        const usersWithImages = responseUser?.data?.data.map((user) => {
-          const profileImage = user.profile
-            ? `${imageBaseUrl}/${user?.profile}`
-            : "../../../assets/img/faces/4.jpg";
-          return {
-            ...user,
-            img: (
-              <img
-                src={profileImage}
-                className="rounded-circle w-100 h-100"
-                alt=""
-              />
-            ),
-            class: "avatar-md rounded-circle",
-          };
-        });
-
-        const allowedRoles = ["CURATOR", "ADMIN", "EXPLORATOR"];
-        setUsers(
-          usersWithImages.filter((user) =>
-            user.roles.some((role) => allowedRoles.includes(role.name))
-          )
-        );
-        setIsLoadingUsers(false);
-      } catch (error) {
-        setIsLoadingUsers(false);
-        console.error("Erreur lors de la récupération des données :", error);
-      }
-    };
-
-    fetchUser();
-  }, [updateUsers]);
 
   useEffect(() => {
     mergeUserData();
@@ -302,7 +270,7 @@ const CurratorList = ({ updateUsers }) => {
 
       await axios.patch(`/users/${selectedUser.id}`, updatedData);
       toast.success("Curateur modifié avec succès !");
-      updateUsers();
+      router.reload();
     } catch (error) {
       console.error(error);
     } finally {
@@ -565,7 +533,7 @@ const CurratorList = ({ updateUsers }) => {
       <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
         <Modal.Body>
           <div className="tx-center">
-            <i className="icon icon ion-ios-close-circle-outline tx-100 tx-danger lh-1 mg-t-20 d-inline-block"></i>{" "}
+            <i className="icon icon ion-ios-close-circle-outline tx-100 tx-danger lh-1 mg-t-20 d-inline-block"></i>
             <h4 className="tx-danger mg-b-20">
               {"Êtes - vous sûr de vouloir supprimer"}{" "}
               <span className="badge bg-danger">{userToDelete?.name} ?</span>
@@ -672,7 +640,7 @@ const CurratorList = ({ updateUsers }) => {
                 <Select
                   options={optionsOrganisations}
                   onChange={handleSelectChangeOrganisation}
-                  value={setSelectedOrganisations}
+                  value={selectedOrganisations}
                   placeholder={"Selectionner l'organisation"}
                 />
               </FormGroup>

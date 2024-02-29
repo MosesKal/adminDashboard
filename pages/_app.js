@@ -12,6 +12,7 @@ const layouts = {
   Switcherlayout: Switcherlayout,
   Authenticationlayout: Authenticationlayout,
 };
+
 function MyApp({ Component, pageProps }) {
   const Layout =
     layouts[Component.layout] ||
@@ -24,4 +25,5 @@ function MyApp({ Component, pageProps }) {
     </Layout>
   );
 }
+
 export default MyApp;

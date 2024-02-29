@@ -1,12 +1,13 @@
-import React, { useState, useEffect, useRef, createRef } from "react";
-import { Breadcrumb, Button, Form, FormGroup, Modal } from "react-bootstrap";
+import React, { useState, useEffect, createRef } from "react";
+import { Button, Form, FormGroup, Modal } from "react-bootstrap";
 import dynamic from "next/dynamic";
 import Seo from "@/shared/layout-components/seo/seo";
-import { useRouter } from "next/router";
 import axios from "@/pages/api/axios";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Select from "react-select";
+import Title from "../components/Title";
+import { useRouter } from "next/router";
 
 const CurratorList = dynamic(
   () => import("@/shared/data/advancedui/curratorListCom"),
@@ -14,7 +15,6 @@ const CurratorList = dynamic(
 );
 
 const CurrateurList = () => {
-  
   const router = useRouter();
 
   const [show, setShow] = React.useState(false);
@@ -39,8 +39,8 @@ const CurrateurList = () => {
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-
     const userRoles = JSON.parse(localStorage.getItem("ACCESS_ACCOUNT")).roles;
+
     setIsAdmin(userRoles.some((role) => role.name === "ADMIN"));
 
     const fetchRole = async () => {
@@ -75,7 +75,7 @@ const CurrateurList = () => {
         console.log(e);
       }
     };
-    
+
     const fetchOrganisations = async () => {
       let data;
       try {
@@ -101,31 +101,6 @@ const CurrateurList = () => {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
-  const updateUsers = async () => {
-    try {
-      const responseUser = await axios.get("/users");
-      const usersWithImages = responseUser?.data?.data.map((user) => ({
-        ...user,
-        img: (
-          <img
-            src={"../../../assets/img/faces/4.jpg"}
-            className="rounded-circle"
-            alt=""
-          />
-        ),
-        class: "avatar-md rounded-circle",
-      }));
-      const allowedRoles = ["CURATOR", "ADMIN", "EXPLORATOR"];
-      setUsers(
-        usersWithImages.filter((user) =>
-          user.roles.some((role) => allowedRoles.includes(role.name))
-        )
-      );
-    } catch (error) {
-      console.error("Erreur lors de la mise à jour des données :", error);
-    }
-  };
-
   const hanleCreateCurrateur = async (e) => {
     e.preventDefault();
 
@@ -133,10 +108,10 @@ const CurrateurList = () => {
       setIsLoadingCreating(true);
 
       const payload = {
-        name: name.current.value,
-        email: email.current.value,
-        phoneNumber: phoneNumber.current.value,
-        address: address.current.value,
+        name: name?.current.value,
+        email: email?.current.value,
+        phoneNumber: phoneNumber?.current.value,
+        address: address?.current.value,
         roles: optionId,
         pole: optionPoleId,
         organisation: optionOrganisationId,
@@ -147,11 +122,9 @@ const CurrateurList = () => {
       toast.success("Curateur créé avec succès !");
       handleClose();
       setIsLoadingCreating(false);
-      updateUsers();
+      router.reload();
     } catch (e) {
       toast.error(e.response.data.message);
-      setIsLoadingCreating(false);
-    } finally {
       setIsLoadingCreating(false);
     }
   };
@@ -177,26 +150,9 @@ const CurrateurList = () => {
   return (
     <div>
       <Seo title={"Curator List"} />
-      <div className="breadcrumb-header justify-content-between">
-        <div className="left-content">
-          <span className="main-content-title mg-b-0 mg-b-lg-1">
-            LISTE DES CURATEURS
-          </span>
-        </div>
-        <div className="justify-content-center mt-2">
-          <Breadcrumb className="breadcrumb">
-            <Button
-              variant=""
-              type="button"
-              className="btn button-icon btn-sm btn-outline-secondary me-1"
-              onClick={() => router.back()}
-            >
-              <i class="bi bi-arrow-left"></i>{" "}
-              <span className="ms-1">{"Retour"}</span>
-            </Button>
-          </Breadcrumb>
-        </div>
-      </div>
+
+      <Title title={"LISTE DES CURATEURS"} />
+
       <div className="breadcrumb-header justify-content-between">
         {isAdmin ? (
           <div className="left-content mt-2">
@@ -208,6 +164,7 @@ const CurrateurList = () => {
               <i className="fe fe-plus me-2"></i>
               {"Nouveau Curateur"}
             </Button>
+
             <Modal show={show} onHide={handleClose}>
               <Modal.Header className="modal-header">
                 <h6 className="modal-title">{"Ajouter Curateur"}</h6>
@@ -266,6 +223,7 @@ const CurrateurList = () => {
                     <FormGroup className="form-group">
                       <Select
                         options={options}
+                        defaultValue={selectedOptions}
                         onChange={handleSelectChange}
                         placeholder={"Selectionner le rôle"}
                         isMulti
@@ -275,6 +233,7 @@ const CurrateurList = () => {
                     <FormGroup className="form-group">
                       <Select
                         options={optionsPoles}
+                        defaultValue={selectedOptionsPoles}
                         onChange={handleSelectChangePole}
                         placeholder={"Selectionner le pôle"}
                       />
@@ -283,22 +242,10 @@ const CurrateurList = () => {
                     <FormGroup className="form-group">
                       <Select
                         options={optionsOrganisations}
+                        defaultInputValue={selectedOrganisations}
                         onChange={handleSelectChangeOrganisation}
                         placeholder={"Selectionner l'organisation"}
                       />
-                    </FormGroup>
-
-                    <FormGroup className="form-group mb-0 justify-content-end">
-                      <div className="checkbox">
-                        <div className="custom-checkbox custom-control">
-                          <input
-                            type="checkbox"
-                            data-checkboxes="mygroup"
-                            className="custom-control-input"
-                            id="checkbox-2"
-                          />
-                        </div>
-                      </div>
                     </FormGroup>
                   </Form>
                 </div>
@@ -326,8 +273,7 @@ const CurrateurList = () => {
           ""
         )}
       </div>
-      <CurratorList updateUsers={updateUsers} />
-      <ToastContainer />
+      <CurratorList />
     </div>
   );
 };
