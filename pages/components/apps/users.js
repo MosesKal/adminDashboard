@@ -1,9 +1,4 @@
 import React from "react";
-import {
-  Button,
-  Breadcrumb,
-} from "react-bootstrap";
-import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
 import Seo from "@/shared/layout-components/seo/seo";
 import Title from "../components/Title";
@@ -15,7 +10,7 @@ const Userlistcom = dynamic(
 );
 
 const Userlist = () => {
-  const router = useRouter();
+
   return (
       <div>
         <Seo title={"Liste d'innovateurs"}/>

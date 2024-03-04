@@ -10,6 +10,7 @@ import { imageBaseUrl } from "@/pages/api/axios";
 import { ProgressBar } from "react-bootstrap";
 import axios from "@/pages/api/axios";
 import { toast } from "react-toastify";
+import Link from "next/link";
 
 library.add(faPlay);
 
@@ -72,7 +73,6 @@ const SolutionTab = ({
   const [commentaires, setCommentaires] = useState([]);
 
   const handleChangeCote = (selectedOption, fieldName) => {
-    
     const selectedCote = optionsFeedBack.find(
       (option) => option.value === selectedOption.value
     );
@@ -384,8 +384,8 @@ const SolutionTab = ({
                                       <p className="">
                                         {solution
                                           ? moment(solution.createdAt).format(
-                                              "DD MMMM YYYY [à] HH:mm"
-                                            )
+                                            "DD MMMM YYYY [à] HH:mm"
+                                          )
                                           : ""}
                                       </p>
                                     </div>
@@ -429,22 +429,21 @@ const SolutionTab = ({
                             </div>
                             <Row className="row">
                               <Col md={2}>Status de la Solution actuel</Col>
-                              <Col md={6}>
+                              <Col md={4}>
                                 <Select
                                   options={options}
                                   onChange={handleSelectChange}
                                   value={
                                     solution && solution.status
                                       ? {
-                                          value: solution.status.id,
-                                          label: solution.status.name,
-                                        }
+                                        value: solution.status.id,
+                                        label: solution.status.name,
+                                      }
                                       : null
                                   }
                                   isDisabled={true}
                                 />
                               </Col>
-                              <Col md={4}></Col>
                             </Row>
 
                             <Row className="row mt-5">
@@ -474,6 +473,7 @@ const SolutionTab = ({
                               </Col>
                               <Col md={4}></Col>
                             </Row>
+
                           </Card.Body>
                         </Card>
                       </div>
@@ -501,7 +501,7 @@ const SolutionTab = ({
                                         <Row md={4} className="mt-5 mb-4">
                                           <Col>
                                             {
-                                              "Envoyer un commentaire à l'innovateur"
+                                              "Envoyer un commentaire à l'innovateur (le commentaire doit contenir au maximum 255 caractères)"
                                             }
                                           </Col>
                                         </Row>
@@ -509,10 +509,10 @@ const SolutionTab = ({
                                         <Row>
                                           <textarea
                                             className="form-control"
-                                            placeholder="Votre Commentaire à l'innovateur"
+                                            placeholder="Votre Commentaire à l'innovateur (le commentaire doit contenir au maximum 255 caractères)"
                                             rows={
                                               isExistCommentaire ||
-                                              isCommentedByAnother
+                                                isCommentedByAnother
                                                 ? 14
                                                 : 4
                                             }
@@ -614,25 +614,25 @@ const SolutionTab = ({
                                                 {renderSelect(
                                                   "Pertinence par rapport aux ODD/thématique",
                                                   isExistCommentaire ||
-                                                    isCommentedByAnother,
+                                                  isCommentedByAnother,
                                                   0
                                                 )}
                                                 {renderSelect(
                                                   "Impact local",
                                                   isExistCommentaire ||
-                                                    isCommentedByAnother,
+                                                  isCommentedByAnother,
                                                   1
                                                 )}
                                                 {renderSelect(
                                                   "Innovation",
                                                   isExistCommentaire ||
-                                                    isCommentedByAnother,
+                                                  isCommentedByAnother,
                                                   2
                                                 )}
                                                 {renderSelect(
                                                   "Échelle de mise en œuvre",
                                                   isExistCommentaire ||
-                                                    isCommentedByAnother,
+                                                  isCommentedByAnother,
                                                   3
                                                 )}
 
@@ -669,13 +669,13 @@ const SolutionTab = ({
                                         <Row className="mb-5 me-5">
                                           <Col>
                                             {
-                                              "Votre commentaire par rapport à la solution"
+                                              "Votre commentaire par rapport à la solution (le commentaire doit contenir au maximum 255 caractères)"
                                             }
                                           </Col>
                                         </Row>
                                         <Row>
                                           {isExistCommentaire ||
-                                          isCommentedByAnother ? (
+                                            isCommentedByAnother ? (
                                             <textarea
                                               className="form-control"
                                               placeholder="Votre Commentaire"
@@ -700,25 +700,25 @@ const SolutionTab = ({
                                         {renderSelect(
                                           "Pertinence par rapport aux ODD/thématique",
                                           isExistCommentaire ||
-                                            isCommentedByAnother,
+                                          isCommentedByAnother,
                                           0
                                         )}
                                         {renderSelect(
                                           "Impact local",
                                           isExistCommentaire ||
-                                            isCommentedByAnother,
+                                          isCommentedByAnother,
                                           1
                                         )}
                                         {renderSelect(
                                           "Innovation",
                                           isExistCommentaire ||
-                                            isCommentedByAnother,
+                                          isCommentedByAnother,
                                           2
                                         )}
                                         {renderSelect(
                                           "Échelle de mise en œuvre",
                                           isExistCommentaire ||
-                                            isCommentedByAnother,
+                                          isCommentedByAnother,
                                           3
                                         )}
 

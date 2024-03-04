@@ -7,7 +7,6 @@ import "react-toastify/dist/ReactToastify.css";
 import Seo from "@/shared/layout-components/seo/seo";
 import { useRouter } from "next/router";
 import axios from "@/pages/api/axios";
-import moment from "moment";
 
 const Solution = () => {
   const router = useRouter();
@@ -15,9 +14,7 @@ const Solution = () => {
   const [solution, setSolution] = useState();
   const [thematique, setThematique] = useState();
   const [domLoaded, setDomLoaded] = useState(false);
-  const [parametreId, setParametreId] = useState(null);
-  const [parametreUserId, setParametreUserId] = useState(null);
-  const [parametreThematiqueId, setParametreThematiqueId] = useState(null);
+
   const [cotation, setCotation] = useState();
 
   const navigate = useRouter();
@@ -25,9 +22,9 @@ const Solution = () => {
   const innovateurId = navigate?.query?.innovateurId;
   const thematiqueId = navigate?.query?.thematiqueId;
 
-  const [options, setOptions] = useState();
-  const [selectedOptions, setSelectedOptions] = useState();
-  const [optionId, setOptionId] = useState();
+  const [optionsStatus, setOptionsStatus] = useState();
+  const [selectedOptionsStatus, setSelectedOptionsStatus] = useState();
+  const [optionId, setOptionStatusId] = useState();
 
   const [optionsPole, setOptionsPole] = useState();
   const [selectedOptionsPole, setSelectedOptionsPole] = useState();
@@ -101,9 +98,6 @@ const Solution = () => {
 
     if (status.authenticate) {
       setDomLoaded(true);
-      setParametreId(id);
-      setParametreUserId(innovateurId);
-      setParametreThematiqueId(thematiqueId);
 
       const fetchInnovateur = async () => {
         if (navigate.query.innovateurId) {
@@ -150,7 +144,7 @@ const Solution = () => {
           const statusResponse = await axios.get("/status");
           data = statusResponse?.data?.data;
 
-          setOptions(
+          setOptionsStatus(
             data.map((option) => ({
               value: option.id,
               label: option.name,
@@ -216,16 +210,7 @@ const Solution = () => {
     } else {
       navigate.push("/");
     }
-  }, [
-    id,
-    innovateurId,
-    navigate,
-    isAdmin,
-    thematiqueId,
-    // navigate.query.id,
-    // navigate.query.innovateurId,
-    // navigate.query.thematiqueId,
-  ]);
+  }, [id, innovateurId, navigate, isAdmin, thematiqueId]);
 
   useEffect(() => {
     const fetchFeedBack = async () => {
@@ -256,7 +241,6 @@ const Solution = () => {
           setIsExistCommentaire(false);
           setIsCommentedByAnother(false);
         }
-       
       } catch (e) {
         console.log(e);
       }
@@ -291,10 +275,10 @@ const Solution = () => {
     fetchAllSolution();
   }, [profile, isAdmin]);
 
-  const handleSelectChange = async (selectedOptions) => {
-    setSelectedOptions(selectedOptions);
-    setOptionId(selectedOptions.value);
-    setNewStatus(selectedOptions);
+  const handleSelectChange = async (selectedOptionsS) => {
+    setSelectedOptionsStatus(selectedOptionsS);
+    setOptionStatusId(selectedOptionsS.value);
+    setNewStatus(selectedOptionsStatus);
   };
 
   const handleChangeStatus = async () => {
@@ -449,8 +433,6 @@ const Solution = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-
-
   return (
     <div>
       <Seo title={"Profile"} />
@@ -494,7 +476,7 @@ const Solution = () => {
             handleSelectChangeFeedBack={handleSelectChangeFeedBack}
             handleSelectChange={handleSelectChange}
             isAdmin={isAdmin}
-            options={options}
+            options={optionsStatus}
             handleChangeStatus={handleChangeStatus}
             isLoadingUpdateStatut={isLoadingUpdateStatut}
             optionsFeedBack={optionsFeedBack}
@@ -504,6 +486,7 @@ const Solution = () => {
             userConnected={userConnected}
             cotations={cotation}
           />
+
           <Col lg={12} md={12} xl={12}>
             <Card>
               <Card.Body>
