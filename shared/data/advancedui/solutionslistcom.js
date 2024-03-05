@@ -708,6 +708,20 @@ const Solutionslistcom = () => {
                       </Col>
                     </div>
                   </Tab>
+
+                  <Tab eventKey="Tab 04" title="Rapports">
+                    <div
+                      className="panel-body tabs-menu-body main-content-body-right "
+                      id="tab6"
+                    >
+                      <Col lg={12} className="w-full">
+                        <Card className="custom-card">
+                          <Card.Body></Card.Body>
+                        </Card>
+                      </Col>
+                    </div>
+                  </Tab>
+
                 </Tabs>
               </div>
             </div>

@@ -65,6 +65,7 @@ const SolutionTab = ({
   userConnected,
   cotations,
 }) => {
+  
   const [cotes, setCotes] = useState({});
   const [coteIds, setCoteIds] = useState([]);
   const [latestCoteValues, setLatestCoteValues] = useState({});
