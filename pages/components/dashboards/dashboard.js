@@ -85,7 +85,7 @@ const Dashboard = () => {
 
               <CardDashboardCout
                 title={"Utilisateurs"}
-                totalNumber={dashboard?.totalUsers}
+                totalNumber={dashboard?.data?.totalUsers}
                 icon={
                   <div className="circle-icon bg-primary-transparent text-center align-self-center overflow-hidden">
                     <i className="bi bi-people-fill tx-16 text-primary"></i>
@@ -95,7 +95,7 @@ const Dashboard = () => {
               />
               <CardDashboardCout
                 title={"Solutions soumises"}
-                totalNumber={dashboard?.totalSolutions}
+                totalNumber={dashboard?.data?.totalSolutions}
                 icon={
                   <div className="circle-icon bg-info-transparent text-center align-self-center overflow-hidden">
                     <i class="bi bi-card-heading tx-16 text-info"></i>
