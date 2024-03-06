@@ -17,6 +17,7 @@ import { columns as configureColumns, truncateText } from "./solutionslist";
 import axios from "@/pages/api/axios";
 import Select from "react-select";
 import { ToastContainer } from "react-toastify";
+import Reporting from "@/pages/components/apps/reporting/reporting";
 
 const Solutionslistcom = () => {
   const [solutions, setSolutions] = useState([]);
@@ -395,7 +396,7 @@ const Solutionslistcom = () => {
               ? item[key]?.props?.alt
               : item[key];
           result += value;
-        } catch (e) {}
+        } catch (e) { }
 
         ctr++;
       });
@@ -716,7 +717,13 @@ const Solutionslistcom = () => {
                     >
                       <Col lg={12} className="w-full">
                         <Card className="custom-card">
-                          <Card.Body></Card.Body>
+                          <Card.Body>
+                            <Reporting 
+                              curratedSolutions={curratedSolutions} 
+                              conformedSolutions={conformedSolutions} 
+                              solutions={solutions} 
+                            />
+                          </Card.Body>
                         </Card>
                       </Col>
                     </div>
