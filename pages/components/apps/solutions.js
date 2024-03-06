@@ -3,14 +3,13 @@ import dynamic from "next/dynamic";
 import Seo from "@/shared/layout-components/seo/seo";
 import Title from "../components/Title";
 
-
-
 const Solutionslistcom = dynamic(
   () => import("@/shared/data/advancedui/solutionslistcom"),
   { ssr: false }
 );
 
 const Solutionlist = () => {
+
 
   return (
     <div>
@@ -19,6 +18,7 @@ const Solutionlist = () => {
       <Solutionslistcom />
     </div>
   );
+  
 };
 
 Solutionlist.propTypes = {};

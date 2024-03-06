@@ -3,6 +3,7 @@ import { imageBaseUrl } from "@/pages/api/axios";
 import { Card } from "react-bootstrap";
 import moment from "moment";
 
+
 const CardInnovateur = ({ profileInnovateur }) => {
   return (
     <Card className="custom-card customs-cards">

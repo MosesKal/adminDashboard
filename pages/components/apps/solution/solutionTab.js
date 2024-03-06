@@ -10,7 +10,7 @@ import { imageBaseUrl } from "@/pages/api/axios";
 import { ProgressBar } from "react-bootstrap";
 import axios from "@/pages/api/axios";
 import { toast } from "react-toastify";
-import Link from "next/link";
+
 
 library.add(faPlay);
 
@@ -65,7 +65,7 @@ const SolutionTab = ({
   userConnected,
   cotations,
 }) => {
-  
+
   const [cotes, setCotes] = useState({});
   const [coteIds, setCoteIds] = useState([]);
   const [latestCoteValues, setLatestCoteValues] = useState({});
