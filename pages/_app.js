@@ -17,6 +17,7 @@ function MyApp({ Component, pageProps }) {
   const Layout =
     layouts[Component.layout] ||
     ((pageProps) => <Component>{pageProps}</Component>);
+
   return (
     <Layout>
         <SSRProvider>

@@ -103,7 +103,7 @@ const Solution = () => {
         if (navigate.query.innovateurId) {
           try {
             const profileResponse = await axios.get(
-              `/users/${navigate?.query?.innovateurId}`
+                `/users/${navigate?.query?.innovateurId}`
             );
             setProfileInnovateur(profileResponse?.data?.data);
           } catch (error) {
