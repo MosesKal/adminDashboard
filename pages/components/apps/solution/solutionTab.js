@@ -11,6 +11,8 @@ import {ProgressBar} from "react-bootstrap";
 import axios from "@/pages/api/axios";
 import {toast} from "react-toastify";
 
+import GenerateCurratedSolutionPdf from "@/pages/components/apps/reporting/generateCurratedSolutionPdf";
+
 
 library.add(faPlay);
 
@@ -21,6 +23,7 @@ const getVideoIdFromUrl = (url) => {
 };
 
 const ProgressIndicator = ({currentCote, maxCote}) => {
+
     const progress = (currentCote / maxCote) * 100;
     let variant;
 
@@ -32,14 +35,12 @@ const ProgressIndicator = ({currentCote, maxCote}) => {
         variant = "danger";
     }
 
-    return (
-        <ProgressBar
-            now={progress}
-            variant={variant}
-            label={`${progress}%`}
-            className="mt-5"
-        />
-    );
+    return (<ProgressBar
+        now={progress}
+        variant={variant}
+        label={`${progress}%`}
+        className="mt-5"
+    />);
 };
 
 const SolutionTab = ({
@@ -71,15 +72,13 @@ const SolutionTab = ({
 
     const [commentaires, setCommentaires] = useState([]);
 
+
     const handleChangeCote = (selectedOption, fieldName) => {
-        const selectedCote = optionsFeedBack.find(
-            (option) => option.value === selectedOption.value
-        );
+        const selectedCote = optionsFeedBack.find((option) => option.value === selectedOption.value);
 
         if (selectedCote) {
             setCotes((prevCotes) => ({
-                ...prevCotes,
-                [fieldName]: selectedCote.cote,
+                ...prevCotes, [fieldName]: selectedCote.cote,
             }));
 
             setCoteIds((prevCoteIds) => {
@@ -89,13 +88,11 @@ const SolutionTab = ({
 
                 if (isIdExists) {
                     return {
-                        ...prevCoteIds,
-                        [fieldName]: existingIds.filter((id) => id !== selectedCote.value),
+                        ...prevCoteIds, [fieldName]: existingIds.filter((id) => id !== selectedCote.value),
                     };
                 } else {
                     return {
-                        ...prevCoteIds,
-                        [fieldName]: [...existingIds, selectedCote.value],
+                        ...prevCoteIds, [fieldName]: [...existingIds, selectedCote.value],
                     };
                 }
             });
@@ -119,56 +116,46 @@ const SolutionTab = ({
     }, [cotes]);
 
     const renderSelect = (label, disabled, index) => {
+
         const existingValues = cotations && cotations[0] ? cotations[0] : [];
 
         const selectedValue = existingValues[index]?.average || null;
 
-        const selectedOption = optionsFeedBack?.find(
-            (option) => option.cote === selectedValue
-        );
+        const selectedOption = optionsFeedBack?.find((option) => option.cote === selectedValue);
 
 
-        return (
-            <Row className="mt-3">
-                <Col>{label}</Col>
-                <Col>
-                    <Select
-                        options={optionsFeedBack}
-                        value={selectedOption}
-                        onChange={(selectedOption) =>
-                            handleChangeCote(selectedOption, label)
-                        }
-                        isDisabled={disabled}
-                    />
-                </Col>
-            </Row>
-        );
+        return (<Row className="mt-3">
+            <Col>{label}</Col>
+            <Col>
+                <Select
+                    options={optionsFeedBack}
+                    value={selectedOption}
+                    onChange={(selectedOption) => handleChangeCote(selectedOption, label)}
+                    isDisabled={disabled}
+                />
+            </Col>
+        </Row>);
     };
 
-    const renderButton = () => (
-        <Col md={6} className="mb-5">
-            {isExistCommentaire ? (
-                <Button
-                    variant=""
-                    className="btn btn-primary"
-                    type="button"
-                    disabled={isCommentedByAnother}
-                >
-                    {"Modifier la côte"}
-                </Button>
-            ) : (
-                <Button
-                    variant=""
-                    className="btn btn-primary"
-                    type="button"
-                    onClick={handleSendFeedBack}
-                    disabled={isCommentedByAnother}
-                >
-                    {"Envoyer la côte"}
-                </Button>
-            )}
-        </Col>
-    );
+    const renderButton = () => (<Col md={6} className="mb-5">
+
+        {isExistCommentaire ? (<Button
+            variant=""
+            className="btn btn-primary"
+            type="button"
+            disabled={isCommentedByAnother}
+        >
+            {"Modifier la côte"}
+        </Button>) : (<Button
+            variant=""
+            className="btn btn-primary"
+            type="button"
+            onClick={handleSendFeedBack}
+            disabled={isCommentedByAnother}
+        >
+            {"Envoyer la côte"}
+        </Button>)}
+    </Col>);
 
     const handleSendFeedBack = async () => {
         let idsToSend = [];
@@ -181,22 +168,15 @@ const SolutionTab = ({
 
         if (commentaires.length > 0) {
             payload = {
-                quotations: idsToSend,
-                user: userConnected?.email,
-                adminComment: commentaires,
+                quotations: idsToSend, user: userConnected?.email, adminComment: commentaires,
             };
         } else {
             payload = {
-                quotations: idsToSend,
-                user: userConnected?.email,
+                quotations: idsToSend, user: userConnected?.email,
             };
         }
-
         try {
-            const response = await axios.post(
-                `/solutions/feedback/${solution?.id}`,
-                payload
-            );
+            const response = await axios.post(`/solutions/feedback/${solution?.id}`, payload);
             toast.success("Côte envoyée avec succès");
         } catch (error) {
             console.error("Erreur survenue lors de l'envoi de la côte ", error);
@@ -206,14 +186,13 @@ const SolutionTab = ({
 
     useEffect(() => {
         if (isExistCommentaire || isCommentedByAnother) {
-            setTotalCote(
-                cotations[0]?.reduce((acc, current) => acc + current.average, 0)
-            );
+            setTotalCote(cotations[0]?.reduce((acc, current) => acc + current.average, 0));
         }
     }, [isExistCommentaire, isCommentedByAnother, solution, cotations]);
 
-    return (
-        <>
+    console.log(" solution detail ====> ", solution);
+
+    return (<>
       <span className=" py-0 ">
         <div className="profile-tab tab-menu-heading border-bottom-0 ">
           <Tab.Container id="left-tabs-example" defaultActiveKey="About">
@@ -226,30 +205,22 @@ const SolutionTab = ({
                   Detail sur la Solution
                 </Nav.Link>
               </Nav.Item>
-                {isAdmin ? (
-                    <Nav.Item className="me-1">
-                        <Nav.Link className="mb-2 mt-2" eventKey="EditProfile">
-                            {"Status de la solution"}
-                        </Nav.Link>
-                    </Nav.Item>
-                ) : (
-                    ""
-                )}
+                {isAdmin ? (<Nav.Item className="me-1">
+                    <Nav.Link className="mb-2 mt-2" eventKey="EditProfile">
+                        {"Status de la solution"}
+                    </Nav.Link>
+                </Nav.Item>) : ("")}
 
                 <Nav.Item className="me-1">
                 <Nav.Link className="mb-2 mt-2" eventKey="Timeline">
                   Feed-Back
                 </Nav.Link>
               </Nav.Item>
-                {isAdmin ? (
-                    <Nav.Item className="me-1">
-                        <Nav.Link className="mb-2 mt-2" eventKey="Assigne">
-                            {"Assigner la solution à un Pôle"}
-                        </Nav.Link>
-                    </Nav.Item>
-                ) : (
-                    ""
-                )}
+               <Nav.Item className="me-1">
+                    <Nav.Link className="mb-2 mt-2" eventKey="PdfDownload">
+                        {"Télécharger la Solution"}
+                    </Nav.Link>
+               </Nav.Item>
             </Nav>
             <Row className=" row-sm ">
               <Col lg={12} md={12}>
@@ -287,65 +258,53 @@ const SolutionTab = ({
                                       Lien Vidéo
                                     </h5>
                                     <p className="">
-                                      {solution && solution.videoLink ? (
-                                          <>
-                                              <p>
-                                                  <a
-                                                      href={solution.videoLink}
-                                                      target="_blank"
-                                                  >
-                                                      {solution.videoLink}
-                                                  </a>
-                                              </p>
-                                              <span
-                                                  style={{position: "relative"}}
+                                      {solution && solution.videoLink ? (<>
+                                          <p>
+                                              <a
+                                                  href={solution.videoLink}
+                                                  target="_blank"
                                               >
-                                            {showYoutubeThumbnail && (
-                                                <a
-                                                    href={`https://www.youtube.com/watch?v=${getVideoIdFromUrl(
-                                                        solution.videoLink
-                                                    )}`}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
+                                                  {solution.videoLink}
+                                              </a>
+                                          </p>
+                                          <span
+                                              style={{position: "relative"}}
+                                          >
+                                            {showYoutubeThumbnail && (<a
+                                                href={`https://www.youtube.com/watch?v=${getVideoIdFromUrl(solution.videoLink)}`}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                style={{
+                                                    position: "relative", display: "block",
+                                                }}
+                                            >
+                                                <Image
+                                                    src={`https://img.youtube.com/vi/${getVideoIdFromUrl(solution.videoLink)}/default.jpg`}
+                                                    alt="YouTube Thumbnail"
                                                     style={{
-                                                        position: "relative",
+                                                        maxWidth: "80%",
+                                                        cursor: "pointer",
                                                         display: "block",
+                                                        width: "100%",
                                                     }}
-                                                >
-                                                    <Image
-                                                        src={`https://img.youtube.com/vi/${getVideoIdFromUrl(
-                                                            solution.videoLink
-                                                        )}/default.jpg`}
-                                                        alt="YouTube Thumbnail"
-                                                        style={{
-                                                            maxWidth: "80%",
-                                                            cursor: "pointer",
-                                                            display: "block",
-                                                            width: "100%",
-                                                        }}
-                                                        fluid
-                                                    />
-                                                    <FontAwesomeIcon
-                                                        icon={faPlay}
-                                                        style={{
-                                                            position: "absolute",
-                                                            top: "50%",
-                                                            left: "40%",
-                                                            transform:
-                                                                "translate(-50%, -50%)",
-                                                            color: "white",
-                                                            fontSize: "3rem",
-                                                            maxWidth: "50px",
-                                                            opacity: "0.5",
-                                                        }}
-                                                    />
-                                                </a>
-                                            )}
+                                                    fluid
+                                                />
+                                                <FontAwesomeIcon
+                                                    icon={faPlay}
+                                                    style={{
+                                                        position: "absolute",
+                                                        top: "50%",
+                                                        left: "40%",
+                                                        transform: "translate(-50%, -50%)",
+                                                        color: "white",
+                                                        fontSize: "3rem",
+                                                        maxWidth: "50px",
+                                                        opacity: "0.5",
+                                                    }}
+                                                />
+                                            </a>)}
                                           </span>
-                                          </>
-                                      ) : (
-                                          "pas de lien youtube"
-                                      )}
+                                      </>) : ("pas de lien youtube")}
                                     </p>
                                   </div>
                                   <div className="m-t-30">
@@ -357,9 +316,7 @@ const SolutionTab = ({
                                         </b>
                                       </p>
                                       <p className=" tx-15 m-b-0">
-                                        {solution
-                                            ? solution.targetedProblem
-                                            : ""}
+                                        {solution ? solution.targetedProblem : ""}
                                       </p>
                                     </div>
                                     <div className="">
@@ -367,14 +324,9 @@ const SolutionTab = ({
                                         Challenges
                                       </h5>
                                       <p className="">
-                                        {thematique &&
-                                            thematique.challenges.map(
-                                                (challenge) => (
-                                                    <p key={challenge.id}>
-                                                        → {challenge.name}
-                                                    </p>
-                                                )
-                                            )}
+                                        {solution?.challenges.map((challenge) => (<p key={challenge.id}>
+                                            → {challenge.name}
+                                        </p>))}
                                       </p>
                                     </div>
                                     <div className="">
@@ -382,11 +334,7 @@ const SolutionTab = ({
                                         Date de soumission :
                                       </h5>
                                       <p className="">
-                                        {solution
-                                            ? moment(solution.createdAt).format(
-                                                "DD MMMM YYYY [à] HH:mm"
-                                            )
-                                            : ""}
+                                        {solution ? moment(solution.createdAt).format("DD MMMM YYYY [à] HH:mm") : ""}
                                       </p>
                                     </div>
                                   </div>
@@ -433,14 +381,9 @@ const SolutionTab = ({
                                 <Select
                                     options={options}
                                     onChange={handleSelectChange}
-                                    value={
-                                        solution && solution.status
-                                            ? {
-                                                value: solution.status.id,
-                                                label: solution.status.name,
-                                            }
-                                            : null
-                                    }
+                                    value={solution && solution.status ? {
+                                        value: solution.status.id, label: solution.status.name,
+                                    } : null}
                                     isDisabled={true}
                                 />
                               </Col>
@@ -466,9 +409,7 @@ const SolutionTab = ({
                                     type="button"
                                     onClick={handleChangeStatus}
                                 >
-                                  {isLoadingUpdateStatut
-                                      ? "Changement en cours..."
-                                      : "Changer le statut"}
+                                  {isLoadingUpdateStatut ? "Changement en cours..." : "Changer le statut"}
                                 </Button>
                               </Col>
                               <Col md={4}></Col>
@@ -490,312 +431,164 @@ const SolutionTab = ({
                                 <div className=" mb-4 main-content-label">
                                   Feed-backs solution
                                 </div>
-                                  {isAdmin ? (
-                                      <>
-                                          <Row
-                                              md={12}
-                                              xl={12}
-                                              className="row mt-4 ms-5 justify-content-between"
-                                          >
-                                              <Col md={4} className="pe-4">
-                                                  <Row md={4} className="mt-5 mb-4">
-                                                      <Col>
-                                                          {
-                                                              "Envoyer un commentaire à l'innovateur (le commentaire doit contenir au maximum 255 caractères)"
-                                                          }
-                                                      </Col>
-                                                  </Row>
+                                  {isAdmin ? (<>
+                                      <Row
+                                          md={12}
+                                          xl={12}
+                                          className="row mt-4 ms-5 justify-content-between"
+                                      >
+                                          <Col md={4} className="pe-4">
+                                              <Row md={4} className="mt-5 mb-4">
+                                                  <Col>
+                                                      {"Envoyer un commentaire à l'innovateur (le commentaire doit contenir au maximum 255 caractères)"}
+                                                  </Col>
+                                              </Row>
 
-                                                  <Row>
+                                              <Row>
                                           <textarea
                                               className="form-control"
                                               placeholder="Votre Commentaire à l'innovateur (le commentaire doit contenir au maximum 255 caractères)"
-                                              rows={
-                                                  isExistCommentaire ||
-                                                  isCommentedByAnother
-                                                      ? 14
-                                                      : 4
-                                              }
+                                              rows={isExistCommentaire || isCommentedByAnother ? 14 : 4}
                                           ></textarea>
-                                                  </Row>
-                                              </Col>
-
-                                              <Col md={8} className="ps-4">
-                                                  <>
-                                                      {isExistCommentaire ||
-                                                          (isCommentedByAnother && (
-                                                              <>
-                                                                  <Col>
-                                                                      <Card className="overflow-hidden">
-                                                                          <Card>
-                                                                              <Card.Body>
-                                                                                  {solution
-                                                                                      ?.feedbacks[0] ? (
-                                                                                      <div
-                                                                                          className="d-sm-flex p-3 sub-review-section border subsection-color br-tl-0 br-tr-0">
-                                                                                          <div className="d-flex me-3">
-                                                                                              {solution
-                                                                                                  .feedbacks[0]
-                                                                                                  .user
-                                                                                                  .profile ? (
-                                                                                                  <img
-                                                                                                      className="media-object brround avatar-md"
-                                                                                                      alt="64x64"
-                                                                                                      src={`${imageBaseUrl}/${solution.feedbacks[0].user.profile}`}
-                                                                                                  />
-                                                                                              ) : (
-                                                                                                  <img
-                                                                                                      className="media-object brround avatar-md"
-                                                                                                      alt="64x64"
-                                                                                                      src={
-                                                                                                          "../../../assets/img/faces/profile.jpg"
-                                                                                                      }
-                                                                                                  />
-                                                                                              )}
-                                                                                          </div>
-
-                                                                                          <div className="media-body">
-                                                                                              <h5 className="mt-0 mb-1 font-weight-semibold">
-                                                                                                  {profileCurateur ? (
-                                                                                                      <>
-                                                                                                          <div
-                                                                                                              className="mb-1">
-                                                                                                              Commenté
-                                                                                                              par :{" "}
-                                                                                                              {
-                                                                                                                  solution
-                                                                                                                      .feedbacks[0]
-                                                                                                                      .user
-                                                                                                                      .name
-                                                                                                              }
-                                                                                                          </div>
-                                                                                                          <span
-                                                                                                              className="h6">
-                                                                      Commenté
-                                                                      le{" "}
-                                                                                                              {moment(
-                                                                                                                  solution
-                                                                                                                      .feedbacks[0]
-                                                                                                                      .user
-                                                                                                                      ?.createdAt
-                                                                                                              ).format(
-                                                                                                                  "DD/MM/YYYY [à] HH:mm"
-                                                                                                              )}{" "}
-                                                                    </span>
-                                                                                                      </>
-                                                                                                  ) : (
-                                                                                                      <span
-                                                                                                          className="tx-14 ms-0  me-1 ms-3"
-                                                                                                          data-bs-toggle="tooltip"
-                                                                                                          data-bs-placement="top"
-                                                                                                          title=""
-                                                                                                          data-original-title="verified"
-                                                                                                      >
-                                                                    <i className="fe fe-check-circle text-success tx-12 "></i>
-                                                                  </span>
-                                                                                                  )}
-                                                                                              </h5>
-                                                                                              <blockquote
-                                                                                                  class="blockquote mt-4">
-                                                                                                  <p className="h6">
-                                                                                                      {
-                                                                                                          solution
-                                                                                                              .feedbacks[0]
-                                                                                                              .adminComment
-                                                                                                      }
-                                                                                                  </p>
-                                                                                              </blockquote>
-                                                                                          </div>
-                                                                                      </div>
-                                                                                  ) : (
-                                                                                      ""
-                                                                                  )}
-                                                                              </Card.Body>
-                                                                          </Card>
-                                                                      </Card>
-                                                                  </Col>
-
-                                                                  {renderSelect(
-                                                                      "Pertinence par rapport aux ODD/thématique",
-                                                                      isExistCommentaire ||
-                                                                      isCommentedByAnother,
-                                                                      0
-                                                                  )}
-                                                                  {renderSelect(
-                                                                      "Impact local",
-                                                                      isExistCommentaire ||
-                                                                      isCommentedByAnother,
-                                                                      1
-                                                                  )}
-                                                                  {renderSelect(
-                                                                      "Innovation",
-                                                                      isExistCommentaire ||
-                                                                      isCommentedByAnother,
-                                                                      2
-                                                                  )}
-                                                                  {renderSelect(
-                                                                      "Échelle de mise en œuvre",
-                                                                      isExistCommentaire ||
-                                                                      isCommentedByAnother,
-                                                                      3
-                                                                  )}
-
-                                                                  <ProgressIndicator
-                                                                      currentCote={
-                                                                          totalCote ? totalCote : 0
-                                                                      }
-                                                                      maxCote={40}
-                                                                  />
-                                                              </>
-                                                          ))}
-                                                  </>
-                                              </Col>
-                                              <Row className="row mt-5 mb-5">
-                                                  <Button
-                                                      variant=""
-                                                      className="btn btn-primary"
-                                                      type="button"
-                                                      commentaires
-                                                  >
-                                                      {"Envoyer le commentaire"}
-                                                  </Button>
                                               </Row>
-                                          </Row>
-                                      </>
-                                  ) : (
-                                      <>
-                                          <Row
-                                              md={12}
-                                              xl={12}
-                                              className="row mt-5 ms-5 justify-content-between"
-                                          >
-                                              <Col md={4}>
-                                                  <Row className="mb-5 me-5">
+                                          </Col>
+
+                                          <Col md={8} className="ps-4">
+                                              <>
+                                                  {isExistCommentaire || (isCommentedByAnother && (<>
                                                       <Col>
-                                                          {
-                                                              "Votre commentaire par rapport à la solution (le commentaire doit contenir au maximum 255 caractères)"
-                                                          }
+                                                          <Card className="overflow-hidden">
+                                                              <Card>
+                                                                  <Card.Body>
+                                                                      {solution?.feedbacks[0] ? (<div
+                                                                          className="d-sm-flex p-3 sub-review-section border subsection-color br-tl-0 br-tr-0">
+                                                                          <div className="d-flex me-3">
+                                                                              {solution.feedbacks[0].user.profile ? (
+                                                                                  <img
+                                                                                      className="media-object brround avatar-md"
+                                                                                      alt="64x64"
+                                                                                      src={`${imageBaseUrl}/${solution.feedbacks[0].user.profile}`}
+                                                                                  />) : (<img
+                                                                                  className="media-object brround avatar-md"
+                                                                                  alt="64x64"
+                                                                                  src={"../../../assets/img/faces/profile.jpg"}
+                                                                              />)}
+                                                                          </div>
+
+                                                                          <div className="media-body">
+                                                                              <h5 className="mt-0 mb-1 font-weight-semibold">
+                                                                                  {profileCurateur ? (<>
+                                                                                      <div
+                                                                                          className="mb-1">
+                                                                                          Commenté
+                                                                                          par :{" "}
+                                                                                          {solution.feedbacks[0].user.name}
+                                                                                      </div>
+                                                                                      <span className="h6">
+                                                                                              Commenté le{" "}
+                                                                                          {moment(solution.feedbacks[0].user?.createdAt).format("DD/MM/YYYY [à] HH:mm")}{" "}
+                                                                                          </span>
+                                                                                  </>) : (<span
+                                                                                      className="tx-14 ms-0  me-1 ms-3"
+                                                                                      data-bs-toggle="tooltip"
+                                                                                      data-bs-placement="top"
+                                                                                      title=""
+                                                                                      data-original-title="verified"
+                                                                                  >
+                                                                                      <i className="fe fe-check-circle text-success tx-12 "></i>
+                                                                                  </span>)}
+                                                                              </h5>
+                                                                              <blockquote
+                                                                                  className="blockquote mt-4">
+                                                                                  <p className="h6">
+                                                                                      {solution.feedbacks[0].adminComment}
+                                                                                  </p>
+                                                                              </blockquote>
+                                                                          </div>
+                                                                      </div>) : ("")}
+                                                                  </Card.Body>
+                                                              </Card>
+                                                          </Card>
                                                       </Col>
-                                                  </Row>
-                                                  <Row>
-                                                      {isExistCommentaire ||
-                                                      isCommentedByAnother ? (
-                                                          <textarea
-                                                              className="form-control"
-                                                              placeholder="Votre Commentaire"
-                                                              onChange={(e) =>
-                                                                  setCommentaires(e.target.value)
-                                                              }
-                                                              disabled={true}
-                                                          ></textarea>
-                                                      ) : (
-                                                          <textarea
-                                                              className="form-control"
-                                                              placeholder="Votre Commentaire"
-                                                              onChange={(e) =>
-                                                                  setCommentaires(e.target.value)
-                                                              }
-                                                              rows={7}
-                                                          ></textarea>
-                                                      )}
-                                                  </Row>
-                                              </Col>
-                                              <Col md={8} xl={8} className="ps-5 mt-5">
-                                                  {renderSelect(
-                                                      "Pertinence par rapport aux ODD/thématique",
-                                                      isExistCommentaire ||
-                                                      isCommentedByAnother,
-                                                      0
-                                                  )}
-                                                  {renderSelect(
-                                                      "Impact local",
-                                                      isExistCommentaire ||
-                                                      isCommentedByAnother,
-                                                      1
-                                                  )}
-                                                  {renderSelect(
-                                                      "Innovation",
-                                                      isExistCommentaire ||
-                                                      isCommentedByAnother,
-                                                      2
-                                                  )}
-                                                  {renderSelect(
-                                                      "Échelle de mise en œuvre",
-                                                      isExistCommentaire ||
-                                                      isCommentedByAnother,
-                                                      3
-                                                  )}
 
-                                                  <ProgressIndicator
-                                                      currentCote={
-                                                          totalCote ? totalCote : 0
-                                                      }
-                                                      maxCote={40}
-                                                  />
-                                              </Col>
-                                          </Row>
+                                                      {renderSelect("Pertinence par rapport aux ODD/thématique", isExistCommentaire || isCommentedByAnother, 0)}
+                                                      {renderSelect("Impact local", isExistCommentaire || isCommentedByAnother, 1)}
+                                                      {renderSelect("Innovation", isExistCommentaire || isCommentedByAnother, 2)}
+                                                      {renderSelect("Échelle de mise en œuvre", isExistCommentaire || isCommentedByAnother, 3)}
 
-                                          <Row className="row mt-5 ms-5 mb-5">
-                                              {renderButton()}
+                                                      <ProgressIndicator currentCote={totalCote ? totalCote : 0}
+                                                                         maxCote={40}/>
+
+                                                  </>))}
+                                              </>
+                                          </Col>
+                                          <Row className="row mt-5 mb-5">
+                                              <Button
+                                                  variant=""
+                                                  className="btn btn-primary"
+                                                  type="button"
+                                                  commentaires
+                                              >
+                                                  {"Envoyer le commentaire"}
+                                              </Button>
                                           </Row>
-                                      </>
-                                  )}
+                                      </Row>
+                                  </>) : (<>
+                                      <Row
+                                          md={12}
+                                          xl={12}
+                                          className="row mt-5 ms-5 justify-content-between"
+                                      >
+                                          <Col md={4}>
+                                              <Row className="mb-5 me-5">
+                                                  <Col>
+                                                      {"Votre commentaire par rapport à la solution (le commentaire doit contenir au maximum 255 caractères)"}
+                                                  </Col>
+                                              </Row>
+                                              <Row>
+                                                  {isExistCommentaire || isCommentedByAnother ? (<textarea
+                                                      className="form-control"
+                                                      placeholder="Votre Commentaire"
+                                                      onChange={(e) => setCommentaires(e.target.value)}
+                                                      disabled={true}
+                                                  ></textarea>) : (<textarea
+                                                      className="form-control"
+                                                      placeholder="Votre Commentaire"
+                                                      onChange={(e) => setCommentaires(e.target.value)}
+                                                      rows={7}
+                                                  ></textarea>)}
+                                              </Row>
+                                          </Col>
+                                          <Col md={8} xl={8} className="ps-5 mt-5">
+                                              {renderSelect("Pertinence par rapport aux ODD/thématique", isExistCommentaire || isCommentedByAnother, 0)}
+                                              {renderSelect("Impact local", isExistCommentaire || isCommentedByAnother, 1)}
+                                              {renderSelect("Innovation", isExistCommentaire || isCommentedByAnother, 2)}
+                                              {renderSelect("Échelle de mise en œuvre", isExistCommentaire || isCommentedByAnother, 3)}
+
+                                              <ProgressIndicator currentCote={totalCote ? totalCote : 0}
+                                                                 maxCote={40}/>
+
+                                          </Col>
+                                      </Row>
+
+                                      <Row className="row mt-5 ms-5 mb-5">
+                                          {renderButton()}
+                                      </Row>
+                                  </>)}
                               </Col>
                             </Row>
                           </Card.Body>
                         </Card>
                       </div>
                     </Tab.Pane>
-                    <Tab.Pane eventKey="Assigne">
+                    <Tab.Pane eventKey="PdfDownload">
                       <div
                           className="main-content-body tab-pane border-top-0"
-                          id="edit"
                       >
-                        <Card style={{height: "350px"}}>
-                          <Card.Body className=" border-0">
-                            <div className="mb-4 main-content-label">
-                              {"Pôle"}
-                            </div>
-
-                            <Row className="row">
-                              <Col md={2}>Pôle actuel</Col>
-                              <Col md={6}>
-                                <Select
-                                    options={optionsPole}
-                                    isDisabled={true}
-                                />
-                              </Col>
-                              <Col md={4}></Col>
-                            </Row>
-
-                            <Row className="row mt-5">
-                              <Col md={2}>{"Sélectionnez le pôle"}</Col>
-                              <Col md={6}>
-                                <Select
-                                    options={optionsPole}
-                                    onChange={handleSelectChangePole}
-                                />
-                              </Col>
-                              <Col md={4}></Col>
-                            </Row>
-
-                            <Row className="row mt-5">
-                              <Col md={2}></Col>
-                              <Col md={6}>
-                                <Button
-                                    variant=""
-                                    className="btn btn-primary"
-                                    type="button"
-                                    onClick={handleChangePole}
-                                >
-                                  {isLoadingupdatePole
-                                      ? "Affectation..."
-                                      : "Affecter la Solution"}
-                                </Button>
-                              </Col>
-                              <Col md={4}></Col>
-                            </Row>
-                          </Card.Body>
+                        <Card
+                            style={{height: "1000px"}}
+                        >
+                          <GenerateCurratedSolutionPdf curratedSolution={solution}/>
                         </Card>
                       </div>
                     </Tab.Pane>
@@ -806,8 +599,7 @@ const SolutionTab = ({
           </Tab.Container>
         </div>
       </span>
-        </>
-    );
+    </>);
 };
 
 export default SolutionTab;

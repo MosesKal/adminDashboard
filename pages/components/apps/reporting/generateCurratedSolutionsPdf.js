@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from "react";
 import {Document, Page, Text, View, StyleSheet, PDFViewer, Image} from "@react-pdf/renderer";
-import {Col, Row} from "react-bootstrap";
 import moment from "moment";
 import axios from "@/pages/api/axios";
 
@@ -114,7 +113,6 @@ const styles = StyleSheet.create({
 });
 
 const UserDetail = ({icon, text}) => (
-
     <View style={styles.containerTextDetailOther}>
         <View style={styles.containerIconOther}>
             <Image src={`${imagePath}${icon}.png`} style={styles.icons}/>
@@ -123,40 +121,14 @@ const UserDetail = ({icon, text}) => (
             <Text style={styles.profDetailOther}>{text}</Text>
         </View>
     </View>
-
 );
 
-const generateStatistics = ({enhancedSolutions}) => {
-
-    const totalSolutions = enhancedSolutions.length;
-
-    const solutionsByPoles = enhancedSolutions.reduce((acc, solution) => {
-        const poleName = solution.curatorInfo.pole.data.name;
-        acc[poleName] = (acc[poleName] || 0) + 1;
-        return acc;
-    }, {});
-
-
-    const totalOrganisations = new Set(enhancedSolutions.map(solution => solution.curatorInfo.organisation.data.name)).size;
-
-
-    const polesByOrganisations = enhancedSolutions.reduce((acc, solution) => {
-        const organisationName = solution.curatorInfo.organisation.data.name;
-        const poleName = solution.curatorInfo.pole.data.name;
-        acc[organisationName] = (acc[organisationName] || new Set()).add(poleName);
-        return acc;
-    }, {});
-
-    return {totalSolutions, solutionsByPoles, totalOrganisations, polesByOrganisations};
-};
-
-
-const Reporting = ({curratedSolutions}) => {
-
-    console.log(curratedSolutions)
+const GenerateCurratedSolutionsPdf = ({curratedSolutions}) => {
 
     const [enhancedSolutions, setEnhancedSolutions] = useState([]);
+
     const [quotations, setQuotations] = useState();
+
     const criteria = [
         'Pertinence par rapport aux ODD/thématique',
         'Impact local',
@@ -206,13 +178,8 @@ const Reporting = ({curratedSolutions}) => {
     }, [curratedSolutions]);
 
 
-    const statistics = generateStatistics({enhancedSolutions});
-
-    console.log(enhancedSolutions);
-
-
-    return (<Row>
-        <Col lg={3}>
+    return (
+        <>
             <PDFViewer width="100%" height="600px">
                 <Document>
                     {enhancedSolutions.map((solution, index) => (<Page key={index} style={styles.page}>
@@ -230,8 +197,7 @@ const Reporting = ({curratedSolutions}) => {
                                     <UserDetail icon="address" text={solution.user.address}/>
                                     <UserDetail icon="phone" text={solution.user.phoneNumber}/>
                                     <UserDetail icon="email" text={solution.user.email}/>
-                                    <UserDetail icon="calendar"
-                                                text={`${moment(solution.user.createdAt).format("DD MMMM YYYY [à] HH:mm")} (Date d'inscription)`}/>
+                                    <UserDetail icon="calendar" text={`${moment(solution.user.createdAt).format("DD MMMM YYYY [à] HH:mm")} (Date d'inscription)`}/>
                                 </View>
                             </View>
 
@@ -341,40 +307,11 @@ const Reporting = ({curratedSolutions}) => {
                                     </Text>
                                 </View>
                             </View>
-
                         </View>
                     </Page>))}
                 </Document>
             </PDFViewer>
-        </Col>
-        <Col lg={3}>
-            <PDFViewer width="100%" height="600px">
-                <Document>
-
-                    <Page style={styles.page}>
-                        <View style={styles.section}>
-                            <Text style={styles.heading}>Statistiques</Text>
-                            <Text
-                                style={styles.text}>{"Nombre total de solutions curées"} : {statistics.totalSolutions}</Text>
-                            <Text
-                                style={styles.text}>{"Nombre total d'organisations"} : {statistics.totalOrganisations}</Text>
-
-                            {Object.entries(statistics.solutionsByPoles).map(([pole, count]) => (
-                                <Text key={pole} style={styles.text}>Nombre de solutions pour le
-                                    pôle {pole} : {count}</Text>
-                            ))}
-
-                            {Object.entries(statistics.polesByOrganisations).map(([organisation, poles]) => (
-                                <Text key={organisation}
-                                      style={styles.text}>{"Nombre de pôles pour l'organisation"} {organisation} : {poles.size}</Text>
-                            ))}
-                        </View>
-                    </Page>
-                </Document>
-            </PDFViewer>
-        </Col>
-        <Col lg={3}></Col>
-        <Col lg={3}></Col>
-    </Row>);
+        </>
+    );
 };
-export default Reporting;
+export default GenerateCurratedSolutionsPdf;
