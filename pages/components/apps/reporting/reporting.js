@@ -1,8 +1,11 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useRef} from "react";
 import {Document, Page, Text, View, StyleSheet, PDFViewer, Image} from "@react-pdf/renderer";
 import {Col, Row} from "react-bootstrap";
 import moment from "moment";
 import axios from "@/pages/api/axios";
+import tinycolor from "tinycolor2";
+import {Chart} from "chart.js";
+import htmlToImage from "html-to-image";
 
 
 const imagePath = "../../../../assets/img/faces/";
@@ -136,9 +139,7 @@ const generateStatistics = ({enhancedSolutions}) => {
         return acc;
     }, {});
 
-
     const totalOrganisations = new Set(enhancedSolutions.map(solution => solution.curatorInfo.organisation.data.name)).size;
-
 
     const polesByOrganisations = enhancedSolutions.reduce((acc, solution) => {
         const organisationName = solution.curatorInfo.organisation.data.name;
@@ -150,13 +151,25 @@ const generateStatistics = ({enhancedSolutions}) => {
     return {totalSolutions, solutionsByPoles, totalOrganisations, polesByOrganisations};
 };
 
+const chartToImage = (chart) => {
+    return new Promise((resolve, reject) => {
+        htmlToImage.toPng(chart.canvas)
+            .then((dataUrl) => {
+                resolve(dataUrl);
+            })
+            .catch((error) => {
+                reject(error);
+            });
+    });
+};
 
 const Reporting = ({curratedSolutions}) => {
 
-    console.log(curratedSolutions)
-
     const [enhancedSolutions, setEnhancedSolutions] = useState([]);
     const [quotations, setQuotations] = useState();
+    const [thematiqueData, setThematiqueData] = useState([]);
+    const [chartReady, setChartReady] = useState(false);
+    const chartContainerRef = useRef(null);
     const criteria = [
         'Pertinence par rapport aux ODD/thématique',
         'Impact local',
@@ -188,7 +201,6 @@ const Reporting = ({curratedSolutions}) => {
             }));
             setEnhancedSolutions(enhancedData);
         };
-
         const fetchQuotations = async () => {
             try {
                 const responseQuotations = await axios.get("/quotations")
@@ -199,22 +211,137 @@ const Reporting = ({curratedSolutions}) => {
                 console.log(e)
             }
         }
+        const fetchThematiqueData = async () => {
+            try {
+                const response = await axios.get("/thematics");
+                setThematiqueData(response.data.data);
+            } catch (err) {
+                console.error("Error fetching thematique data:", err);
+            }
+        };
+
+        const DoughnutData = {
+            labels: thematiqueData?.map((thematic) => thematic.name),
+            datasets: [
+                {
+                    data: countSolutionsByThematic(),
+                    backgroundColor: thematiqueData?.map((thematic, index) =>
+                        getThematicColor(index)
+                    ),
+                },
+            ],
+        };
+
+
+        const doughnutChart = new Chart(chartContainerRef.current, {
+            type: "doughnut",
+            data: DoughnutData,
+            options: {
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: "top",
+                        align: "start",
+                    },
+                },
+                responsive: true,
+                animation: {
+                    onComplete: () => {
+                        setChartReady(true);
+                    },
+                },
+            },
+        });
 
         fetchCuratorsInfo();
         fetchQuotations();
+        fetchThematiqueData();
+
+        return () => {
+            doughnutChart.destroy();
+        };
 
     }, [curratedSolutions]);
 
 
     const statistics = generateStatistics({enhancedSolutions});
+    const countSolutionsByThematic = () => {
 
-    console.log(enhancedSolutions);
+        const solutionsCountByThematic = thematiqueData?.reduce((acc, thematic) => {
+            acc[thematic.name] = 0;
+            return acc;
+        }, {});
+
+        enhancedSolutions.forEach((solution) => {
+            const thematicName = solution?.thematic.name;
+            solutionsCountByThematic[thematicName]++;
+        });
+
+        return Object.values(solutionsCountByThematic);
+    };
+
+    const getDefaultColors = () => {
+        return ["#6d26be", "#ffbd5a", "#027333", "#4ec2f0", "#1a9c86"];
+    };
+
+    const getThematicColor = (index) => {
+        const defaultColors = getDefaultColors();
+        const defaultColor = "#a0a0a0";
+
+        if (thematiqueData[index]?.color) {
+            return thematiqueData[index].color;
+        }
+
+        const color = defaultColors[index % defaultColors.length] || defaultColor;
+
+        return tinycolor(color).toString();
+    };
+
+
+    useEffect(() => {
+        if (chartReady) {
+            chartToImage(document.getElementById('chartContainer'))
+                .then((dataUrl) => {
+                    // Utiliser l'URL de l'image dans votre application
+                    console.log(dataUrl); // À remplacer par votre utilisation réelle
+                })
+                .catch((error) => {
+                    console.error('Erreur lors de la conversion du graphique en image :', error);
+                });
+        }
+    }, [chartReady]);
 
 
     return (<Row>
-        <Col lg={3}>
+        <Col>
+
             <PDFViewer width="100%" height="600px">
                 <Document>
+
+                    <Page style={styles.page}>
+                        <View style={styles.section}>
+                            <Text style={styles.heading}>Statistiques</Text>
+                            <Text
+                                style={styles.text}>{"Nombre total de solutions curées"} : {statistics.totalSolutions}</Text>
+                            <Text
+                                style={styles.text}>{"Nombre total d'organisations"} : {statistics.totalOrganisations}</Text>
+
+                            {Object.entries(statistics.solutionsByPoles).map(([pole, count]) => (
+                                <Text key={pole} style={styles.text}>Nombre de solutions pour le
+                                    pôle {pole} : {count}</Text>
+                            ))}
+
+                            {Object.entries(statistics.polesByOrganisations).map(([organisation, poles]) => (
+                                <Text key={organisation}
+                                      style={styles.text}>{"Nombre de pôles pour l'organisation"} {organisation} : {poles.size}</Text>
+                            ))}
+                        </View>
+
+
+                        <canvas id="chartContainer" ref={chartContainerRef}/>
+
+                    </Page>
+
                     {enhancedSolutions.map((solution, index) => (<Page key={index} style={styles.page}>
                         {/*<ExampleSvg/>*/}
                         <View style={styles.section}>
@@ -223,8 +350,7 @@ const Reporting = ({curratedSolutions}) => {
                                 <Text>{"Informations de l'innovateur"}</Text>
                             </View>
                             <View style={styles.profileImage}>
-                                <Image style={styles.profileImg}
-                                       src={"../../../../assets/img/faces/profile.jpg"}/>
+                                <Image style={styles.profileImg} src={"../../../../assets/img/faces/profile.jpg"}/>
                                 <View style={styles.profDetails}>
                                     <UserDetail icon="person" text={solution.user.name}/>
                                     <UserDetail icon="address" text={solution.user.address}/>
@@ -341,40 +467,12 @@ const Reporting = ({curratedSolutions}) => {
                                     </Text>
                                 </View>
                             </View>
-
                         </View>
                     </Page>))}
                 </Document>
             </PDFViewer>
         </Col>
-        <Col lg={3}>
-            <PDFViewer width="100%" height="600px">
-                <Document>
 
-                    <Page style={styles.page}>
-                        <View style={styles.section}>
-                            <Text style={styles.heading}>Statistiques</Text>
-                            <Text
-                                style={styles.text}>{"Nombre total de solutions curées"} : {statistics.totalSolutions}</Text>
-                            <Text
-                                style={styles.text}>{"Nombre total d'organisations"} : {statistics.totalOrganisations}</Text>
-
-                            {Object.entries(statistics.solutionsByPoles).map(([pole, count]) => (
-                                <Text key={pole} style={styles.text}>Nombre de solutions pour le
-                                    pôle {pole} : {count}</Text>
-                            ))}
-
-                            {Object.entries(statistics.polesByOrganisations).map(([organisation, poles]) => (
-                                <Text key={organisation}
-                                      style={styles.text}>{"Nombre de pôles pour l'organisation"} {organisation} : {poles.size}</Text>
-                            ))}
-                        </View>
-                    </Page>
-                </Document>
-            </PDFViewer>
-        </Col>
-        <Col lg={3}></Col>
-        <Col lg={3}></Col>
     </Row>);
 };
 export default Reporting;
