@@ -141,7 +141,6 @@ const Settings = () => {
                     </Modal>
                 </div>
             </div>
-
             <Settingscom updateRoles={setRoles}/>
         </div>
     );
