@@ -3,26 +3,30 @@ import {Text, View} from "@react-pdf/renderer";
 import {styles} from "@/pages/services/services.reporting";
 
 const curatorDetail = ({solution}) => (
-    <View>
-        <View>
-            <Text>Détails de la solution</Text>
+    <>
+        <View style={styles.section}>
+            <Text style={styles.heading}>Côte</Text>
+            {solution.feedbacks[0]?.quotations.split(',').map((quotationId, index) => {
+                const quotation = quotations.find(q => q.id === Number(quotationId.trim()));
+                return (
+                    <View key={index} style={styles.quotationContainer}>
+                        <Text style={styles.quotationLabel}>{criteria[index]} : </Text>
+                        <Text style={styles.quotationLabel}>{quotation?.mention} - </Text>
+                        <Text style={styles.quotationValue}>{quotation?.average}</Text>
+                    </View>
+                );
+            })}
+            <View style={styles.totalPercentageContainer}>
+                <Text style={styles.label}>Pourcentage total : </Text>
+                <Text style={styles.text}>
+                    {solution.feedbacks[0]?.quotations.split(',').reduce((total, quotationId) => {
+                        const quotation = quotations.find(q => q.id === Number(quotationId.trim()));
+                        return total + quotation?.average;
+                    }, 0) / 40 * 100}%
+                </Text>
+            </View>
         </View>
-        <View style={{marginBottom: 10}}>
-            <Text style={styles.label}>Description:</Text>
-            <Text style={styles.text}>{solution.description}</Text>
-        </View>
-        <View style={{marginBottom: 10}}>
-            <Text style={styles.label}>Thème:</Text>
-            <Text style={styles.text}>{solution.thematic.name}</Text>
-        </View>
-        <View style={{marginBottom: 10}}>
-            <Text style={styles.label}>Challenges:</Text>
-            {solution.challenges.map((challenge, index) => (
-                <Text key={index} style={styles.text}>
-                    {challenge.name}
-                </Text>))}
-        </View>
-    </View>
+    </>
 );
 
 export default curatorDetail;
