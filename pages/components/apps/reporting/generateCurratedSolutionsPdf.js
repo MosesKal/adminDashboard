@@ -17,8 +17,9 @@ const GenerateCurratedSolutionsPdf = ({curratedSolutions}) => {
     const [enhancedSolutions, setEnhancedSolutions] = useState([]);
     const [quotations, setQuotations] = useState();
     const [thematiqueData, setThematiqueData] = useState([]);
-    const [chartReady, setChartReady] = useState(false);
-    const chartContainerRef = useRef(null);
+
+    // const [chartReady, setChartReady] = useState(false);
+    // const chartContainerRef = useRef(null);
 
 
     useEffect(() => {
@@ -99,13 +100,16 @@ const GenerateCurratedSolutionsPdf = ({curratedSolutions}) => {
 
     }, [curratedSolutions]);
 
+    console.log("generateCurratedSolutionsPdf=========>", curratedSolutions)
+
 
     return (<Row>
         <Col>
             <PDFViewer width="100%" height="600px">
                 <Document>
-                    {
-                        enhancedSolutions && <StatCuration solutions={enhancedSolutions}/>}
+
+                     <StatCuration solutions={enhancedSolutions}/>
+
                     {
                         enhancedSolutions.map((solution, index) =>
                             (

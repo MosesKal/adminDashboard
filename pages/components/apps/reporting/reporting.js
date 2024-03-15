@@ -6,6 +6,8 @@ import GenerateCurratedSolutionsPdf from "@/pages/components/apps/reporting/gene
 
 const Reporting = ({curratedSolutions}) => {
 
+    console.log("CurratedSolutions=========>", curratedSolutions);
+
     return (
         <Row>
             <Col>
