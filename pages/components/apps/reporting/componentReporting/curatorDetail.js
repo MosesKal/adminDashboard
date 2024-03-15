@@ -1,29 +1,70 @@
 import React from "react";
-import {Text, View} from "@react-pdf/renderer";
+import {Image, Text, View} from "@react-pdf/renderer";
 import {styles} from "@/pages/services/services.reporting";
+import {IMAGEPATH} from "@/pages/services/services.reporting";
 
 const curatorDetail = ({solution}) => (
     <>
-        <View style={styles.section}>
-            <Text style={styles.heading}>Côte</Text>
-            {solution.feedbacks[0]?.quotations.split(',').map((quotationId, index) => {
-                const quotation = quotations.find(q => q.id === Number(quotationId.trim()));
-                return (
-                    <View key={index} style={styles.quotationContainer}>
-                        <Text style={styles.quotationLabel}>{criteria[index]} : </Text>
-                        <Text style={styles.quotationLabel}>{quotation?.mention} - </Text>
-                        <Text style={styles.quotationValue}>{quotation?.average}</Text>
+        <View>
+            <View>
+                <Text>Informations du Curateur</Text>
+            </View>
+            <View style={styles.curatorContainer}>
+                <View style={styles.curatorContainerBloc}>
+                    <View style={styles.textIconCurator}>
+                        <View style={styles.iconCuratorContainer}>
+                            <Image src={`${IMAGEPATH}person.png`}
+                                   style={styles.iconCurator}/>
+                        </View>
+                        <View>
+                            <Text
+                                style={styles.text}>{solution.curatorInfo.data.name}</Text>
+                        </View>
                     </View>
-                );
-            })}
-            <View style={styles.totalPercentageContainer}>
-                <Text style={styles.label}>Pourcentage total : </Text>
-                <Text style={styles.text}>
-                    {solution.feedbacks[0]?.quotations.split(',').reduce((total, quotationId) => {
-                        const quotation = quotations.find(q => q.id === Number(quotationId.trim()));
-                        return total + quotation?.average;
-                    }, 0) / 40 * 100}%
-                </Text>
+
+                    <View style={styles.textIconCurator}>
+                        <View style={styles.iconCuratorContainer}>
+                            <Image src={`${IMAGEPATH}email.png`}
+                                   style={styles.iconCurator}/>
+                        </View>
+                        <View style={styles.textContainer}>
+                            <Text
+                                style={styles.text}>{solution.curatorInfo.data.email}</Text>
+                        </View>
+                    </View>
+                    <View style={styles.textIconCurator}>
+                        <View style={styles.iconCuratorContainer}>
+                            <Image src={`${IMAGEPATH}phone.png`}
+                                   style={styles.iconCurator}/>
+                        </View>
+                        <View style={styles.textContainer}>
+                            <Text
+                                style={styles.text}>{solution.curatorInfo.data.phoneNumber}</Text>
+                        </View>
+                    </View>
+                </View>
+
+                <View style={styles.curatorContainerBlocTow}>
+                    <View style={styles.textIconCurator}>
+                        <View style={styles.iconCuratorContainer}>
+                            <Image src={`${IMAGEPATH}organisation.png`} style={styles.iconCurator}/>
+                        </View>
+                        <View style={styles.textContainer}>
+                            <Text
+                                style={styles.text}>{solution.curatorInfo.organisation.data.name}</Text>
+                        </View>
+                    </View>
+
+                    <View style={styles.textIconCurator}>
+                        <View style={styles.iconCuratorContainer}>
+                            <Image src={`${IMAGEPATH}pole.png`} style={styles.iconCurator}/>
+                        </View>
+                        <View style={styles.textContainer}>
+                            <Text
+                                style={styles.text}>{solution.curatorInfo.pole.data.name}</Text>
+                        </View>
+                    </View>
+                </View>
             </View>
         </View>
     </>

@@ -4,7 +4,7 @@ import {Col, Row} from "react-bootstrap";
 import axios from "@/pages/api/axios";
 import tinycolor from "tinycolor2";
 import {Chart} from "chart.js";
-import { styles} from "@/pages/services/services.reporting";
+import {styles} from "@/pages/services/services.reporting";
 import SolutionDetail from "@/pages/components/apps/reporting/componentReporting/solutionDetail";
 import InnovateurDetail from "@/pages/components/apps/reporting/componentReporting/innovateurDetail";
 import CuratorDetail from "@/pages/components/apps/reporting/componentReporting/curatorDetail";
@@ -23,6 +23,7 @@ const GenerateCurratedSolutionsPdf = ({curratedSolutions}) => {
 
     useEffect(() => {
         const fetchCuratorsInfo = async () => {
+
             const enhancedData = await Promise.all(curratedSolutions.map(async (solution) => {
                 try {
                     const curatorInfoResponse = await axios.get(`/users/${solution.feedbacks[0]?.userId}`);
@@ -54,6 +55,8 @@ const GenerateCurratedSolutionsPdf = ({curratedSolutions}) => {
                 console.log(e)
             }
         }
+
+
         // const fetchThematiqueData = async () => {
         //     try {
         //         const response = await axios.get("/thematics");
@@ -85,7 +88,9 @@ const GenerateCurratedSolutionsPdf = ({curratedSolutions}) => {
         // });
 
         fetchCuratorsInfo();
+
         fetchQuotations();
+
         // fetchThematiqueData();
 
         // return () => {
@@ -99,7 +104,8 @@ const GenerateCurratedSolutionsPdf = ({curratedSolutions}) => {
         <Col>
             <PDFViewer width="100%" height="600px">
                 <Document>
-                    {/*<StatCuration/>*/}
+                    {
+                        enhancedSolutions && <StatCuration solutions={enhancedSolutions}/>}
                     {
                         enhancedSolutions.map((solution, index) =>
                             (
@@ -114,7 +120,8 @@ const GenerateCurratedSolutionsPdf = ({curratedSolutions}) => {
 
                                         <CuratorDetail solution={solution}/>
 
-                                        {/*<NotationCurator solution={solution} quotations={quotations} />*/}
+                                        <NotationCurator solution={solution} quotations={quotations}/>
+
                                     </View>
                                 </Page>
                             )

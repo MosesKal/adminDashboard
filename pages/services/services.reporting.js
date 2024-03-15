@@ -1,27 +1,7 @@
 import htmlToImage from "html-to-image";
 import { StyleSheet} from "@react-pdf/renderer";
 
-export const generateStatistics = ({enhancedSolutions}) => {
 
-    const totalSolutions = enhancedSolutions.length;
-
-    const solutionsByPoles = enhancedSolutions.reduce((acc, solution) => {
-        const poleName = solution.curatorInfo.pole.data.name;
-        acc[poleName] = (acc[poleName] || 0) + 1;
-        return acc;
-    }, {});
-
-    const totalOrganisations = new Set(enhancedSolutions.map(solution => solution.curatorInfo.organisation.data.name)).size;
-
-    const polesByOrganisations = enhancedSolutions.reduce((acc, solution) => {
-        const organisationName = solution.curatorInfo.organisation.data.name;
-        const poleName = solution.curatorInfo.pole.data.name;
-        acc[organisationName] = (acc[organisationName] || new Set()).add(poleName);
-        return acc;
-    }, {});
-
-    return {totalSolutions, solutionsByPoles, totalOrganisations, polesByOrganisations};
-};
 
 export const chartToImage = (chart) => {
     return new Promise((resolve, reject) => {

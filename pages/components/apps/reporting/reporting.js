@@ -6,11 +6,13 @@ import GenerateCurratedSolutionsPdf from "@/pages/components/apps/reporting/gene
 
 const Reporting = ({curratedSolutions}) => {
 
+    return (
+        <Row>
+            <Col>
+                <GenerateCurratedSolutionsPdf curratedSolutions={curratedSolutions}/>
+            </Col>
+        </Row>
 
-    return (<Row>
-        <Col>
-            <GenerateCurratedSolutionsPdf curratedSolutions={curratedSolutions}/>
-        </Col>
-    </Row>);
+    );
 };
 export default Reporting;
