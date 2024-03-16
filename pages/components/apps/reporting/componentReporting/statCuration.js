@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios'; // Assurez-vous d'avoir correctement configuré Axios dans votre application
 import { Page, Text, View } from '@react-pdf/renderer';
-import { Chart } from 'chart.js';
-import { chartToImage, styles } from '@/pages/services/services.reporting'; // Assurez-vous que le chemin d'importation est correct
-import tinycolor from 'tinycolor2';
-import htmlToImage from 'html-to-image';
+import {  styles } from '@/pages/services/services.reporting';
+import HeaderReport from "@/pages/components/apps/reporting/componentReporting/headerReport";
 
 const StatCuration = ({ solutions }) => {
     const [statDataCuration, setStatDataCuration] = useState({});
@@ -37,31 +34,31 @@ const StatCuration = ({ solutions }) => {
         generateStatData();
     }, [solutions]);
 
-    console.log('statDataCuration', statDataCuration);
 
     return (
         <Page style={styles.page}>
+            <HeaderReport/>
             {!loading && statDataCuration.totalSolutions > 0 ? (
                 <View style={styles.section}>
-                    <Text style={styles.heading}>Statistiques</Text>
-                    <Text style={styles.text}>Nombre total de solutions curées : {statDataCuration.totalSolutions}</Text>
-                    <Text style={styles.text}>Nombre total d'organisations : {statDataCuration.totalOrganisations}</Text>
+                    <Text style={styles.heading}>{"Statistiques"}</Text>
+                    <Text style={styles.text}>{"Nombre total de solutions curées"} : {statDataCuration.totalSolutions}</Text>
+                    <Text style={styles.text}>{"Nombre total d'organisations"} : {statDataCuration.totalOrganisations}</Text>
 
                     {Object.entries(statDataCuration.solutionsByPoles).map(([pole, count]) => (
                         <Text key={pole} style={styles.text}>
-                            Nombre de solutions pour le pôle {pole} : {count}
+                            {"Nombre de solutions pour le pôle"} {pole} : {count}
                         </Text>
                     ))}
                     {Object.entries(statDataCuration.polesByOrganisations).map(([organisation, poles]) => (
                         <Text key={organisation} style={styles.text}>
-                            Nombre de pôles pour l'organisation {organisation} : {poles.size}
+                            {"Nombre de pôles pour l'organisation"} {organisation} : {poles.size}
                         </Text>
                     ))}
                 </View>
             ) : (
                 <View>
-                    <Text style={styles.heading}>Statistiques</Text>
-                    <Text style={styles.text}>Aucune donnée disponible</Text>
+                    <Text style={styles.heading}>{"Statistiques"}</Text>
+                    <Text style={styles.text}>{"Aucune donnée disponible"}</Text>
                 </View>
             )}
         </Page>

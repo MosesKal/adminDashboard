@@ -7,7 +7,7 @@ const curatorDetail = ({solution}) => (
     <>
         <View>
             <View>
-                <Text>Informations du Curateur</Text>
+                <Text style={{fontSize: "8", textDecoration: "underline"}}>Informations du Curateur</Text>
             </View>
             <View style={styles.curatorContainer}>
                 <View style={styles.curatorContainerBloc}>

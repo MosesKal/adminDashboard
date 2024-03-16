@@ -21,11 +21,11 @@ export const styles = StyleSheet.create({
     }, section: {
         margin: 10, padding: 10, flexGrow: 1, borderWidth: 1, borderColor: "#ccc", borderRadius: 5,
     }, heading: {
-        fontSize: 20, marginBottom: 10, color: "#333", textDecoration: "underline"
+        fontSize: 15, marginBottom: 10, color: "#333", textDecoration: "underline"
     }, label: {
-        fontSize: 12, fontWeight: "bold", marginBottom: 5, color: "#666",
+        fontSize: 8, fontWeight: "bold", marginBottom: 5, color: "#666",
     }, text: {
-        fontSize: 12, marginBottom: 5, color: "#333",
+        fontSize: 8, marginBottom: 5, color: "#333",
     }, profileImage: {
         marginBottom: 10,
         flexDirection: "row",
@@ -47,7 +47,7 @@ export const styles = StyleSheet.create({
     }, containerTextDetailOther: {
         display: "flex", flexDirection: "row",
     }, profDetailOther: {
-        fontSize: 10
+        fontSize: 8
     }, containerIconOther: {
         marginRight: 15, marginTop: 5
     }, containerTextOther: {

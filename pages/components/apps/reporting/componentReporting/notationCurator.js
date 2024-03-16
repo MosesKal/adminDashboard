@@ -6,7 +6,7 @@ const NotationCurator = ({solution, quotations}) => {
     return (
         <>
             <View style={styles.section}>
-                <Text style={styles.heading}>Notation</Text>
+                <Text style={{fontSize: "8", textDecoration: "underline"}}>Notation</Text>
                 {solution.feedbacks[0]?.quotations.split(',').map((quotationId, index) => {
                     const quotation = quotations.find(q => q.id === Number(quotationId.trim()));
                     return (

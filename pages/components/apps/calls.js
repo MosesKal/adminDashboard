@@ -1,14 +1,6 @@
 import React, {useState, useEffect, useRef, createRef} from "react";
 import {
-    Button,
-    Row,
-    Col,
-    Card,
-    Form,
-    FormGroup,
-    Modal,
-    Breadcrumb,
-    InputGroup,
+    Button, Row, Col, Card, Form, FormGroup, Modal, Breadcrumb, InputGroup,
 } from "react-bootstrap";
 import Link from "next/link";
 import {useRouter} from "next/router";
@@ -38,10 +30,7 @@ const Settings = () => {
     const [description, setDescription] = useState("");
 
     useEffect(() => {
-        if (
-            JSON.parse(localStorage.getItem("ACCESS_ACCOUNT")).roles[0].name ===
-            "ADMIN"
-        ) {
+        if (JSON.parse(localStorage.getItem("ACCESS_ACCOUNT")).roles[0].name === "ADMIN") {
             setIsAdmin(true);
         }
     }, []);
@@ -67,10 +56,7 @@ const Settings = () => {
         try {
             setIsLoadingCreating(true);
             const payload = {
-                name,
-                startedAt: startDate,
-                endedAt: endDate,
-                description,
+                name, startedAt: startDate, endedAt: endDate, description,
             };
 
             await axios.post("/calls", JSON.stringify(payload));
@@ -86,8 +72,7 @@ const Settings = () => {
         }
     };
 
-    return (
-        <div>
+    return (<div>
             <Seo title={"Liste Appel"}/>
 
             <Title title={"LISTE D'APPELS "}/>
@@ -115,9 +100,7 @@ const Settings = () => {
                                     <InputGroup>
                                         <InputGroup.Text className={"input-group-text"}>
                                             <i
-                                                className={
-                                                    "typcn typcn-calendar-outline tx-24 lh--9 op-6"
-                                                }
+                                                className={"typcn typcn-calendar-outline tx-24 lh--9 op-6"}
                                             ></i>
                                         </InputGroup.Text>
                                         <DatePicker
@@ -133,9 +116,7 @@ const Settings = () => {
                                     <InputGroup className={"input-group reactdate-pic"}>
                                         <InputGroup.Text className={"input-group-text"}>
                                             <i
-                                                className={
-                                                    "typcn typcn-calendar-outline tx-24 lh--9 op-6"
-                                                }
+                                                className={"typcn typcn-calendar-outline tx-24 lh--9 op-6"}
                                             ></i>
                                         </InputGroup.Text>
                                         <DatePicker
@@ -171,8 +152,7 @@ const Settings = () => {
             </div>
 
             <Settingscom updateRoles={setRoles}/>
-        </div>
-    );
+        </div>);
 };
 
 Settings.propTypes = {};

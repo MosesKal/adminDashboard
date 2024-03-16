@@ -7,9 +7,13 @@ export const imageBaseUrl = "https://api.fikiri.co/uploads";
 
 
 export default axios.create({
+
   baseURL: apiBaseUrl,
+
   headers: {
     "Content-Type": "application/json",
   },
+
   withCredentials: true,
+
 });
