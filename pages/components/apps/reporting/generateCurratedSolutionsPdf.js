@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Document, Page, Text, View, PDFViewer} from "@react-pdf/renderer";
+import {Document, Page, PDFViewer, Text, View} from "@react-pdf/renderer";
 import {Col, Row} from "react-bootstrap";
 import axios from "@/pages/api/axios";
 
@@ -15,7 +15,6 @@ const GenerateCurratedSolutionsPdf = ({curratedSolutions}) => {
 
     const [enhancedSolutions, setEnhancedSolutions] = useState([]);
     const [quotations, setQuotations] = useState();
-    const [thematiqueData, setThematiqueData] = useState([]);
 
 
     useEffect(() => {
@@ -27,14 +26,13 @@ const GenerateCurratedSolutionsPdf = ({curratedSolutions}) => {
 
                     const poleResponse = await axios.get(`/poles/${curatorInfoResponse?.data?.data?.poleId}`);
                     const organisationResponse = await axios.get(`/organisations/${curatorInfoResponse?.data?.data?.organisationId}`);
-                    const enhancedSolution = {
+                    return {
                         ...solution, curatorInfo: {
                             ...curatorInfoResponse.data,
                             pole: poleResponse.data,
                             organisation: organisationResponse.data
                         }
                     };
-                    return enhancedSolution;
                 } catch (error) {
                     console.log("Error fetching curator info:", error);
                     return solution;
