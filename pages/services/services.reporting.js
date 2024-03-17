@@ -1,6 +1,5 @@
 import htmlToImage from "html-to-image";
-import { StyleSheet} from "@react-pdf/renderer";
-
+import {StyleSheet} from "@react-pdf/renderer";
 
 
 export const chartToImage = (chart) => {
@@ -20,7 +19,21 @@ export const styles = StyleSheet.create({
         flexDirection: "column", padding: 20,
     }, section: {
         margin: 10, padding: 10, flexGrow: 1, borderWidth: 1, borderColor: "#ccc", borderRadius: 5,
-    }, heading: {
+    }, graphiqueContainer: {
+        margin: 10,
+        padding: 10,
+        flexGrow: 1,
+        borderWidth: 1,
+        borderColor: "#ccc",
+        borderRadius: 5,
+        display: "flex",
+        justifyContent: "center",
+        alignItems : "center"
+    },
+    graphiqueImg : {
+        padding: 5
+    }
+    ,heading: {
         fontSize: 15, marginBottom: 10, color: "#333", textDecoration: "underline"
     }, label: {
         fontSize: 8, fontWeight: "bold", marginBottom: 5, color: "#666",
@@ -75,71 +88,29 @@ export const styles = StyleSheet.create({
 
     }, iconCurator: {
         width: 15
-    }, textContainer: {},
-    section1: {
-        marginVertical: 10,
-        padding: 10,
-        borderWidth: 1,
-        borderColor: "#ccc",
-        borderRadius: 5,
-    },
-    heading1: {
-        fontSize: 20,
-        marginBottom: 10,
-        color: "#333",
-        textDecoration: "underline"
-    },
-    quotationContainer: {
-        flexDirection: "row",
-        alignItems: "center",
-        marginTop: 5,
-    },
-    quotationLabel: {
-        fontSize: 12,
-        fontWeight: "bold",
-        color: "#666",
-        marginRight: 5,
-    },
-    quotationValue: {
-        fontSize: 12,
-        color: "#333",
-    },
-    totalPercentageContainer: {
-        flexDirection: "row",
-        alignItems: "center",
-        marginTop: 10,
-    },
-    label1: {
-        fontSize: 12,
-        fontWeight: "bold",
-        color: "#666",
-        marginRight: 5,
-    },
-    text1: {
-        fontSize: 12,
-        color: "#333",
+    }, textContainer: {}, section1: {
+        marginVertical: 10, padding: 10, borderWidth: 1, borderColor: "#ccc", borderRadius: 5,
+    }, heading1: {
+        fontSize: 20, marginBottom: 10, color: "#333", textDecoration: "underline"
+    }, quotationContainer: {
+        flexDirection: "row", alignItems: "center", marginTop: 5,
+    }, quotationLabel: {
+        fontSize: 12, fontWeight: "bold", color: "#666", marginRight: 5,
+    }, quotationValue: {
+        fontSize: 12, color: "#333",
+    }, totalPercentageContainer: {
+        flexDirection: "row", alignItems: "center", marginTop: 10,
+    }, label1: {
+        fontSize: 12, fontWeight: "bold", color: "#666", marginRight: 5,
+    }, text1: {
+        fontSize: 12, color: "#333",
     },
 });
 
-export const CRITERIA = [
-    'Pertinence par rapport aux ODD/thématique',
-    'Impact local',
-    'Innovation',
-    'Échelle de mise en œuvre',
-];
+export const CRITERIA = ['Pertinence par rapport aux ODD/thématique', 'Impact local', 'Innovation', 'Échelle de mise en œuvre',];
 
-export  const IMAGEPATH = "../../../../assets/img/faces/";
+export const IMAGEPATH = "../../../../assets/img/faces/";
 
-// export const DoughnutData = {
-//     labels: thematiqueData?.map((thematic) => thematic.name),
-//     datasets: [
-//         {
-//             data: countSolutionsByThematic(),
-//             backgroundColor: thematiqueData?.map((thematic, index) =>
-//                 getThematicColor(index)
-//             ),
-//         },
-//     ],
-// };
+
 
 

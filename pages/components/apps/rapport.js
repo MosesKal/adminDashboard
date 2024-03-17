@@ -13,7 +13,9 @@ const Linechart = {
 };
 
 const Rapport = () => {
+
     const [dataUser, setDataUser] = useState([]);
+
     const [userRegistrationData, setUserRegistrationData] = useState({
         labels: [],
         datasets: [
@@ -45,7 +47,7 @@ const Rapport = () => {
     const [thematiqueData, setThematiqueData] = useState([]);
 
     useEffect(() => {
-        const fetchData = async () => {
+         const fetchData = async () => {
             try {
                 const response = await axios.get("dashboard/users");
                 setDataUser(response.data.data);

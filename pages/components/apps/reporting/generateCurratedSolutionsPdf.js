@@ -11,7 +11,7 @@ import NotationCurator from "@/pages/components/apps/reporting/componentReportin
 import StatCuration from "@/pages/components/apps/reporting/componentReporting/statCuration";
 import HeaderReport from "@/pages/components/apps/reporting/componentReporting/headerReport";
 
-const GenerateCurratedSolutionsPdf = ({curratedSolutions}) => {
+const GenerateCurratedSolutionsPdf = ({curratedSolutions , chartImage}) => {
 
     const [enhancedSolutions, setEnhancedSolutions] = useState([]);
     const [quotations, setQuotations] = useState();
@@ -63,7 +63,7 @@ const GenerateCurratedSolutionsPdf = ({curratedSolutions}) => {
             <PDFViewer width="100%" height="600px">
                 <Document>
 
-                    <StatCuration solutions={enhancedSolutions}/>
+                    <StatCuration solutions={enhancedSolutions} chartImage={chartImage}/>
 
                     {
                         enhancedSolutions.map((solution, index) =>

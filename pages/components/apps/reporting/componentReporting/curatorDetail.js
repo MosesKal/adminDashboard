@@ -45,6 +45,7 @@ const curatorDetail = ({solution}) => (
                 </View>
 
                 <View style={styles.curatorContainerBlocTow}>
+
                     <View style={styles.textIconCurator}>
                         <View style={styles.iconCuratorContainer}>
                             <Image src={`${IMAGEPATH}organisation.png`} style={styles.iconCurator}/>

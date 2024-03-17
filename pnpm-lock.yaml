@@ -65,6 +65,9 @@ dependencies:
   chart.js:
     specifier: ^4.4.1
     version: 4.4.1
+  chartjs-plugin-datalabels:
+    specifier: ^2.2.0
+    version: 2.2.0(chart.js@4.4.1)
   chartjs-to-image:
     specifier: ^1.2.2
     version: 1.2.2
@@ -2953,6 +2956,14 @@ packages:
     engines: {pnpm: '>=7'}
     dependencies:
       '@kurkle/color': 0.3.2
+    dev: false
+
+  /chartjs-plugin-datalabels@2.2.0(chart.js@4.4.1):
+    resolution: {integrity: sha512-14ZU30lH7n89oq+A4bWaJPnAG8a7ZTk7dKf48YAzMvJjQtjrgg5Dpk9f+LbjCF6bpx3RAGTeL13IXpKQYyRvlw==}
+    peerDependencies:
+      chart.js: '>=3.0.0'
+    dependencies:
+      chart.js: 4.4.1
     dev: false
 
   /chartjs-to-image@1.2.2:

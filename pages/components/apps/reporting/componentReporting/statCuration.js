@@ -1,13 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import { Page, Text, View } from '@react-pdf/renderer';
-import {  styles } from '@/pages/services/services.reporting';
+import React, {useEffect, useState} from 'react';
+import {Page, Text, View, Image,} from '@react-pdf/renderer';
+import {styles} from '@/pages/services/services.reporting';
 import HeaderReport from "@/pages/components/apps/reporting/componentReporting/headerReport";
 
-const StatCuration = ({ solutions }) => {
+
+const StatCuration = ({solutions, chartImage}) => {
     const [statDataCuration, setStatDataCuration] = useState({});
     const [loading, setLoading] = useState(false);
 
+
     useEffect(() => {
+
         setLoading(true);
         const generateStatData = () => {
             const totalSolutions = solutions.length;
@@ -27,7 +30,7 @@ const StatCuration = ({ solutions }) => {
                 return acc;
             }, {});
 
-            setStatDataCuration({ totalSolutions, solutionsByPoles, totalOrganisations, polesByOrganisations });
+            setStatDataCuration({totalSolutions, solutionsByPoles, totalOrganisations, polesByOrganisations});
             setLoading(false);
         };
 
@@ -39,22 +42,37 @@ const StatCuration = ({ solutions }) => {
         <Page style={styles.page}>
             <HeaderReport/>
             {!loading && statDataCuration.totalSolutions > 0 ? (
-                <View style={styles.section}>
-                    <Text style={styles.heading}>{"Statistiques"}</Text>
-                    <Text style={styles.text}>{"Nombre total de solutions curées"} : {statDataCuration.totalSolutions}</Text>
-                    <Text style={styles.text}>{"Nombre total d'organisations"} : {statDataCuration.totalOrganisations}</Text>
+                <>
+                    <View style={styles.section}>
+                        <Text style={styles.heading}>{"Statistiques"}</Text>
+                        <Text
+                            style={styles.text}>{"Nombre total de solutions curées"} : {statDataCuration.totalSolutions}</Text>
+                        <Text
+                            style={styles.text}>{"Nombre total d'organisations"} : {statDataCuration.totalOrganisations}</Text>
 
-                    {Object.entries(statDataCuration.solutionsByPoles).map(([pole, count]) => (
-                        <Text key={pole} style={styles.text}>
-                            {"Nombre de solutions pour le pôle"} {pole} : {count}
-                        </Text>
-                    ))}
-                    {Object.entries(statDataCuration.polesByOrganisations).map(([organisation, poles]) => (
-                        <Text key={organisation} style={styles.text}>
-                            {"Nombre de pôles pour l'organisation"} {organisation} : {poles.size}
-                        </Text>
-                    ))}
-                </View>
+                        {Object.entries(statDataCuration.solutionsByPoles).map(([pole, count]) => (
+                            <Text key={pole} style={styles.text}>
+                                {"Nombre de solutions pour le pôle"} {pole} : {count}
+                            </Text>
+                        ))}
+                        {Object.entries(statDataCuration.polesByOrganisations).map(([organisation, poles]) => (
+                            <Text key={organisation} style={styles.text}>
+                                {"Nombre de pôles pour l'organisation"} {organisation} : {poles.size}
+                            </Text>
+                        ))}
+                    </View>
+
+                    <View style={styles.graphiqueContainer}>
+                        <View>
+                            <Text style={styles.heading}>{"Solution curée par thématique"}</Text>
+                        </View>
+                        <View style={styles.graphiqueImage}>
+                            {chartImage && <Image src={chartImage} style={{ width: 300, height: 300 }} />}
+                        </View>
+
+                    </View>
+                </>
+
             ) : (
                 <View>
                     <Text style={styles.heading}>{"Statistiques"}</Text>
