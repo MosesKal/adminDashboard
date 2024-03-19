@@ -82,7 +82,7 @@ const GenerateDoughnoutChart = ({ solutions, thematiques, graphiqueId }) => {
                                 font: {
                                     size: 12,
                                 },
-                                formatter: (value, context) => {
+                                formatter: (value) => {
                                     return value;
                                 },
                             },

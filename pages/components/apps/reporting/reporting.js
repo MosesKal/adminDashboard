@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Col, Row, Button, Spinner } from "react-bootstrap";
+import { Col, Row, Button } from "react-bootstrap";
 import GenerateCurratedSolutionsPdf from "@/pages/components/apps/reporting/generateCurratedSolutionsPdf";
 import axios from "@/pages/api/axios";
 import GenerateDoughnoutChart from "@/pages/components/apps/reporting/generateDoughnutChart";
