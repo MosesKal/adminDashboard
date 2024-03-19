@@ -3,7 +3,7 @@ import rootred from "../reducers/main";
 
 const store = configureStore({
   reducer : rootred,
-  devTools: true,
+  devTools: false,
 });
 
 export default store;

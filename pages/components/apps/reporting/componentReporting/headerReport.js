@@ -1,11 +1,11 @@
 import React from 'react';
 import {Image, View} from "@react-pdf/renderer";
-import {IMAGEPATH} from "@/pages/services/services.reporting";
+const IMAGEPATH = "/assets/img/faces/";
 
 const HeaderReport = () => {
     return (
         <View>
-            <Image src={`${IMAGEPATH}entete.png`} />
+            <Image src={`${IMAGEPATH}entete.png`} alt={"entete.png"}/>
         </View>
     )
 }

@@ -1,41 +1,78 @@
 import React from "react";
+import {Text, View, StyleSheet, Image} from "@react-pdf/renderer";
 import moment from "moment";
-import styles from "./customCardInnovation.module.css";
 
 const CustomCardInnovateur = ({profileInnovateur}) => {
+    const styles = StyleSheet.create({
+        profileImage: {
+            marginBottom: 10,
+            flexDirection: "row",
+            alignItems: "center",
+        },
+        profileImg: {
+            borderRadius: 5,
+            width: 100,
+            height: 100,
+            objectFit: "cover",
+            marginRight: 10,
+        },
+        profDetails: {
+            flexDirection: "column",
+        },
+        fontWeightSemibold: {
+            fontWeight: "bold",
+        },
+        textMuted: {
+            color: "#666",
+        },
+    });
+
     return (
-        <div className={styles.customCard}>
-            <div className={styles.profileImage}>
-                <img
-                    className={styles.profileImg}
-                    alt=""
-                    src={profileInnovateur?.profile ? profileInnovateur.profile : "../../../assets/img/faces/profile.jpg"}
-                />
-            </div>
-            <div className={styles.profDetails}>
-                <h4 className={styles.fontWeightSemibold}>{profileInnovateur ? profileInnovateur.name : ""}</h4>
-                <p className={styles.textMuted}>
-                    <i className="far fa-address-card"></i> Innovateur
-                </p>
-                <p className={styles.textMuted}>
+        <View style={styles.profileImage}>
+            <Image
+                style={styles.profileImg}
+                src={profileInnovateur?.profile ? profileInnovateur.profile : ""}
+                alt={"profile image"}
+            />
+            <View style={styles.profDetails}>
+                <Text style={styles.fontWeightSemibold}>
+                    {profileInnovateur ? profileInnovateur.name : ""}
+                </Text>
+                <Text style={styles.textMuted}>
+                    <Text>
+                        {" "}
+                        <i className="far fa-address-card"></i>{" "}
+                    </Text>
+                    <Text>Innovateur</Text>
+                </Text>
+                <Text style={styles.textMuted}>
+                    {" "}
                     <i className="bi bi-geo-alt-fill"></i>
                     {profileInnovateur ? profileInnovateur.address : ""}
-                </p>
-                <p className={styles.textMuted}>
+                </Text>
+                <Text style={styles.textMuted}>
+                    {" "}
                     <i className="far fa-flag"></i> RDC
-                </p>
-                <p className={styles.textMuted}>
-                    <i className="fa fa-phone"></i> Phone: {profileInnovateur ? profileInnovateur.phoneNumber : ""}
-                </p>
-                <p className={styles.textMuted}>
-                    <i className="fa fa-envelope"></i> Email: {profileInnovateur ? profileInnovateur.email : ""}
-                </p>
-                <p className={styles.textMuted}>
-                    <i className="bi bi-calendar-check"></i> {"Date d'inscription sur la plateforme"}:{" "}
-                    {profileInnovateur ? moment(profileInnovateur.createdAt).format("DD MMMM YYYY [à] HH:mm") : ""}
-                </p>
-            </div>
-        </div>
+                </Text>
+                <Text style={styles.textMuted}>
+                    {" "}
+                    <i className="fa fa-phone"></i> Phone:{" "}
+                    {profileInnovateur ? profileInnovateur.phoneNumber : ""}
+                </Text>
+                <Text style={styles.textMuted}>
+                    {" "}
+                    <i className="fa fa-envelope"></i> Email:{" "}
+                    {profileInnovateur ? profileInnovateur.email : ""}
+                </Text>
+                <Text style={styles.textMuted}>
+                    {" "}
+                    <i className="bi bi-calendar-check"></i> {"Date d'inscription sur la plateforme: "}
+                    {profileInnovateur
+                        ? moment(profileInnovateur.createdAt).format("DD MMMM YYYY [à] HH:mm")
+                        : ""}
+                </Text>
+            </View>
+        </View>
     );
 };
 export default CustomCardInnovateur;

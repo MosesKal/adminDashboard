@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { Document, Page, PDFViewer, Text, View } from "@react-pdf/renderer";
-import { Col } from "react-bootstrap";
+import React, {useEffect, useState} from "react";
+import {Document, Page, PDFViewer, Text, View, StyleSheet} from "@react-pdf/renderer";
+import {Col} from "react-bootstrap";
 import axios from "@/pages/api/axios";
 
-import { styles } from "@/pages/services/services.reporting";
 import SolutionDetail from "@/pages/components/apps/reporting/componentReporting/solutionDetail";
 import InnovateurDetail from "@/pages/components/apps/reporting/componentReporting/innovateurDetail";
 import CuratorDetail from "@/pages/components/apps/reporting/componentReporting/curatorDetail";
@@ -11,7 +10,7 @@ import NotationCurator from "@/pages/components/apps/reporting/componentReportin
 import StatCuration from "@/pages/components/apps/reporting/componentReporting/statCuration";
 import HeaderReport from "@/pages/components/apps/reporting/componentReporting/headerReport";
 
-const SolutionTemplate = ({ solutions, chartImage, isCuratedSolution }) => {
+const SolutionTemplate = ({solutions, chartImage, isCuratedSolution}) => {
 
     const [enhancedSolutions, setEnhancedSolutions] = useState([]);
     const [quotations, setQuotations] = useState();
@@ -41,11 +40,11 @@ const SolutionTemplate = ({ solutions, chartImage, isCuratedSolution }) => {
             }
         };
         const fetchQuotations = async () => {
-            if(isCuratedSolution){
+            if (isCuratedSolution) {
                 try {
                     const responseQuotations = await axios.get("/quotations")
                     setQuotations(responseQuotations?.data?.data.map((quotation) => {
-                        return { id: quotation.id, average: quotation.average, mention: quotation.mention }
+                        return {id: quotation.id, average: quotation.average, mention: quotation.mention}
                     }))
                 } catch (e) {
                     console.log(e)
@@ -59,34 +58,65 @@ const SolutionTemplate = ({ solutions, chartImage, isCuratedSolution }) => {
 
     }, [solutions, isCuratedSolution]);
 
+    const styles = StyleSheet.create({
+        page: {
+            flexDirection: "column",
+            padding: 20,
+        },
+        section: {
+            margin: 10,
+            padding: 10,
+            flexGrow: 1,
+            borderWidth: 1,
+            borderColor: "#ccc",
+            borderRadius: 5,
+        },
+        heading: {
+            fontSize: 15,
+            marginBottom: 10,
+            color: "#333",
+            textDecoration: "underline"
+        },
+        text: {
+            fontSize: 8,
+            marginBottom: 5,
+            color: "#333",
+        },
+    });
+
     return (
         <Col>
-            <PDFViewer width="100%" height="600px">
-                <Document>
-                    <StatCuration solutions={enhancedSolutions} chartImage={chartImage} isCuratedSolution={isCuratedSolution} />
-                    {
-                        (isCuratedSolution ? enhancedSolutions : solutions).map((solution, index) =>
-                            (
-                                <Page key={index} style={styles.page}>
-                                    <HeaderReport />
-                                    <View style={styles.section}>
-                                        <Text style={styles.heading}>{index + 1}. {solution.name}</Text>
+            {solutions && chartImage && isCuratedSolution && (
+                <PDFViewer width="100%" height="600px">
+                    <Document>
+                        <StatCuration solutions={enhancedSolutions} chartImage={chartImage}
+                                      isCuratedSolution={isCuratedSolution}/>
+                        {
+                            (isCuratedSolution ? enhancedSolutions : solutions).map((solution, index) =>
+                                (
+                                    <Page key={index} style={styles.page}>
+                                        <HeaderReport/>
+                                        <View style={styles.section}>
+                                            <Text style={styles.heading}>{index + 1}. {solution.name}</Text>
 
-                                        <InnovateurDetail solution={solution} />
+                                            <InnovateurDetail solution={solution}/>
 
-                                        <SolutionDetail solution={solution} hiddenDetails={true} />
+                                            <SolutionDetail solution={solution} hiddenDetails={true}/>
 
-                                        {isCuratedSolution && <CuratorDetail solution={solution} />}
+                                            {isCuratedSolution && <CuratorDetail solution={solution}/>}
 
-                                        {isCuratedSolution && <NotationCurator solution={solution} quotations={quotations} />}
+                                            {isCuratedSolution &&
+                                                <NotationCurator solution={solution} quotations={quotations}/>}
 
-                                    </View>
-                                </Page>
+                                        </View>
+                                    </Page>
+                                )
                             )
-                        )
-                    }
-                </Document>
-            </PDFViewer>
+                        }
+                    </Document>
+                </PDFViewer>
+            )}
+
         </Col>
     );
 };

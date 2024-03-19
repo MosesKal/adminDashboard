@@ -1,112 +1,99 @@
-import React from "react";
-import axios from "@/pages/api/axios";
+import React from 'react';
 import tinycolor from "tinycolor2";
 import ChartDataLabels from "chartjs-plugin-datalabels";
-import {Doughnut} from "react-chartjs-2";
+import { Doughnut } from "react-chartjs-2";
 
+const GenerateDoughnoutChart = ({ solutions, thematiques, graphiqueId }) => {
 
-const GenerateDoughnoutChart = ({solutions, thematiques, graphiqueId}) => {
+    let DoughnutData;
 
-    const captureChartImage = () => {
-        const canvas = document.getElementById("doughnut-chart");
-        const chartImage = canvas.toDataURL("image/png");
-        setChartImage(chartImage);
-    };
+    if(solutions && thematiques && graphiqueId) {
+        const countSolutionsByThematic = () => {
+            const solutionsCountByThematic = thematiques?.reduce((acc, thematic) => {
+                acc[thematic.name] = 0;
+                return acc;
+            }, {});
 
-    const countSolutionsByThematic = () => {
+            solutions.forEach((solution) => {
+                const thematicName = solution.thematic.name;
+                solutionsCountByThematic[thematicName]++;
+            });
 
-        const solutionsCountByThematic = thematiques.reduce((acc, thematic) => {
-            acc[thematic.name] = 0;
-            return acc;
-        }, {});
+            return Object.values(solutionsCountByThematic);
+        };
 
-        solutions.forEach((solution) => {
-            const thematicName = solution.thematic.name;
-            solutionsCountByThematic[thematicName]++;
-        });
+        const getThematicColor = (index) => {
+            const defaultColors = getDefaultColors();
+            const defaultColor = "#a0a0a0";
 
-        return Object.values(solutionsCountByThematic);
-    };
-    const getThematicColor = (index) => {
+            if (thematiques[index]?.color) {
+                return thematiques[index].color;
+            }
 
-        const defaultColors = getDefaultColors();
-        const defaultColor = "#a0a0a0";
+            const color = defaultColors[index % defaultColors.length] || defaultColor;
 
-        if (thematiques[index]?.color) {
-            return thematiques[index].color;
-        }
+            return tinycolor(color).toString();
+        };
 
-        const color = defaultColors[index % defaultColors.length] || defaultColor;
+        const getDefaultColors = () => {
+            return ["#6d26be", "#ffbd5a", "#027333", "#4ec2f0", "#1a9c86"];
+        };
 
-        return tinycolor(color).toString();
-    };
+        const countSolutions = countSolutionsByThematic();
 
-    const getDefaultColors = () => {
-        return ["#6d26be", "#ffbd5a", "#027333", "#4ec2f0", "#1a9c86"];
-    };
+        const filteredData = countSolutions.filter((value) => value !== 0);
 
-    const countSolutions = countSolutionsByThematic();
+        const filteredLabels = thematiques.map((thematic) => thematic.name).filter((_, index) => countSolutions[index] !== 0);
 
-    const filteredData = countSolutions.filter((value) => value !== 0);
-
-    const filteredLabels = thematiques.map((thematic) => thematic.name).filter((_, index) => countSolutions[index] !== 0);
-
-    const DoughnutData = {
-        labels: filteredLabels,
-        datasets: [
-            {
-                data: filteredData,
-                backgroundColor: filteredLabels.map((_, index) =>
-                    getThematicColor(index)
-                ),
-            },
-        ],
-    };
-
+        DoughnutData = {
+            labels: filteredLabels,
+            datasets: [
+                {
+                    data: filteredData,
+                    backgroundColor: filteredLabels.map((_, index) => getThematicColor(index)),
+                },
+            ],
+        };
+    }
 
     return (
         <>
-            <Doughnut
-                data={DoughnutData}
-                id={`${graphiqueId}`}
-                className="chartjs-render-monitor"
-
-                options={{
-                    plugins: {
-                        legend: {
-                            display: true,
-                            position: "top",
-                            align: "start",
-                        },
-                        labels: {
-                            render: "label",
-                            display: true,
-                            font: {
-                                size: 14,
+            {solutions && thematiques && graphiqueId && (
+                <Doughnut
+                    data={DoughnutData}
+                    id={graphiqueId}
+                    className="chartjs-render-monitor"
+                    options={{
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: "top",
+                                align: "start",
+                            },
+                            labels: {
+                                render: "label",
+                                display: true,
+                                font: {
+                                    size: 14,
+                                },
+                            },
+                            datalabels: {
+                                color: "#ffffff",
+                                font: {
+                                    size: 12,
+                                },
+                                formatter: (value, context) => {
+                                    return value;
+                                },
                             },
                         },
-                        datalabels: {
-                            color: "#ffffff",
-                            font: {
-                                size: 12,
-                            },
-                            formatter: (value, context) => {
-                                return value;
-                            },
-                        },
-                    },
-                    responsive: true,
-                }}
-                plugins={[ChartDataLabels]}
-            />
+                        responsive: true,
+                    }}
+                    plugins={[ChartDataLabels]}
+                />
+            )}
         </>
     );
 };
-
-GenerateDoughnoutChart.propTypes = {};
-
-GenerateDoughnoutChart.defaultProps = {};
-
-GenerateDoughnoutChart.layout = "Contentlayout";
 
 export default GenerateDoughnoutChart;

@@ -1,15 +1,30 @@
 import React from 'react';
 import UserDetail from "@/pages/components/apps/reporting/componentReporting/userDetail";
-import {styles} from "@/pages/services/services.reporting";
-import {Image, Text, View} from "@react-pdf/renderer";
+import { Image, StyleSheet, Text, View } from "@react-pdf/renderer";
 import moment from "moment/moment";
-import {imageBaseUrl} from "@/pages/api/axios";
+import { imageBaseUrl } from "@/pages/api/axios";
 
- const InnovateurDetail = ({solution}) => {
+const InnovateurDetail = ({ solution }) => {
+
+    const styles = StyleSheet.create({
+        profileImage: {
+            marginBottom: 10,
+            flexDirection: "row",
+            alignItems: "center",
+            border: "1px dash #ccc",
+            paddingLeft: 20,
+            paddingBottom: 10
+        }, profileImg: {
+            borderRadius: 5, width: 100, height: 100, objectFit: "cover", marginRight: 10,
+        }, profDetails: {
+            flexDirection: "column",
+        }
+    });
+
     return (
         <>
             <View>
-                <Text style={{marginBottom: "5", fontSize: "8", textDecoration: "underline"}}>{"Informations de l'innovateur"}</Text>
+                <Text style={{ marginBottom: "5", fontSize: "8", textDecoration: "underline" }}>{"Informations de l'innovateur"}</Text>
             </View>
             <View style={styles.profileImage}>
                 <Image style={styles.profileImg} src={
@@ -17,6 +32,7 @@ import {imageBaseUrl} from "@/pages/api/axios";
                         ? `${imageBaseUrl}/${solution?.user?.profile}`
                         : "../../../assets/img/faces/profile.jpg"
                 }
+                       alt={"profile innovateur"}
                 />
                 <View style={styles.profDetails}>
                     <UserDetail icon="person" text={solution?.user?.name}/>

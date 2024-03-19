@@ -4,7 +4,9 @@ const GenerateCurratedSolutionsPdf = ({curratedSolutions, chartImage, isCuratedS
 
     return (
         <>
-            <SolutionTemplate solutions={curratedSolutions} chartImage={chartImage} isCuratedSolution={isCuratedSolution}/>
+            {curratedSolutions && chartImage && isCuratedSolution && (
+                <SolutionTemplate solutions={curratedSolutions} chartImage={chartImage} isCuratedSolution={isCuratedSolution}/>
+            )}
         </>
     );
 };
