@@ -18,7 +18,7 @@ const curatorDetail = ({solution}) => (
                         </View>
                         <View>
                             <Text
-                                style={styles.text}>{solution.curatorInfo.data.name}</Text>
+                                style={styles.text}>{solution?.curatorInfo?.data.name}</Text>
                         </View>
                     </View>
 
@@ -29,7 +29,7 @@ const curatorDetail = ({solution}) => (
                         </View>
                         <View style={styles.textContainer}>
                             <Text
-                                style={styles.text}>{solution.curatorInfo.data.email}</Text>
+                                style={styles.text}>{solution?.curatorInfo?.data.email}</Text>
                         </View>
                     </View>
                     <View style={styles.textIconCurator}>
@@ -39,7 +39,7 @@ const curatorDetail = ({solution}) => (
                         </View>
                         <View style={styles.textContainer}>
                             <Text
-                                style={styles.text}>{solution.curatorInfo.data.phoneNumber}</Text>
+                                style={styles.text}>{solution?.curatorInfo.data.phoneNumber}</Text>
                         </View>
                     </View>
                 </View>

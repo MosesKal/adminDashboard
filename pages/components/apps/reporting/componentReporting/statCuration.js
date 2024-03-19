@@ -4,7 +4,8 @@ import {styles} from '@/pages/services/services.reporting';
 import HeaderReport from "@/pages/components/apps/reporting/componentReporting/headerReport";
 
 
-const StatCuration = ({solutions, chartImage}) => {
+const StatCuration = ({solutions, chartImage, isCuratedSolution}) => {
+
     const [statDataCuration, setStatDataCuration] = useState({});
     const [loading, setLoading] = useState(false);
 
@@ -13,35 +14,39 @@ const StatCuration = ({solutions, chartImage}) => {
 
         setLoading(true);
         const generateStatData = () => {
-            const totalSolutions = solutions.length;
+            setLoading(true);
+            if (isCuratedSolution) {
+                const totalSolutions = solutions.length;
 
-            const solutionsByPoles = solutions.reduce((acc, solution) => {
-                const poleName = solution.curatorInfo.pole.data.name;
-                acc[poleName] = (acc[poleName] || 0) + 1;
-                return acc;
-            }, {});
+                const solutionsByPoles = solutions.reduce((acc, solution) => {
+                    const poleName = solution.curatorInfo.pole.data.name;
+                    acc[poleName] = (acc[poleName] || 0) + 1;
+                    return acc;
+                }, {});
 
-            const totalOrganisations = new Set(solutions.map(solution => solution.curatorInfo.organisation.data.name)).size;
+                const totalOrganisations = new Set(solutions.map(solution => solution.curatorInfo.organisation.data.name)).size;
 
-            const polesByOrganisations = solutions.reduce((acc, solution) => {
-                const organisationName = solution.curatorInfo.organisation.data.name;
-                const poleName = solution.curatorInfo.pole.data.name;
-                acc[organisationName] = new Set([...(acc[organisationName] || []), poleName]);
-                return acc;
-            }, {});
+                const polesByOrganisations = solutions.reduce((acc, solution) => {
+                    const organisationName = solution.curatorInfo.organisation.data.name;
+                    const poleName = solution.curatorInfo.pole.data.name;
+                    acc[organisationName] = new Set([...(acc[organisationName] || []), poleName]);
+                    return acc;
+                }, {});
 
-            setStatDataCuration({totalSolutions, solutionsByPoles, totalOrganisations, polesByOrganisations});
-            setLoading(false);
-        };
+                setStatDataCuration({totalSolutions, solutionsByPoles, totalOrganisations, polesByOrganisations});
+                setLoading(false);
+            }
+
+        }
 
         generateStatData();
-    }, [solutions]);
+    }, [solutions, isCuratedSolution]);
 
 
     return (
         <Page style={styles.page}>
             <HeaderReport/>
-            {!loading && statDataCuration.totalSolutions > 0 ? (
+            {isCuratedSolution && !loading && statDataCuration.totalSolutions > 0 ? (
                 <>
                     <View style={styles.section}>
                         <Text style={styles.heading}>{"Statistiques"}</Text>
@@ -61,24 +66,25 @@ const StatCuration = ({solutions, chartImage}) => {
                             </Text>
                         ))}
                     </View>
-
-                    <View style={styles.graphiqueContainer}>
-                        <View>
-                            <Text style={styles.heading}>{"Solution curée par thématique"}</Text>
-                        </View>
-                        <View style={styles.graphiqueImage}>
-                            {chartImage && <Image src={chartImage} style={{ width: 300, height: 300 }} />}
-                        </View>
-
-                    </View>
                 </>
 
             ) : (
                 <View>
-                    <Text style={styles.heading}>{"Statistiques"}</Text>
-                    <Text style={styles.text}>{"Aucune donnée disponible"}</Text>
+                    {/*<Text style={styles.heading}>{"Statistiques"}</Text>*/}
+                    {/*<Text style={styles.text}>{"Aucune donnée disponible"}</Text>*/}
                 </View>
             )}
+
+
+            <View style={styles.graphiqueContainer}>
+                <View>
+                    <Text style={styles.heading}>{"Solution curée par thématique"}</Text>
+                </View>
+                <View style={styles.graphiqueImage}>
+                    {chartImage && <Image src={chartImage} style={{width: 300, height: 300}}/>}
+                </View>
+            </View>
+
         </Page>
     );
 };
