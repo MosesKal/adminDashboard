@@ -6,6 +6,8 @@ import {Chart as ChartJS, registerables} from "chart.js";
 
 import axios from "@/pages/api/axios";
 
+import GenerateDoughnoutChart from "@/pages/components/apps/reporting/generateDoughnutChart";
+
 ChartJS.register(...registerables);
 
 const Linechart = {
@@ -247,20 +249,10 @@ const Rapport = () => {
                                         <Spinner animation="border" variant="primary"/>
                                     </div>
                                 ) : (
-                                    <Doughnut
-                                        data={DoughnutData}
-                                        id="chartDonut"
-                                        className="chartjs-render-monitor"
-                                        options={{
-                                            plugins: {
-                                                legend: {
-                                                    display: true,
-                                                    position: "top",
-                                                    align: "start",
-                                                },
-                                            },
-                                            responsive: true,
-                                        }}
+                                    <GenerateDoughnoutChart
+                                        thematiques={thematiqueData}
+                                        graphiqueId={"chartDonut"}
+                                        solutions={dataSolution}
                                     />
                                 )}
                             </div>

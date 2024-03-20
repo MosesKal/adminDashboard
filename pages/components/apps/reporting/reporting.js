@@ -12,7 +12,7 @@ const Reporting = ({ curratedSolutions, conformedSolutions, solutions }) => {
     const [chartImageConformedSolutions, setChartImageConformedSolutions] = useState();
     const [chartImageCurratedSolutions, setChartImageCurratedSolutions] = useState();
     const [chartImageAllSolutions, setChartImageAllSolutions] = useState();
-    const [isLoading, setIsLoading] = useState(false); // Ajouter un état pour contrôler l'affichage du loader
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         const fetchThematiqueData = async () => {
@@ -25,15 +25,16 @@ const Reporting = ({ curratedSolutions, conformedSolutions, solutions }) => {
         };
 
         fetchThematiqueData();
+
     }, []);
 
     const handleGenerateCuratedSolutionsImage = () => {
-        setIsLoading(true); // Afficher le loader lorsque le bouton est cliqué
+        setIsLoading(true);
         captureCuratedImageSolutions();
     };
 
     const handleGenerateStatsChartsImage = () => {
-        setIsLoading(true); // Afficher le loader lorsque le bouton est cliqué
+        setIsLoading(true);
         captureChartImageConformedSolutions();
         captureCuratedImageSolutions();
         captureAllImageSolutions();
@@ -62,7 +63,7 @@ const Reporting = ({ curratedSolutions, conformedSolutions, solutions }) => {
 
     return (
         <>
-            {isLoading && <LoaderPdf />} {/* Afficher le loader si isLoading est true */}
+            {isLoading && <LoaderPdf />}
             {!isLoading && solutions && curratedSolutions && conformedSolutions && (
                 <>
                     <Row>
@@ -108,11 +109,7 @@ const Reporting = ({ curratedSolutions, conformedSolutions, solutions }) => {
                             <GenerateCurratedSolutionsPdf curratedSolutions={curratedSolutions} chartImage={chartImageCurratedSolutions} isCuratedSolution={true} />
                         </Col>
                         <Col xl={8}>
-                            <GenerateStatsCharts
-                                chartImageConformedSolutions={chartImageConformedSolutions}
-                                chartImageCurratedSolutions={chartImageCurratedSolutions}
-                                chartImageAllSolutions={chartImageAllSolutions}
-                            />
+                            <GenerateStatsCharts chartImageConformedSolutions={chartImageConformedSolutions} chartImageCurratedSolutions={chartImageCurratedSolutions} chartImageAllSolutions={chartImageAllSolutions}/>
                         </Col>
                     </Row>
                 </>

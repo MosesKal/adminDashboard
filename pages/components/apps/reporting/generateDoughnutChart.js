@@ -94,6 +94,7 @@ const GenerateDoughnoutChart = ({ solutions, thematiques, graphiqueId }) => {
             )}
         </>
     );
+
 };
 
 export default GenerateDoughnoutChart;
