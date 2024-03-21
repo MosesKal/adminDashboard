@@ -1,20 +1,22 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useMemo} from "react";
 import {
     Button, Row, Col, Card, Spinner, Modal, FormGroup, Form, Tab, Tabs, Nav,
 } from "react-bootstrap";
 import DataTable from "react-data-table-component";
 import {columns as configureColumns, truncateText} from "./solutionslist";
+import {columnsCurations as configureColumnsCuration} from "./solutionslistCuration";
 import axios from "@/pages/api/axios";
 import Select from "react-select";
 import {ToastContainer} from "react-toastify";
 import Reporting from "@/pages/components/apps/reporting/reporting";
 
 const Solutionslistcom = () => {
+
     const [solutions, setSolutions] = useState([]);
     const [conformedSolutions, setConformedSolutions] = useState([]);
     const [curratedSolutions, setCurratedSolutions] = useState([]);
-
     const [isLoadingSolution, setIsLoadingSolution] = useState(false);
+
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [solutionToDelete, setSolutionToDelete] = useState(null);
     const [selectedRows, setSelectedRows] = useState([]);
@@ -32,18 +34,10 @@ const Solutionslistcom = () => {
     const [users, setUsers] = useState([]);
     const [isLoadingUsers, setIsLoadingUsers] = useState(false);
     const [profile, setProfile] = useState(null);
-    const [dataMerged, setDataMerged] = useState([]);
+    const [mentions, setMentions] = useState(null);
 
-    const [dataConformedSolutionsMerged, setDataConformedSolutionsMerged] = useState([]);
-    const [dataCurratedSolutionsMerged, setDataCurratedSolutionsMerged] = useState([]);
 
-    const [filters, setFilters] = useState({
-        searchText: "", statusFilter: "Tous", thematicFilter: "Tous",
-    });
-
-    const [filteredSolutions, setFilteredSolutions] = useState([]);
-    const [filteredCurratedSolutions, setFilteredCurratedSolutions] = useState([]);
-    const [filteredConformedSolutions, setFilteredConformedSolutions] = useState([]);
+    const [filters, setFilters] = useState({searchText: "", statusFilter: "Tous", thematicFilter: "Tous",});
 
     const [optionPole, setOptionPole] = useState();
     const [selectedSolutions, setSelectedSolutions] = useState(null);
@@ -63,7 +57,6 @@ const Solutionslistcom = () => {
                 console.log(error);
             }
         };
-
         const fetchStatus = async () => {
             try {
                 const statusResponse = await axios.get("/status");
@@ -113,6 +106,19 @@ const Solutionslistcom = () => {
             }
         };
 
+        const fetchMentions = async () => {
+            try {
+                const mentionsResponse = await axios.get("/quotations");
+
+                const mentions = mentionsResponse?.data?.data
+
+                setMentions(mentions.map((mention) => ({id: mention.id, average: mention.average})));
+
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
         if (localStorage?.getItem("ACCESS_ACCOUNT")) {
             const userRoles = JSON.parse(localStorage?.getItem("ACCESS_ACCOUNT"))?.roles;
             setIsAdmin(userRoles?.some((role) => role.name === "ADMIN"));
@@ -123,149 +129,183 @@ const Solutionslistcom = () => {
         fetchStatus();
         fetchProfile();
         fetchPole();
+        fetchMentions();
     }, []);
 
-    useEffect(() => {
-        const fetchSolution = async () => {
-            if (profile) {
-                try {
-                    setIsLoadingSolution(true);
-                    let responseSolution;
-                    let responseSolutionConforms;
-                    let responseSolutionCurated;
+    const fetchSolutions = async () => {
+        try {
+            setIsLoadingSolution(true);
+            let responseSolution;
+            let responseSolutionConforms;
+            let responseSolutionCurated;
 
-                    if (isAdmin) {
-                        responseSolution = await axios.get("/solutions");
-                        responseSolutionConforms = await axios.get("/solutions/conforms/all");
-                        responseSolutionCurated = await axios.get("/solutions/curated/all");
-                    } else {
-                        responseSolution = await axios.get(`/solutions/pole/${profile.poleId}`);
-                    }
-
-                    setSolutions(responseSolution?.data?.data);
-
-                    setConformedSolutions(responseSolutionConforms?.data?.data);
-                    setCurratedSolutions(responseSolutionCurated?.data?.data);
-                    setIsLoadingSolution(false);
-                } catch (error) {
-                    setIsLoadingSolution(false);
-                    console.error("Erreur lors de la récupération des données :", error);
-                }
+            if (isAdmin) {
+                responseSolution = await axios.get("/solutions");
+                responseSolutionConforms = await axios.get("/solutions/conforms/all");
+                responseSolutionCurated = await axios.get("/solutions/curated/all");
+            } else {
+                responseSolution = await axios.get(`/solutions/pole/${profile.poleId}`);
             }
-        };
-        fetchSolution();
+
+            setSolutions(responseSolution?.data?.data);
+            setConformedSolutions(responseSolutionConforms?.data?.data);
+            setCurratedSolutions(responseSolutionCurated?.data?.data);
+            setIsLoadingSolution(false);
+
+        } catch (error) {
+            setIsLoadingSolution(false);
+            console.error("Erreur lors de la récupération des données :", error);
+        }
+    };
+
+    useMemo(() => {
+        if (profile) {
+            fetchSolutions();
+        }
     }, [profile]);
 
-    useEffect(() => {
+    const dataMerged = useMemo(() => {
         const mergeData = (solutions, users) => {
             const userMap = {};
             users.forEach((user) => {
                 userMap[user.id] = user;
             });
 
-            const mergedData = solutions.map((solution) => ({
-                ...solution, user: userMap[solution.userId],
+            return solutions.map((solution) => ({
+                ...solution,
+                user: userMap[solution.userId],
             }));
-
-            setDataMerged(mergedData);
         };
 
+        return mergeData(solutions, users);
+    }, [solutions, users]);
+
+    const dataConformedSolutionsMerged = useMemo(() => {
         const mergeDataConfermedSolution = (solutions, users) => {
             const userMap = {};
             users.forEach((user) => {
                 userMap[user.id] = user;
             });
 
-            const mergedData = solutions?.map((solution) => ({
-                ...solution, user: userMap[solution.userId],
+            return solutions?.map((solution) => ({
+                ...solution,
+                user: userMap[solution.userId],
             }));
-
-            setDataConformedSolutionsMerged(mergedData);
         };
 
+        return mergeDataConfermedSolution(conformedSolutions, users);
+    }, [conformedSolutions, users]);
+
+    const dataCurratedSolutionsMerged = useMemo(() => {
         const mergeDataCurratedSolutions = (solutions, users) => {
             const userMap = {};
-
             users.forEach((user) => {
                 userMap[user.id] = user;
             });
 
-            const mergedData = solutions?.map((solution) => ({
-                ...solution, user: userMap[solution.userId],
+            return solutions?.map((solution) => ({
+                ...solution,
+                user: userMap[solution.userId],
             }));
-            setDataCurratedSolutionsMerged(mergedData);
         };
 
-        mergeData(solutions, users);
-        mergeDataConfermedSolution(conformedSolutions, users);
-        mergeDataCurratedSolutions(curratedSolutions, users);
-    }, [solutions, conformedSolutions, curratedSolutions, users]);
+        return mergeDataCurratedSolutions(curratedSolutions, users);
+    }, [curratedSolutions, users]);
 
-    useEffect(() => {
-        const filteredSolutions = dataMerged?.filter((solution) => {
+    const filteredSolutions = useMemo(() => {
+        return dataMerged?.filter((solution) => {
             if (!dataMerged) {
                 return false;
             }
-
-            const textMatch = solution.name
-                .toLowerCase()
-                .includes(filters.searchText.toLowerCase()) || solution.user?.name
-                .toLowerCase()
-                .includes(filters.searchText.toLowerCase()) || solution.user?.email
-                .toLowerCase()
-                .includes(filters.searchText.toLowerCase());
-
-            const statusMatch = filters.statusFilter === "Tous" || solution?.status?.name === filters.statusFilter;
-
-            const thematicMatch = filters.thematicFilter === "Tous" || solution?.thematic?.name === filters.thematicFilter;
-
+            const textMatch =
+                solution.name
+                    .toLowerCase()
+                    .includes(filters.searchText.toLowerCase()) ||
+                solution.user?.name
+                    .toLowerCase()
+                    .includes(filters.searchText.toLowerCase()) ||
+                solution.user?.email
+                    .toLowerCase()
+                    .includes(filters.searchText.toLowerCase());
+            const statusMatch =
+                filters.statusFilter === "Tous" ||
+                solution?.status?.name === filters.statusFilter;
+            const thematicMatch =
+                filters.thematicFilter === "Tous" ||
+                solution?.thematic?.name === filters.thematicFilter;
             return textMatch && statusMatch && thematicMatch;
         });
+    }, [dataMerged, filters]);
 
-        const filteredConformedSolutions = dataConformedSolutionsMerged?.filter((solution) => {
+    const filteredConformedSolutions = useMemo(() => {
+        return dataConformedSolutionsMerged?.filter((solution) => {
             if (!dataConformedSolutionsMerged) {
                 return false;
             }
-
-            const textMatch = solution.name
-                .toLowerCase()
-                .includes(filters.searchText.toLowerCase()) || solution.user?.name
-                .toLowerCase()
-                .includes(filters.searchText.toLowerCase()) || solution.user?.email
-                .toLowerCase()
-                .includes(filters.searchText.toLowerCase());
-
-            const statusMatch = filters.statusFilter === "Tous" || solution?.status?.name === filters.statusFilter;
-
-            const thematicMatch = filters.thematicFilter === "Tous" || solution?.thematic?.name === filters.thematicFilter;
-
+            const textMatch =
+                solution.name
+                    .toLowerCase()
+                    .includes(filters.searchText.toLowerCase()) ||
+                solution.user?.name
+                    .toLowerCase()
+                    .includes(filters.searchText.toLowerCase()) ||
+                solution.user?.email
+                    .toLowerCase()
+                    .includes(filters.searchText.toLowerCase());
+            const statusMatch =
+                filters.statusFilter === "Tous" ||
+                solution?.status?.name === filters.statusFilter;
+            const thematicMatch =
+                filters.thematicFilter === "Tous" ||
+                solution?.thematic?.name === filters.thematicFilter;
             return textMatch && statusMatch && thematicMatch;
         });
+    }, [dataConformedSolutionsMerged, filters]);
 
-        const filteredCurratedSolutions = dataCurratedSolutionsMerged?.filter((solution) => {
+    const filteredCurratedSolutions = useMemo(() => {
+        return dataCurratedSolutionsMerged?.filter((solution) => {
             if (!dataCurratedSolutionsMerged) {
                 return false;
             }
-
-            const textMatch = solution.name
-                .toLowerCase()
-                .includes(filters.searchText.toLowerCase()) || solution.user?.name
-                .toLowerCase()
-                .includes(filters.searchText.toLowerCase()) || solution.user?.email
-                .toLowerCase()
-                .includes(filters.searchText.toLowerCase());
-
-            const statusMatch = filters.statusFilter === "Tous" || solution?.status?.name === filters.statusFilter;
-
-            const thematicMatch = filters.thematicFilter === "Tous" || solution?.thematic?.name === filters.thematicFilter;
-
+            const textMatch =
+                solution.name
+                    .toLowerCase()
+                    .includes(filters.searchText.toLowerCase()) ||
+                solution.user?.name
+                    .toLowerCase()
+                    .includes(filters.searchText.toLowerCase()) ||
+                solution.user?.email
+                    .toLowerCase()
+                    .includes(filters.searchText.toLowerCase());
+            const statusMatch =
+                filters.statusFilter === "Tous" ||
+                solution?.status?.name === filters.statusFilter;
+            const thematicMatch =
+                filters.thematicFilter === "Tous" ||
+                solution?.thematic?.name === filters.thematicFilter;
             return textMatch && statusMatch && thematicMatch;
         });
+    }, [dataCurratedSolutionsMerged, filters]);
 
-        setFilteredSolutions(filteredSolutions);
-        setFilteredConformedSolutions(filteredConformedSolutions);
-        setFilteredCurratedSolutions(filteredCurratedSolutions);
-    }, [filters, dataMerged, dataConformedSolutionsMerged, dataCurratedSolutionsMerged,]);
+    const dataCurratedSolutionsMergedWithCote = useMemo(() => {
+
+        if(isAdmin) {
+            const newData = filteredCurratedSolutions.map(solution => {
+                const feedbacks = solution.feedbacks[0].quotations.split(",").map(id => parseInt(id, 10));
+                const coteTotal = feedbacks.reduce((total, id) => {
+                    const mention = mentions.find(mention => mention.id === id);
+                    return total + (mention ? mention.average : 0);
+                }, 0);
+                return {...solution, cote: ((coteTotal / 40) * 100)};
+            });
+
+
+            newData.sort((a, b) => b.cote - a.cote);
+
+            return newData;
+        }
+    }, [filteredCurratedSolutions, mentions, isAdmin]);
+
 
     const handleDelete = async (s) => {
         if (isAdmin) {
@@ -297,10 +337,22 @@ const Solutionslistcom = () => {
     };
 
     const columns = configureColumns(handleDelete);
+    const columnsCurations = configureColumnsCuration(handleDelete);
 
     columns.forEach((column) => {
         if (column.name === "Actions") {
             column.width = "30%";
+        }
+    });
+
+    columnsCurations.forEach((column) => {
+        if (column.name === "Actions") {
+            column.width = "30%";
+        }
+        if(column.name === "pourcentage"){
+            column.width = "10%";
+        }if(column.name === "Titre"){
+            column.width = "20%"
         }
     });
 
@@ -355,9 +407,11 @@ const Solutionslistcom = () => {
         link.click();
     }
 
-    const Export = ({onExport}) => (<Button size="sm" onClick={() => onExport()}>
-        Exporter les Solutions
-    </Button>);
+    const Export = ({onExport}) => (
+        <Button size="sm" onClick={() => onExport()}>
+            Exporter les Solutions
+        </Button>
+    );
 
     const actionsMemo = React.useMemo(() => <Export onExport={() => downloadCSV(solutions)}/>, [solutions]);
 
@@ -447,21 +501,21 @@ const Solutionslistcom = () => {
                                                         </Col>
                                                     </Row>
                                                     <span className="datatable">
-                                                                  <span className="uselistdata">
-                                                                    <DataTable
-                                                                        columns={columns}
-                                                                        data={filteredCurratedSolutions}
-                                                                        actions={actionsMemo}
-                                                                        contextActions={contextActions}
-                                                                        onSelectedRowsChange={handleRowSelected}
-                                                                        clearSelectedRows={toggleCleared}
-                                                                        defaultSortField="id"
-                                                                        defaultSortAsc={false}
-                                                                        selectableRows
-                                                                        pagination
-                                                                    />
-                                                                  </span>
-                                                                </span>
+                                                          <span className="uselistdata">
+                                                            <DataTable
+                                                                columns={columnsCurations}
+                                                                data={dataCurratedSolutionsMergedWithCote}
+                                                                actions={actionsMemo}
+                                                                contextActions={contextActions}
+                                                                onSelectedRowsChange={handleRowSelected}
+                                                                clearSelectedRows={toggleCleared}
+                                                                defaultSortField="id"
+                                                                defaultSortAsc={false}
+                                                                selectableRows
+                                                                pagination
+                                                            />
+                                                          </span>
+                                                        </span>
                                                 </div>)}
                                             </Card.Body>
                                         </Card>
@@ -521,21 +575,21 @@ const Solutionslistcom = () => {
                                                         </Col>
                                                     </Row>
                                                     <span className="datatable">
-                                                                  <span className="uselistdata">
-                                                                    <DataTable
-                                                                        columns={columns}
-                                                                        data={filteredConformedSolutions}
-                                                                        actions={actionsMemo}
-                                                                        contextActions={contextActions}
-                                                                        onSelectedRowsChange={handleRowSelected}
-                                                                        clearSelectedRows={toggleCleared}
-                                                                        defaultSortField="id"
-                                                                        defaultSortAsc={false}
-                                                                        selectableRows
-                                                                        pagination
-                                                                    />
-                                                                  </span>
-                                                                </span>
+                                                      <span className="uselistdata">
+                                                        <DataTable
+                                                            columns={columns}
+                                                            data={filteredConformedSolutions}
+                                                            actions={actionsMemo}
+                                                            contextActions={contextActions}
+                                                            onSelectedRowsChange={handleRowSelected}
+                                                            clearSelectedRows={toggleCleared}
+                                                            defaultSortField="id"
+                                                            defaultSortAsc={false}
+                                                            selectableRows
+                                                            pagination
+                                                        />
+                                                      </span>
+                                                    </span>
                                                 </div>)}
                                             </Card.Body>
                                         </Card>
@@ -594,21 +648,21 @@ const Solutionslistcom = () => {
                                                         </Col>
                                                     </Row>
                                                     <span className="datatable">
-                                                                  <span className="uselistdata">
-                                                                    <DataTable
-                                                                        columns={columns}
-                                                                        data={filteredSolutions}
-                                                                        actions={actionsMemo}
-                                                                        contextActions={contextActions}
-                                                                        onSelectedRowsChange={handleRowSelected}
-                                                                        clearSelectedRows={toggleCleared}
-                                                                        defaultSortField="id"
-                                                                        defaultSortAsc={false}
-                                                                        selectableRows
-                                                                        pagination
-                                                                    />
-                                                                  </span>
-                                                                </span>
+                                                      <span className="uselistdata">
+                                                        <DataTable
+                                                            columns={columns}
+                                                            data={filteredSolutions}
+                                                            actions={actionsMemo}
+                                                            contextActions={contextActions}
+                                                            onSelectedRowsChange={handleRowSelected}
+                                                            clearSelectedRows={toggleCleared}
+                                                            defaultSortField="id"
+                                                            defaultSortAsc={false}
+                                                            selectableRows
+                                                            pagination
+                                                        />
+                                                      </span>
+                                                    </span>
                                                 </div>)}
                                             </Card.Body>
                                         </Card>

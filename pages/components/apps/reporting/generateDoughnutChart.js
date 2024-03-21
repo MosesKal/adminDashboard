@@ -1,66 +1,65 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import tinycolor from "tinycolor2";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import { Doughnut } from "react-chartjs-2";
 
-const GenerateDoughnoutChart = ({ solutions, thematiques, graphiqueId }) => {
+const GenerateDoughnutChart = ({ solutions, thematiques, graphiqueId }) => {
 
-    let DoughnutData;
+    const countSolutionsByThematic = useMemo(() => {
+        const solutionsCountByThematic = thematiques?.reduce((acc, thematic) => {
+            acc[thematic.name] = 0;
+            return acc;
+        }, {});
 
-    if(solutions && thematiques && graphiqueId) {
-        const countSolutionsByThematic = () => {
-            const solutionsCountByThematic = thematiques?.reduce((acc, thematic) => {
-                acc[thematic.name] = 0;
-                return acc;
-            }, {});
+        solutions?.forEach((solution) => {
+            const thematicName = solution.thematic.name;
+            solutionsCountByThematic[thematicName]++;
+        });
 
-            solutions.forEach((solution) => {
-                const thematicName = solution.thematic.name;
-                solutionsCountByThematic[thematicName]++;
-            });
+        return solutionsCountByThematic;
+    }, [solutions, thematiques]);
 
-            return Object.values(solutionsCountByThematic);
-        };
+    const doughnutData = useMemo(() => {
+        if (solutions && thematiques && graphiqueId) {
+            const getThematicColor = (index) => {
+                const defaultColors = getDefaultColors();
+                const defaultColor = "#a0a0a0";
 
-        const getThematicColor = (index) => {
-            const defaultColors = getDefaultColors();
-            const defaultColor = "#a0a0a0";
+                if (thematiques[index]?.color) {
+                    return thematiques[index].color;
+                }
 
-            if (thematiques[index]?.color) {
-                return thematiques[index].color;
-            }
+                const color = defaultColors[index % defaultColors.length] || defaultColor;
 
-            const color = defaultColors[index % defaultColors.length] || defaultColor;
+                return tinycolor(color).toString();
+            };
 
-            return tinycolor(color).toString();
-        };
+            const getDefaultColors = () => {
+                return ["#6d26be", "#ffbd5a", "#027333", "#4ec2f0", "#1a9c86"];
+            };
 
-        const getDefaultColors = () => {
-            return ["#6d26be", "#ffbd5a", "#027333", "#4ec2f0", "#1a9c86"];
-        };
+            const countSolutions = Object.values(countSolutionsByThematic);
+            const filteredData = countSolutions.filter((value) => value !== 0);
+            const filteredLabels = thematiques.map((thematic) => thematic.name).filter((_, index) => countSolutions[index] !== 0);
 
-        const countSolutions = countSolutionsByThematic();
-
-        const filteredData = countSolutions.filter((value) => value !== 0);
-
-        const filteredLabels = thematiques.map((thematic) => thematic.name).filter((_, index) => countSolutions[index] !== 0);
-
-        DoughnutData = {
-            labels: filteredLabels,
-            datasets: [
-                {
-                    data: filteredData,
-                    backgroundColor: filteredLabels.map((_, index) => getThematicColor(index)),
-                },
-            ],
-        };
-    }
+            return {
+                labels: filteredLabels,
+                datasets: [
+                    {
+                        data: filteredData,
+                        backgroundColor: filteredLabels.map((_, index) => getThematicColor(index)),
+                    },
+                ],
+            };
+        }
+        return null;
+    }, [solutions, thematiques, graphiqueId, countSolutionsByThematic]);
 
     return (
         <>
-            {solutions && thematiques && graphiqueId && (
+            {doughnutData && (
                 <Doughnut
-                    data={DoughnutData}
+                    data={doughnutData}
                     id={graphiqueId}
                     className="chartjs-render-monitor"
                     options={{
@@ -82,9 +81,7 @@ const GenerateDoughnoutChart = ({ solutions, thematiques, graphiqueId }) => {
                                 font: {
                                     size: 12,
                                 },
-                                formatter: (value) => {
-                                    return value;
-                                },
+                                formatter: (value) => value,
                             },
                         },
                         responsive: true,
@@ -94,7 +91,6 @@ const GenerateDoughnoutChart = ({ solutions, thematiques, graphiqueId }) => {
             )}
         </>
     );
-
 };
 
-export default GenerateDoughnoutChart;
+export default GenerateDoughnutChart;

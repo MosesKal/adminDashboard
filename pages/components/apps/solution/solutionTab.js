@@ -190,8 +190,6 @@ const SolutionTab = ({
         }
     }, [isExistCommentaire, isCommentedByAnother, solution, cotations]);
 
-    console.log(" solution detail ====> ", solution);
-
     return (<>
       <span className=" py-0 ">
         <div className="profile-tab tab-menu-heading border-bottom-0 ">

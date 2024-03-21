@@ -321,6 +321,7 @@ const Solution = () => {
         feedbacks.push();
 
         try {
+
             const payload = {
                 labels: feedbacks,
                 user: userConnected?.email,
@@ -330,6 +331,7 @@ const Solution = () => {
 
             await axios.post(`/solutions/feedback/${solution?.id}`, payload);
             toast.success("Feedback envoyé avec succès");
+
         } catch (error) {
             console.error("Erreur survenue lors de l'envoi de l'impression :", error);
             toast.error("Erreur survenue lors de l'envoi de l'impression");
@@ -360,6 +362,7 @@ const Solution = () => {
     }
 
     useEffect(() => {
+
         const fetchCurateur = async () => {
             if (idCurateur) {
                 try {
@@ -372,6 +375,7 @@ const Solution = () => {
         };
 
         fetchCurateur();
+
     }, [idCurateur]);
 
     const handleChangeCommentUser = (e) => {
@@ -407,6 +411,7 @@ const Solution = () => {
     };
 
     const handleNextSolution = async () => {
+
         const currentIndex = allSolutions.findIndex(
             (sol) => sol.id === solution.id
         );
@@ -433,6 +438,7 @@ const Solution = () => {
         }
         window.scrollTo({top: 0, behavior: "smooth"});
     };
+
 
     return (
         <div>

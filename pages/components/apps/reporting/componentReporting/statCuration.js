@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { Page, Text, View, Image, StyleSheet } from '@react-pdf/renderer';
+import React, {useEffect, useState} from 'react';
+import {Page, Text, View, Image, StyleSheet} from '@react-pdf/renderer';
 import HeaderReport from "@/pages/components/apps/reporting/componentReporting/headerReport";
 
-const StatCuration = ({ solutions, chartImage, isCuratedSolution }) => {
+const StatCuration = ({solutions, chartImage, isCuratedSolution}) => {
 
     const [statDataCuration, setStatDataCuration] = useState({});
     const [loading, setLoading] = useState(false);
@@ -30,7 +30,7 @@ const StatCuration = ({ solutions, chartImage, isCuratedSolution }) => {
                     return acc;
                 }, {});
 
-                setStatDataCuration({ totalSolutions, solutionsByPoles, totalOrganisations, polesByOrganisations });
+                setStatDataCuration({totalSolutions, solutionsByPoles, totalOrganisations, polesByOrganisations});
                 setLoading(false);
             }
         }
@@ -40,10 +40,17 @@ const StatCuration = ({ solutions, chartImage, isCuratedSolution }) => {
 
     const styles = StyleSheet.create({
         heading: {
-            fontSize: 15, marginBottom: 10, color: "#333", textDecoration: "underline"
-        }, text: {
-            fontSize: 8, marginBottom: 5, color: "#333",
-        }, graphiqueContainer: {
+            fontSize: 15,
+            marginBottom: 10,
+            color: "#333",
+            textDecoration: "underline",
+        },
+        text: {
+            fontSize: 12,
+            marginBottom: 5,
+            color: "#333",
+        },
+        graphiqueContainer: {
             margin: 10,
             padding: 10,
             flexGrow: 1,
@@ -53,31 +60,43 @@ const StatCuration = ({ solutions, chartImage, isCuratedSolution }) => {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-        }, graphiqueImage: {
+        },
+        graphiqueImage: {
             padding: 5
         },
+        container: {
+
+            display: "flex",
+            margin: 10,
+            borderWidth: 1,
+            borderColor: "#ccc",
+            borderRadius: 5,
+            paddingLeft: 10
+        }
     });
 
     return (
         <Page style={styles.page}>
-            <HeaderReport />
+            <HeaderReport/>
             {isCuratedSolution && !loading && statDataCuration.totalSolutions > 0 ? (
                 <>
-                    <View style={styles.section}>
+                    <View style={styles.container}>
                         <Text style={styles.heading}>{"Statistiques"}</Text>
-                        <Text style={styles.text}>{"Nombre total de solutions curées"} : {statDataCuration.totalSolutions}</Text>
-                        <Text style={styles.text}>{"Nombre total d'organisations"} : {statDataCuration.totalOrganisations}</Text>
+                        <Text
+                            style={styles.text}>{"Nombre total de solutions curées"} : {statDataCuration.totalSolutions}</Text>
+                        <Text
+                            style={styles.text}>{"Nombre total d'organisations"} : {statDataCuration.totalOrganisations}</Text>
 
                         {Object.entries(statDataCuration.solutionsByPoles).map(([pole, count]) => (
                             <Text key={pole} style={styles.text}>
-                                {"Nombre de solutions pour le pôle"} {pole} : {count}
+                                {"Nombre de solutions curées par le pôle"} {pole} : {count}
                             </Text>
                         ))}
-                        {Object.entries(statDataCuration.polesByOrganisations).map(([organisation, poles]) => (
-                            <Text key={organisation} style={styles.text}>
-                                {"Nombre de pôles pour l'organisation"} {organisation} : {poles.size}
-                            </Text>
-                        ))}
+                        {/*{Object.entries(statDataCuration.polesByOrganisations).map(([organisation, poles]) => (*/}
+                        {/*    <Text key={organisation} style={styles.text}>*/}
+                        {/*        {"Nombre de pôles pour l'organisation"} {organisation} : {poles.size}*/}
+                        {/*    </Text>*/}
+                        {/*))}*/}
                     </View>
                 </>
             ) : (
@@ -89,7 +108,7 @@ const StatCuration = ({ solutions, chartImage, isCuratedSolution }) => {
                     <Text style={styles.heading}>{"Solution curée par thématique"}</Text>
                 </View>
                 <View style={styles.graphiqueImage}>
-                    {chartImage && <Image src={chartImage} style={{ width: 300, height: 300 }} alt={"stat thematique curation"} />}
+                    {chartImage && <Image src={chartImage} style={{width: 300, height: 300}} alt={"stat thematique curation"}/>}
                 </View>
             </View>
         </Page>

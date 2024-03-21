@@ -3,6 +3,7 @@ import {Text, View, StyleSheet, Image} from "@react-pdf/renderer";
 import moment from "moment";
 
 const CustomCardInnovateur = ({profileInnovateur}) => {
+
     const styles = StyleSheet.create({
         profileImage: {
             marginBottom: 10,

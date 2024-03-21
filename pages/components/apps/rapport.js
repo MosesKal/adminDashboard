@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import tinycolor from "tinycolor2";
 import {Card, Col, Row, Spinner} from "react-bootstrap";
-import {Line, Doughnut} from "react-chartjs-2";
+import {Line} from "react-chartjs-2";
 import {Chart as ChartJS, registerables} from "chart.js";
 
 import axios from "@/pages/api/axios";
