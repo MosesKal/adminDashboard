@@ -124,17 +124,19 @@ const SolutionTab = ({
         const selectedOption = optionsFeedBack?.find((option) => option.cote === selectedValue);
 
 
-        return (<Row className="mt-3">
-            <Col>{label}</Col>
-            <Col>
-                <Select
-                    options={optionsFeedBack}
-                    value={selectedOption}
-                    onChange={(selectedOption) => handleChangeCote(selectedOption, label)}
-                    isDisabled={disabled}
-                />
-            </Col>
-        </Row>);
+        return (
+            <Row className="mt-3">
+
+                <Col>{label}</Col>
+
+                <Col>
+                    <Select options={optionsFeedBack} value={selectedOption}
+                            onChange={(selectedOption) => handleChangeCote(selectedOption, label)}
+                            isDisabled={disabled}/>
+                </Col>
+
+            </Row>
+        );
     };
 
     const renderButton = () => (<Col md={6} className="mb-5">

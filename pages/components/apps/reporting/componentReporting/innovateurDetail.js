@@ -18,6 +18,7 @@ const InnovateurDetail = ({ solution }) => {
             borderRadius: 5, width: 100, height: 100, objectFit: "cover", marginRight: 10,
         }, profDetails: {
             flexDirection: "column",
+
         }
     });
 
@@ -27,13 +28,13 @@ const InnovateurDetail = ({ solution }) => {
                 <Text style={{ marginBottom: "5", fontSize: "8", textDecoration: "underline" }}>{"Informations de l'innovateur"}</Text>
             </View>
             <View style={styles.profileImage}>
-                <Image style={styles.profileImg} src={
-                    solution?.user?.profile
-                        ? `${imageBaseUrl}/${solution?.user?.profile}`
-                        : "../../../assets/img/faces/profile.jpg"
-                }
-                       alt={"profile innovateur"}
-                />
+                {/*<Image style={styles.profileImg} src={*/}
+                {/*    solution?.user?.profile*/}
+                {/*        ? `${imageBaseUrl}/${solution?.user?.profile}`*/}
+                {/*        : "../../../assets/img/faces/profile.jpg"*/}
+                {/*}*/}
+                {/*       alt={"profile innovateur"}*/}
+                {/*/>*/}
                 <View style={styles.profDetails}>
                     <UserDetail icon="person" text={solution?.user?.name}/>
                     <UserDetail icon="address" text={solution?.user?.address}/>

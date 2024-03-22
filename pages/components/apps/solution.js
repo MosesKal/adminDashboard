@@ -217,7 +217,7 @@ const Solution = () => {
         const fetchFeedBack = async () => {
             try {
                 const responseFeedbacks = await axios.get(
-                    `solutions/feedbacks/quotations/${solution.id}`
+                    `solutions/feedbacks/quotations/${solution?.id}`
                 );
 
                 setCotation(responseFeedbacks?.data?.data);
