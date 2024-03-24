@@ -10,7 +10,7 @@ import NotationCurator from "@/pages/components/apps/reporting/componentReportin
 import StatCuration from "@/pages/components/apps/reporting/componentReporting/statCuration";
 import HeaderReport from "@/pages/components/apps/reporting/componentReporting/headerReport";
 
-const SolutionTemplate = ({solutions, chartImage, isCuratedSolution}) => {
+const SolutionTemplate = ({solutions, chartImage, isCuratedSolution, tabImage}) => {
 
     const [enhancedSolutions, setEnhancedSolutions] = useState([]);
     const [quotations, setQuotations] = useState();
@@ -89,7 +89,7 @@ const SolutionTemplate = ({solutions, chartImage, isCuratedSolution}) => {
             {solutions && chartImage && isCuratedSolution && (
                 <PDFViewer width="100%" height="600px">
                     <Document>
-                        <StatCuration solutions={enhancedSolutions} chartImage={chartImage} isCuratedSolution={isCuratedSolution}/>
+                        <StatCuration solutions={enhancedSolutions} chartImage={chartImage} isCuratedSolution={isCuratedSolution} tabImage={tabImage} />
                         {
                             (isCuratedSolution ? enhancedSolutions : solutions).map((solution, index) =>
                                 (

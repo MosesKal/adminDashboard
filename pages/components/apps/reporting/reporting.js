@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import html2canvas from "html2canvas";
 import { Col, Row, Button } from "react-bootstrap";
 import GenerateCurratedSolutionsPdf from "@/pages/components/apps/reporting/generateCurratedSolutionsPdf";
 import axios from "@/pages/api/axios";
@@ -8,11 +9,18 @@ import LoaderPdf from "@/pages/components/apps/reporting/loaderPdf";
 
 
 const Reporting = ({ curratedSolutions, conformedSolutions, solutions }) => {
+
     const [thematiques, setThematiques] = useState([]);
+
     const [chartImageConformedSolutions, setChartImageConformedSolutions] = useState();
+    const [tabImageConformedSolutions, setTabImageConformedSolutions] = useState();
+
     const [chartImageCurratedSolutions, setChartImageCurratedSolutions] = useState();
+    const [tabImageCurratedSolutions, setTabImageCurratedSolutions] = useState();
+
     const [chartImageAllSolutions, setChartImageAllSolutions] = useState();
     const [isLoading, setIsLoading] = useState(false);
+
 
     useEffect(() => {
         const fetchThematiqueData = async () => {
@@ -28,9 +36,23 @@ const Reporting = ({ curratedSolutions, conformedSolutions, solutions }) => {
 
     }, []);
 
+    const captureTableImageCuratedSolutions = () => {
+        const table = document.getElementById("tab-curated-solutions");
+        html2canvas(table)
+            .then(canvas => {
+                const tableImage = canvas.toDataURL("image/png");
+                setTabImageCurratedSolutions(tableImage);
+            })
+            .catch(error => {
+                console.error('Error capturing table image:', error);
+            });
+    };
+
     const handleGenerateCuratedSolutionsImage = () => {
         setIsLoading(true);
         captureCuratedImageSolutions();
+        const tableImage = captureTableImageCuratedSolutions();
+        setTabImageCurratedSolutions(tableImage);
     };
 
     const handleGenerateStatsChartsImage = () => {
@@ -43,6 +65,7 @@ const Reporting = ({ curratedSolutions, conformedSolutions, solutions }) => {
     const captureChartImageConformedSolutions = () => {
         const canvas = document.getElementById("doughnut-chart-conformed-solutions");
         const chartImage = canvas.toDataURL("image/png");
+
         setChartImageConformedSolutions(chartImage);
         setIsLoading(false)
     };
@@ -52,6 +75,7 @@ const Reporting = ({ curratedSolutions, conformedSolutions, solutions }) => {
         const chartImage = canvas.toDataURL("image/png");
         setChartImageCurratedSolutions(chartImage);
         setIsLoading(false)
+
     };
 
     const captureAllImageSolutions = () => {
@@ -66,25 +90,26 @@ const Reporting = ({ curratedSolutions, conformedSolutions, solutions }) => {
             {isLoading && <LoaderPdf />}
             {!isLoading && solutions && curratedSolutions && conformedSolutions && (
                 <>
-                    <Row>
-                        <Col>
-                            <h3 className={"text-center p-2"}>{"Solution(s) curée(s)"}</h3>
+                    <Row className="mb-3">
+                        <Col xs={12} md={4}>
+                            <h3 className="text-center p-2">Solution(s) curée(s)</h3>
                             <GenerateDoughnoutChart
                                 thematiques={thematiques}
                                 graphiqueId={"doughnut-chart-curated-solutions"}
+                                tabId={"tab-curated-solutions"}
                                 solutions={curratedSolutions}
                             />
                         </Col>
-                        <Col>
-                            <h3 className={"text-center p-2"}>{"Solution(s) conforme(s)"}</h3>
+                        <Col xs={12} md={4}>
+                            <h3 className="text-center p-2">Solution(s) conforme(s)</h3>
                             <GenerateDoughnoutChart
                                 thematiques={thematiques}
                                 graphiqueId={"doughnut-chart-conformed-solutions"}
                                 solutions={conformedSolutions}
                             />
                         </Col>
-                        <Col>
-                            <h3 className={"text-center p-2"}>{"Toutes les Solutions"}</h3>
+                        <Col xs={12} md={4}>
+                            <h3 className="text-center p-2">Toutes les Solutions</h3>
                             <GenerateDoughnoutChart
                                 thematiques={thematiques}
                                 graphiqueId={"doughnut-chart-all-solutions"}
@@ -92,29 +117,30 @@ const Reporting = ({ curratedSolutions, conformedSolutions, solutions }) => {
                             />
                         </Col>
                     </Row>
-                    <Row>
-                        <Col>
-                            <div style={{ textAlign: "center", marginTop: 10, marginBottom: 10 }}>
-                                <Button onClick={handleGenerateCuratedSolutionsImage}>{"Générer le rapport de la curation"}</Button>
+                    <Row className="mb-3">
+                        <Col xs={12} md={4}>
+                            <div className="text-center">
+                                <Button onClick={handleGenerateCuratedSolutionsImage}>Générer</Button>
                             </div>
                         </Col>
-                        <Col xl={8}>
-                            <div style={{ textAlign: "center", marginTop: 10, marginBottom: 10 }}>
-                                <Button onClick={handleGenerateStatsChartsImage}>{"Générer le rapport de la répartition des solutions par thématique"}</Button>
+                        <Col xs={12} md={8}>
+                            <div className="text-center">
+                                <Button onClick={handleGenerateStatsChartsImage}>Générer</Button>
                             </div>
                         </Col>
                     </Row>
-                    <Row>
-                        <Col>
-                            <GenerateCurratedSolutionsPdf curratedSolutions={curratedSolutions} chartImage={chartImageCurratedSolutions} isCuratedSolution={true} />
+                    <Row className="mb-3">
+                        <Col xs={12} md={4}>
+                            <GenerateCurratedSolutionsPdf curratedSolutions={curratedSolutions} chartImage={chartImageCurratedSolutions} isCuratedSolution={true} tabImage={tabImageCurratedSolutions}/>
                         </Col>
-                        <Col xl={8}>
+                        <Col xs={12} md={8}>
                             <GenerateStatsCharts chartImageConformedSolutions={chartImageConformedSolutions} chartImageCurratedSolutions={chartImageCurratedSolutions} chartImageAllSolutions={chartImageAllSolutions}/>
                         </Col>
                     </Row>
                 </>
             )}
         </>
+
     );
 };
 

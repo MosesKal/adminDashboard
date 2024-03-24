@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {Page, Text, View, Image, StyleSheet} from '@react-pdf/renderer';
 import HeaderReport from "@/pages/components/apps/reporting/componentReporting/headerReport";
 
-const StatCuration = ({solutions, chartImage, isCuratedSolution}) => {
+const StatCuration = ({solutions, chartImage, isCuratedSolution, tabImage}) => {
 
     const [statDataCuration, setStatDataCuration] = useState({});
     const [loading, setLoading] = useState(false);
@@ -92,11 +92,7 @@ const StatCuration = ({solutions, chartImage, isCuratedSolution}) => {
                                 {"Nombre de solutions curées par le pôle"} {pole} : {count}
                             </Text>
                         ))}
-                        {/*{Object.entries(statDataCuration.polesByOrganisations).map(([organisation, poles]) => (*/}
-                        {/*    <Text key={organisation} style={styles.text}>*/}
-                        {/*        {"Nombre de pôles pour l'organisation"} {organisation} : {poles.size}*/}
-                        {/*    </Text>*/}
-                        {/*))}*/}
+
                     </View>
                 </>
             ) : (
@@ -108,7 +104,10 @@ const StatCuration = ({solutions, chartImage, isCuratedSolution}) => {
                     <Text style={styles.heading}>{"Solution curée par thématique"}</Text>
                 </View>
                 <View style={styles.graphiqueImage}>
-                    {chartImage && <Image src={chartImage} style={{width: 300, height: 300}} alt={"stat thematique curation"}/>}
+                    {chartImage && <Image src={chartImage} style={{width: 300}} alt={"stat thematique curation"}/>}
+                </View>
+                <View>
+                    {tabImage && <Image src={tabImage} alt={"tab image"}  style={{width: 200}}/>}
                 </View>
             </View>
         </Page>
