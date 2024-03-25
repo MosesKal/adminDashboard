@@ -104,10 +104,10 @@ const StatCuration = ({solutions, chartImage, isCuratedSolution, tabImage}) => {
                     <Text style={styles.heading}>{"Solution curée par thématique"}</Text>
                 </View>
                 <View style={styles.graphiqueImage}>
-                    {chartImage && <Image src={chartImage} style={{width: 300}} alt={"stat thematique curation"}/>}
+                    {chartImage && <Image src={chartImage} style={{width: 300,  }} alt={"stat thematique curation"}/>}
                 </View>
-                <View>
-                    {tabImage && <Image src={tabImage} alt={"tab image"}  style={{width: 200}}/>}
+                <View >
+                    {tabImage && <Image src={tabImage} alt={"tab image"}  style={{width: "auto", }}/>}
                 </View>
             </View>
         </Page>

@@ -1,6 +1,6 @@
 import React, {useEffect, useState, useMemo} from "react";
 import {
-    Button, Row, Col, Card, Spinner, Modal, FormGroup, Form, Tab, Tabs, Nav,
+    Button, Row, Col, Card, Spinner, Modal, FormGroup, Form, Tab, Tabs,
 } from "react-bootstrap";
 import DataTable from "react-data-table-component";
 import {columns as configureColumns, truncateText} from "./solutionslist";
@@ -289,7 +289,7 @@ const Solutionslistcom = () => {
 
     const dataCurratedSolutionsMergedWithCote = useMemo(() => {
 
-        if(isAdmin) {
+        if (isAdmin) {
             const newData = filteredCurratedSolutions.map(solution => {
                 const feedbacks = solution.feedbacks[0].quotations.split(",").map(id => parseInt(id, 10));
                 const coteTotal = feedbacks.reduce((total, id) => {
@@ -305,6 +305,7 @@ const Solutionslistcom = () => {
             return newData;
         }
     }, [filteredCurratedSolutions, mentions, isAdmin]);
+
 
 
     const handleDelete = async (s) => {
@@ -349,9 +350,10 @@ const Solutionslistcom = () => {
         if (column.name === "Actions") {
             column.width = "30%";
         }
-        if(column.name === "pourcentage"){
+        if (column.name === "pourcentage") {
             column.width = "10%";
-        }if(column.name === "Titre"){
+        }
+        if (column.name === "Titre") {
             column.width = "20%"
         }
     });
@@ -679,7 +681,7 @@ const Solutionslistcom = () => {
                                         <Card className="custom-card">
                                             <Card.Body>
                                                 <Reporting
-                                                    curratedSolutions={curratedSolutions}
+                                                    curratedSolutions={dataCurratedSolutionsMergedWithCote}
                                                     conformedSolutions={conformedSolutions}
                                                     solutions={solutions}
                                                 />

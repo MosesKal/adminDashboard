@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState, useMemo} from "react";
 import html2canvas from "html2canvas";
-import { Col, Row, Button } from "react-bootstrap";
+import {Col, Row, Button} from "react-bootstrap";
 import GenerateCurratedSolutionsPdf from "@/pages/components/apps/reporting/generateCurratedSolutionsPdf";
 import axios from "@/pages/api/axios";
 import GenerateDoughnoutChart from "@/pages/components/apps/reporting/generateDoughnutChart";
@@ -8,9 +8,10 @@ import GenerateStatsCharts from "@/pages/components/apps/reporting/generateStats
 import LoaderPdf from "@/pages/components/apps/reporting/loaderPdf";
 
 
-const Reporting = ({ curratedSolutions, conformedSolutions, solutions }) => {
+const Reporting = ({curratedSolutions, conformedSolutions, solutions}) => {
 
     const [thematiques, setThematiques] = useState([]);
+
 
     const [chartImageConformedSolutions, setChartImageConformedSolutions] = useState();
     const [tabImageConformedSolutions, setTabImageConformedSolutions] = useState();
@@ -19,8 +20,9 @@ const Reporting = ({ curratedSolutions, conformedSolutions, solutions }) => {
     const [tabImageCurratedSolutions, setTabImageCurratedSolutions] = useState();
 
     const [chartImageAllSolutions, setChartImageAllSolutions] = useState();
-    const [isLoading, setIsLoading] = useState(false);
+    const [tabImageAllSolutions, setTabImageAllSolutions] = useState();
 
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         const fetchThematiqueData = async () => {
@@ -32,9 +34,23 @@ const Reporting = ({ curratedSolutions, conformedSolutions, solutions }) => {
             }
         };
 
+        const fetchMentions = async () => {
+            try {
+                const mentionsResponse = await axios.get("/quotations");
+
+                const mentions = mentionsResponse?.data?.data
+
+                setMentions(mentions.map((mention) => ({id: mention.id, average: mention.average})));
+
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
         fetchThematiqueData();
 
     }, []);
+
 
     const captureTableImageCuratedSolutions = () => {
         const table = document.getElementById("tab-curated-solutions");
@@ -48,6 +64,30 @@ const Reporting = ({ curratedSolutions, conformedSolutions, solutions }) => {
             });
     };
 
+    const captureTableImageConformedSolutions = () => {
+        const table = document.getElementById("tab-conformed-solutions");
+        html2canvas(table)
+            .then(canvas => {
+                const tableImage = canvas.toDataURL("image/png");
+                setTabImageConformedSolutions(tableImage);
+            })
+            .catch(error => {
+                console.error('Error capturing table image:', error);
+            });
+    }
+
+    const captureTableImageAllSolutions = () => {
+        const table = document.getElementById("tab-all-solutions");
+        html2canvas(table)
+            .then(canvas => {
+                const tableImage = canvas.toDataURL("image/png");
+                setTabImageAllSolutions(tableImage);
+            })
+            .catch(error => {
+                console.error('Error capturing table image:', error);
+            });
+    }
+
     const handleGenerateCuratedSolutionsImage = () => {
         setIsLoading(true);
         captureCuratedImageSolutions();
@@ -60,6 +100,13 @@ const Reporting = ({ curratedSolutions, conformedSolutions, solutions }) => {
         captureChartImageConformedSolutions();
         captureCuratedImageSolutions();
         captureAllImageSolutions();
+        const tableImageConformedSolutions = captureTableImageConformedSolutions();
+        const tableImageAllSolutions = captureTableImageAllSolutions();
+        const tableImageCuratedSolutions = captureTableImageCuratedSolutions();
+
+        setTabImageConformedSolutions(tableImageConformedSolutions);
+        setTabImageAllSolutions(tableImageAllSolutions);
+        setTabImageCurratedSolutions(tableImageCuratedSolutions);
     };
 
     const captureChartImageConformedSolutions = () => {
@@ -87,7 +134,7 @@ const Reporting = ({ curratedSolutions, conformedSolutions, solutions }) => {
 
     return (
         <>
-            {isLoading && <LoaderPdf />}
+            {isLoading && <LoaderPdf/>}
             {!isLoading && solutions && curratedSolutions && conformedSolutions && (
                 <>
                     <Row className="mb-3">
@@ -105,6 +152,7 @@ const Reporting = ({ curratedSolutions, conformedSolutions, solutions }) => {
                             <GenerateDoughnoutChart
                                 thematiques={thematiques}
                                 graphiqueId={"doughnut-chart-conformed-solutions"}
+                                tabId={"tab-conformed-solutions"}
                                 solutions={conformedSolutions}
                             />
                         </Col>
@@ -112,6 +160,7 @@ const Reporting = ({ curratedSolutions, conformedSolutions, solutions }) => {
                             <h3 className="text-center p-2">Toutes les Solutions</h3>
                             <GenerateDoughnoutChart
                                 thematiques={thematiques}
+                                tabId={"tab-all-solutions"}
                                 graphiqueId={"doughnut-chart-all-solutions"}
                                 solutions={solutions}
                             />
@@ -134,7 +183,14 @@ const Reporting = ({ curratedSolutions, conformedSolutions, solutions }) => {
                             <GenerateCurratedSolutionsPdf curratedSolutions={curratedSolutions} chartImage={chartImageCurratedSolutions} isCuratedSolution={true} tabImage={tabImageCurratedSolutions}/>
                         </Col>
                         <Col xs={12} md={8}>
-                            <GenerateStatsCharts chartImageConformedSolutions={chartImageConformedSolutions} chartImageCurratedSolutions={chartImageCurratedSolutions} chartImageAllSolutions={chartImageAllSolutions}/>
+                            <GenerateStatsCharts
+                                chartImageConformedSolutions={chartImageConformedSolutions}
+                                chartImageCurratedSolutions={chartImageCurratedSolutions}
+                                chartImageAllSolutions={chartImageAllSolutions}
+                                tabImageAllSolutions={tabImageAllSolutions}
+                                tabImageConformedSolutions={tabImageConformedSolutions}
+                                tabImageCurratedSolutions={tabImageCurratedSolutions}
+                            />
                         </Col>
                     </Row>
                 </>

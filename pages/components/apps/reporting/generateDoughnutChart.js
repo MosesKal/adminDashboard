@@ -8,18 +8,24 @@ import {Col, Row} from "react-bootstrap";
 const GenerateDoughnutChart = ({solutions, thematiques, graphiqueId, tabId}) => {
 
     const countSolutionsByThematic = useMemo(() => {
-        const solutionsCountByThematic = thematiques?.reduce((acc, thematic) => {
-            acc[thematic.name] = 0;
-            return acc;
-        }, {});
 
-        solutions?.forEach((solution) => {
-            const thematicName = solution.thematic.name;
-            solutionsCountByThematic[thematicName]++;
-        });
+
+        const solutionsCountByThematic = {};
+
+        if (thematiques && solutions) {
+            thematiques.forEach((thematic) => {
+                solutions.forEach((solution) => {
+                    if (solution.thematic && solution.thematic.name === thematic.name) {
+                        solutionsCountByThematic[thematic.name] = (solutionsCountByThematic[thematic.name] || 0) + 1;
+                    }
+                });
+            });
+        }
+
 
         return solutionsCountByThematic;
     }, [solutions, thematiques]);
+
 
     const doughnutData = useMemo(() => {
         if (solutions && thematiques && graphiqueId) {
@@ -45,13 +51,9 @@ const GenerateDoughnutChart = ({solutions, thematiques, graphiqueId, tabId}) => 
             const filteredLabels = thematiques.map((thematic) => thematic.name).filter((_, index) => countSolutions[index] !== 0);
 
             return {
-                labels: filteredLabels,
-                datasets: [
-                    {
-                        data: filteredData,
-                        backgroundColor: filteredLabels.map((_, index) => getThematicColor(index)),
-                    },
-                ],
+                labels: filteredLabels, datasets: [{
+                    data: filteredData, backgroundColor: filteredLabels.map((_, index) => getThematicColor(index)),
+                },],
             };
         }
         return null;
@@ -62,43 +64,31 @@ const GenerateDoughnutChart = ({solutions, thematiques, graphiqueId, tabId}) => 
     }, [countSolutionsByThematic]);
 
     return (
-
         <Row className="flex-column ">
-            <Col  >
-                {doughnutData && (
-                    <Doughnut
-                        data={doughnutData}
-                        id={graphiqueId}
-                        className="chartjs-render-monitor"
-                        options={{
-                            plugins: {
-                                legend: {
-                                    display: true,
-                                    position: "top",
-                                    align: "start",
+            <Col>
+                {doughnutData && (<Doughnut
+                    data={doughnutData}
+                    id={graphiqueId}
+                    className="chartjs-render-monitor"
+                    options={{
+                        plugins: {
+                            legend: {
+                                display: true, position: "top", align: "start",
+                            }, labels: {
+                                render: "label", display: true, font: {
+                                    size: 14,
                                 },
-                                labels: {
-                                    render: "label",
-                                    display: true,
-                                    font: {
-                                        size: 14,
-                                    },
-                                },
-                                datalabels: {
-                                    color: "#ffffff",
-                                    font: {
-                                        size: 12,
-                                    },
-                                    formatter: (value) => value,
-                                },
+                            }, datalabels: {
+                                color: "#ffffff", font: {
+                                    size: 12,
+                                }, formatter: (value) => value,
                             },
-                            responsive: true,
-                        }}
-                        plugins={[ChartDataLabels]}
-                    />
-                )}
+                        }, responsive: true,
+                    }}
+                    plugins={[ChartDataLabels]}
+                />)}
             </Col>
-            <Col className={"mt-5"} >
+            <Col className={"mt-5"}>
                 <Table striped bordered hover responsive id={tabId}>
                     <thead>
                     <tr>
@@ -108,11 +98,11 @@ const GenerateDoughnutChart = ({solutions, thematiques, graphiqueId, tabId}) => 
                     </tr>
                     </thead>
                     <tbody>
-                    {thematiques.map((thematic) => (
+                    {thematiques && thematiques.map((thematic) => (
                         <tr key={thematic.id}>
                             <td>{thematic.name}</td>
-                            <td>{countSolutionsByThematic[thematic.name]}</td>
-                            <td>{((countSolutionsByThematic[thematic.name] / totalSolutions) * 100).toFixed(2)}%</td>
+                            <td>{countSolutionsByThematic[thematic.name] > 0 ? countSolutionsByThematic[thematic.name] : 0}</td>
+                            <td>{countSolutionsByThematic[thematic.name] > 0 ? ((countSolutionsByThematic[thematic.name] / totalSolutions) * 100).toFixed(2) : 0} %</td>
                         </tr>
                     ))}
                     <tr>

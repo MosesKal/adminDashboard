@@ -10,7 +10,6 @@ const Solutionslistcom = dynamic(
 
 const Solutionlist = () => {
 
-
   return (
     <div>
       <Seo title={"User List"} />
