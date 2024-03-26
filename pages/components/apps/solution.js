@@ -19,6 +19,8 @@ const Solution = () => {
     const [cotation, setCotation] = useState();
 
     const navigate = useRouter();
+
+
     const id = navigate?.query?.id;
     const innovateurId = navigate?.query?.innovateurId;
     const thematiqueId = navigate?.query?.thematiqueId;
@@ -83,18 +85,13 @@ const Solution = () => {
             localStorage.setItem("solution", JSON.stringify(solution));
         }
         if (profileInnovateur) {
-            localStorage.setItem(
-                "profileInnovateur",
-                JSON.stringify(profileInnovateur)
-            );
+            localStorage.setItem("profileInnovateur", JSON.stringify(profileInnovateur));
         }
     }, [solution, profileInnovateur]);
 
     useEffect(() => {
         const status = JSON.parse(localStorage?.getItem("STATUS_ACCOUNT"));
-        const userRoles = JSON.parse(
-            localStorage?.getItem("ACCESS_ACCOUNT")
-        )?.roles;
+        const userRoles = JSON.parse(localStorage?.getItem("ACCESS_ACCOUNT"))?.roles;
         setIsAdmin(userRoles?.some((role) => role.name === "ADMIN"));
 
         if (status.authenticate) {
@@ -103,9 +100,7 @@ const Solution = () => {
             const fetchInnovateur = async () => {
                 if (navigate.query.innovateurId) {
                     try {
-                        const profileResponse = await axios.get(
-                            `/users/${navigate?.query?.innovateurId}`
-                        );
+                        const profileResponse = await axios.get(`/users/${navigate?.query?.innovateurId}`);
                         setProfileInnovateur(profileResponse?.data?.data);
                     } catch (error) {
                         console.log(error);
@@ -116,9 +111,7 @@ const Solution = () => {
             const fetchSolution = async () => {
                 if (navigate.query.id) {
                     try {
-                        const solutionResponse = await axios.get(
-                            `/solutions/${navigate?.query?.id}`
-                        );
+                        const solutionResponse = await axios.get(`/solutions/${navigate?.query?.id}`);
                         setSolution(solutionResponse?.data?.data);
                     } catch (error) {
                         console.log(error);
@@ -129,9 +122,7 @@ const Solution = () => {
             const fetchThematique = async () => {
                 if (navigate.query.thematiqueId) {
                     try {
-                        const thematiqueResponse = await axios.get(
-                            `/thematics/${navigate?.query?.thematiqueId}`
-                        );
+                        const thematiqueResponse = await axios.get(`/thematics/${navigate?.query?.thematiqueId}`);
                         setThematique(thematiqueResponse?.data?.data);
                     } catch (error) {
                         console.log(error);
@@ -145,12 +136,9 @@ const Solution = () => {
                     const statusResponse = await axios.get("/status");
                     data = statusResponse?.data?.data;
 
-                    setOptionsStatus(
-                        data.map((option) => ({
-                            value: option.id,
-                            label: option.name,
-                        }))
-                    );
+                    setOptionsStatus(data.map((option) => ({
+                        value: option.id, label: option.name,
+                    })));
                 } catch (error) {
                     console.log(error);
                 }
@@ -162,12 +150,9 @@ const Solution = () => {
 
                     data = poleResponse?.data?.data;
 
-                    setOptionsPole(
-                        data.map((option) => ({
-                            value: option.id,
-                            label: option.name,
-                        }))
-                    );
+                    setOptionsPole(data.map((option) => ({
+                        value: option.id, label: option.name,
+                    })));
                 } catch (e) {
                     console.log(e);
                 }
@@ -180,13 +165,9 @@ const Solution = () => {
 
                     data = labelsResponse?.data?.data;
 
-                    setOptionsFeedBack(
-                        data.map((option) => ({
-                            value: option.id,
-                            label: `${option.mention} - ${option.average}`,
-                            cote: option.average,
-                        }))
-                    );
+                    setOptionsFeedBack(data.map((option) => ({
+                        value: option.id, label: `${option.mention} - ${option.average}`, cote: option.average,
+                    })));
                 } catch (e) {
                     console.log(e);
                 }
@@ -216,25 +197,15 @@ const Solution = () => {
     useEffect(() => {
         const fetchFeedBack = async () => {
             try {
-                const responseFeedbacks = await axios.get(
-                    `solutions/feedbacks/quotations/${solution?.id}`
-                );
+                const responseFeedbacks = await axios.get(`solutions/feedbacks/quotations/${solution?.id}`);
 
                 setCotation(responseFeedbacks?.data?.data);
 
-                if (
-                    solution.feedbacks &&
-                    solution.feedbacks.length > 0 &&
-                    solution.feedbacks[0].userId === userConnected.id
-                ) {
+                if (solution.feedbacks && solution.feedbacks.length > 0 && solution.feedbacks[0].userId === userConnected.id) {
                     setIsExistCommentaire(true);
                     setCommentaires(solution.feedbacks);
                     setIdCurateur(solution?.feedbacks[0].userId);
-                } else if (
-                    solution.feedbacks &&
-                    solution.feedbacks.length > 0 &&
-                    solution.feedbacks[0].userId !== userConnected.id
-                ) {
+                } else if (solution.feedbacks && solution.feedbacks.length > 0 && solution.feedbacks[0].userId !== userConnected.id) {
                     setIsCommentedByAnother(true);
                     setCommentaires(solution.feedbacks);
                     setIdCurateur(solution?.feedbacks[0].userId);
@@ -259,9 +230,7 @@ const Solution = () => {
                     if (isAdmin) {
                         responseSolution = await axios.get("/solutions");
                     } else {
-                        responseSolution = await axios.get(
-                            `/solutions/pole/${profile?.poleId}`
-                        );
+                        responseSolution = await axios.get(`/solutions/pole/${profile?.poleId}`);
                     }
 
                     setAllSolution(responseSolution?.data?.data);
@@ -323,10 +292,7 @@ const Solution = () => {
         try {
 
             const payload = {
-                labels: feedbacks,
-                user: userConnected?.email,
-                adminComment: commentUser,
-                userComment: "",
+                labels: feedbacks, user: userConnected?.email, adminComment: commentUser, userComment: "",
             };
 
             await axios.post(`/solutions/feedback/${solution?.id}`, payload);
@@ -383,9 +349,7 @@ const Solution = () => {
     };
 
     const handlePreviousSolution = async () => {
-        const currentIndex = allSolutions.findIndex(
-            (sol) => sol?.id === solution?.id
-        );
+        const currentIndex = allSolutions.findIndex((sol) => sol?.id === solution?.id);
         let previousSolution;
         if (currentIndex > 0) {
             try {
@@ -398,9 +362,7 @@ const Solution = () => {
 
             try {
                 if (previousSolution.userId) {
-                    const profileResponse = await axios.get(
-                        `/users/${previousSolution?.userId}`
-                    );
+                    const profileResponse = await axios.get(`/users/${previousSolution?.userId}`);
                     setProfileInnovateur(profileResponse?.data?.data);
                 }
             } catch (error) {
@@ -411,10 +373,7 @@ const Solution = () => {
     };
 
     const handleNextSolution = async () => {
-
-        const currentIndex = allSolutions.findIndex(
-            (sol) => sol.id === solution.id
-        );
+        const currentIndex = allSolutions.findIndex((sol) => sol.id === solution.id);
         let nextSolution;
         if (currentIndex < allSolutions?.length - 1) {
             try {
@@ -427,9 +386,7 @@ const Solution = () => {
 
             try {
                 if (nextSolution.userId) {
-                    const profileResponse = await axios.get(
-                        `/users/${nextSolution?.userId}`
-                    );
+                    const profileResponse = await axios.get(`/users/${nextSolution?.userId}`);
                     setProfileInnovateur(profileResponse?.data?.data);
                 }
             } catch (error) {
@@ -445,7 +402,7 @@ const Solution = () => {
             <Seo title={"Profile"}/>
             <div className="breadcrumb-header justify-content-between">
                 <div className="left-content">
-          <span className="main-content-title mg-b-0 mg-b-lg-1">
+                    <span className="main-content-title mg-b-0 mg-b-lg-1">
             DETAILS DE LA SOLUTION
           </span>
                 </div>
