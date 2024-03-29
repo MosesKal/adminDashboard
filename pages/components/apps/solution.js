@@ -39,7 +39,7 @@ const Solution = () => {
 
   const [isAdmin, setIsAdmin] = useState(false);
 
-  // let userConnected;
+ 
 
   const [profile, setProfile] = useState(null);
 
@@ -65,6 +65,7 @@ const Solution = () => {
     };
 
     fetchAllCuratedSolutions();
+    
   }, []);
 
   let solution = useMemo(() => {
@@ -108,11 +109,7 @@ const Solution = () => {
     }
   }, [solution]);
 
-  // const feedbacks = useMemo(() => {
-  //   if (solution) {
-  //     return solution.feedbacks.map((feedback) => feedback) || [];
-  //   }
-  // }, [solution]);
+
 
   useEffect(() => {
     const status = JSON.parse(localStorage?.getItem("STATUS_ACCOUNT"));
@@ -213,9 +210,7 @@ const Solution = () => {
     }
   }, [id, navigate, isAdmin, thematiqueId]);
 
-  // if (typeof window !== "undefined") {
-  //     userConnected = JSON.parse(localStorage?.getItem("ACCESS_ACCOUNT"));
-  // }
+
 
   useEffect(() => {
     if (solution) {
@@ -247,6 +242,8 @@ const Solution = () => {
       return profile.email;
     }
   }, [profile]);
+
+
 
   return (
     <div>

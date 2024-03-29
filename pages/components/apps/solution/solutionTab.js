@@ -29,6 +29,8 @@ const SolutionTab = ({
   userConnectedEmail,
   solutionId,
 }) => {
+
+
   return (
     <>
       <span className=" py-0 ">
@@ -73,161 +75,10 @@ const SolutionTab = ({
                         className="main-content-body tab-pane active"
                         id="about"
                       >
-                        <Card className="">
-                          <Card.Body className="border-0 p-10 rounded-10">
-                            <div className="p-4">
-                              <Row>
-                                <Col md={6}>
-                                  <h4 className="text-primary tx-17 text-uppercase mb-3">
-                                    <b className="text-primary m-b-5 tx-17 text-uppercase">
-                                      Titre de la solution
-                                    </b>
-                                  </h4>
-                                  <p className="m-b-5 text-justify tx-15 p-10">
-                                    {solution ? solution.name : ""}
-                                  </p>
-                                  <h4 className="text-primary tx-17 text-uppercase mb-3">
-                                    <b className="text-primary m-b-5 tx-17 text-uppercase">
-                                      Description
-                                    </b>
-                                  </h4>
-                                  <p className="m-b-5 text-justify tx-15 p-10">
-                                    {solution ? solution.description : ""}
-                                  </p>
-                                  solution
-                                  <div className="">
-                                    <h5 className="text-primary m-b-5 tx-17 text-uppercase">
-                                      Lien Vidéo
-                                    </h5>
-                                    <p className="">
-                                      {solution && solution.videoLink ? (
-                                        <>
-                                          <p>
-                                            <a
-                                              href={solution.videoLink}
-                                              target="_blank"
-                                            >
-                                              {solution.videoLink}
-                                            </a>
-                                          </p>
-                                          <span
-                                            style={{ position: "relative" }}
-                                          >
-                                            {showYoutubeThumbnail && (
-                                              <a
-                                                href={`https://www.youtube.com/watch?v=${getVideoIdFromUrl(
-                                                  solution.videoLink
-                                                )}`}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                style={{
-                                                  position: "relative",
-                                                  display: "block",
-                                                }}
-                                              >
-                                                <img
-                                                  src={`https://img.youtube.com/vi/${getVideoIdFromUrl(
-                                                    solution.videoLink
-                                                  )}/default.jpg`}
-                                                  alt="YouTube Thumbnail"
-                                                  style={{
-                                                    maxWidth: "80%",
-                                                    cursor: "pointer",
-                                                    display: "block",
-                                                    width: "100%",
-                                                  }}
-                                                  fluid
-                                                />
-                                                <FontAwesomeIcon
-                                                  icon={faPlay}
-                                                  style={{
-                                                    position: "absolute",
-                                                    top: "50%",
-                                                    left: "40%",
-                                                    transform:
-                                                      "translate(-50%, -50%)",
-                                                    color: "white",
-                                                    fontSize: "3rem",
-                                                    maxWidth: "50px",
-                                                    opacity: "0.5",
-                                                  }}
-                                                />
-                                              </a>
-                                            )}
-                                          </span>
-                                        </>
-                                      ) : (
-                                        "pas de lien youtube"
-                                      )}
-                                    </p>
-                                  </div>
-                                  <div className="m-t-30">
-                                    <div className=" p-t-10">
-                                      <p className="text-primary m-b-5 tx-17 text-uppercase">
-                                        <b className="text-primary m-b-5 tx-17 text-uppercase">
-                                          En quoi est-ce que cette solution /
-                                          initiative locale est innovante ?
-                                        </b>
-                                      </p>
-                                      <p className=" tx-15 m-b-0">
-                                        {solution
-                                          ? solution.targetedProblem
-                                          : ""}
-                                      </p>
-                                    </div>
-                                    <div className="">
-                                      <h5 className="text-primary m-b-5 tx-17 text-uppercase">
-                                        Challenges
-                                      </h5>
-                                      <p className="">
-                                        {solution?.challenges.map(
-                                          (challenge) => (
-                                            <p key={challenge.id}>
-                                              → {challenge.name}
-                                            </p>
-                                          )
-                                        )}
-                                      </p>
-                                    </div>
-                                    <div className="">
-                                      <h5 className="text-primary m-b-5 tx-17 text-uppercase">
-                                        Date de soumission :
-                                      </h5>
-                                      <p className="">
-                                        {solution
-                                          ? moment(solution.createdAt).format(
-                                              "DD MMMM YYYY [à] HH:mm"
-                                            )
-                                          : ""}
-                                      </p>
-                                    </div>
-                                  </div>
-                                </Col>
-
-                                <Col md={6}>
-                                  <div className="m-t-30">
-                                    <div className=" p-t-10">
-                                      <h5 className="text-primary m-b-5 tx-17 text-uppercase">
-                                        Thématique
-                                      </h5>
-                                      <p className="">
-                                        {thematique ? thematique.name : ""}
-                                      </p>
-                                      <h5 className="text-primary m-b-5 tx-17 text-uppercase">
-                                        {"ODD Concerné(s)"}
-                                      </h5>
-                                      <p className="">
-                                        {thematique ? thematique.odds : ""}
-                                      </p>
-                                      );
-                                    </div>
-                                  </div>
-                                  <Carousels imageLinks={imageLinks} />
-                                </Col>
-                              </Row>
-                            </div>
-                          </Card.Body>
-                        </Card>
+                        <SolutionDetails
+                          solution={solution}
+                          imageLinks={imageLinks}
+                        />
                       </div>
                     </Tab.Pane>
                     <Tab.Pane eventKey="EditProfile">
@@ -261,6 +112,157 @@ const SolutionTab = ({
           </Tab.Container>
         </div>
       </span>
+    </>
+  );
+};
+
+const SolutionDetails = ({ solution, imageLinks }) => {
+  return (
+    <>
+      {solution && (
+        <Card className="">
+          <Card.Body className="border-0 p-10 rounded-10">
+            <div className="p-4">
+              <Row>
+                <Col md={6}>
+                  <h4 className="text-primary tx-17 text-uppercase mb-3">
+                    <b className="text-primary m-b-5 tx-17 text-uppercase">
+                      Titre de la solution
+                    </b>
+                  </h4>
+                  <p className="m-b-5 text-justify tx-15 p-10">
+                    {solution ? solution.name : ""}
+                  </p>
+                  <h4 className="text-primary tx-17 text-uppercase mb-3">
+                    <b className="text-primary m-b-5 tx-17 text-uppercase">
+                      Description
+                    </b>
+                  </h4>
+                  <p className="m-b-5 text-justify tx-15 p-10">
+                    {solution ? solution.description : ""}
+                  </p>
+                  solution
+                  <div className="">
+                    <h5 className="text-primary m-b-5 tx-17 text-uppercase">
+                      Lien Vidéo
+                    </h5>
+                    <p className="">
+                      {solution && solution.videoLink ? (
+                        <>
+                          <p>
+                            <a href={solution.videoLink} target="_blank">
+                              {solution.videoLink}
+                            </a>
+                          </p>
+                          <span style={{ position: "relative" }}>
+                            {showYoutubeThumbnail && (
+                              <a
+                                href={`https://www.youtube.com/watch?v=${getVideoIdFromUrl(
+                                  solution.videoLink
+                                )}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style={{
+                                  position: "relative",
+                                  display: "block",
+                                }}
+                              >
+                                <img
+                                  src={`https://img.youtube.com/vi/${getVideoIdFromUrl(
+                                    solution.videoLink
+                                  )}/default.jpg`}
+                                  alt="YouTube Thumbnail"
+                                  style={{
+                                    maxWidth: "80%",
+                                    cursor: "pointer",
+                                    display: "block",
+                                    width: "100%",
+                                  }}
+                                  fluid
+                                />
+                                <FontAwesomeIcon
+                                  icon={faPlay}
+                                  style={{
+                                    position: "absolute",
+                                    top: "50%",
+                                    left: "40%",
+                                    transform: "translate(-50%, -50%)",
+                                    color: "white",
+                                    fontSize: "3rem",
+                                    maxWidth: "50px",
+                                    opacity: "0.5",
+                                  }}
+                                />
+                              </a>
+                            )}
+                          </span>
+                        </>
+                      ) : (
+                        "pas de lien youtube"
+                      )}
+                    </p>
+                  </div>
+                  <div className="m-t-30">
+                    <div className=" p-t-10">
+                      <p className="text-primary m-b-5 tx-17 text-uppercase">
+                        <b className="text-primary m-b-5 tx-17 text-uppercase">
+                          En quoi est-ce que cette solution / initiative locale
+                          est innovante ?
+                        </b>
+                      </p>
+                      <p className=" tx-15 m-b-0">
+                        {solution ? solution.targetedProblem : ""}
+                      </p>
+                    </div>
+                    <div className="">
+                      <h5 className="text-primary m-b-5 tx-17 text-uppercase">
+                        Challenges
+                      </h5>
+                      <p className="">
+                        {solution?.challenges.map((challenge) => (
+                          <p key={challenge.id}>→ {challenge.name}</p>
+                        ))}
+                      </p>
+                    </div>
+                    <div className="">
+                      <h5 className="text-primary m-b-5 tx-17 text-uppercase">
+                        Date de soumission :
+                      </h5>
+                      <p className="">
+                        {solution
+                          ? moment(solution.createdAt).format(
+                              "DD MMMM YYYY [à] HH:mm"
+                            )
+                          : ""}
+                      </p>
+                    </div>
+                  </div>
+                </Col>
+
+                <Col md={6}>
+                  <div className="m-t-30">
+                    <div className=" p-t-10">
+                      <h5 className="text-primary m-b-5 tx-17 text-uppercase">
+                        Thématique
+                      </h5>
+                      <p className="">{solution.thematic.name}</p>
+                      <h5 className="text-primary m-b-5 tx-17 text-uppercase">
+                        {"ODD Concerné(s)"}
+                      </h5>
+                      <p className="">
+                        {
+                          solution.thematic.odds
+                        }
+                      </p>
+                    </div>
+                  </div>
+                  <Carousels imageLinks={imageLinks} />
+                </Col>
+              </Row>
+            </div>
+          </Card.Body>
+        </Card>
+      )}
     </>
   );
 };
