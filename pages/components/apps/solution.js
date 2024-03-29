@@ -115,6 +115,7 @@ const Solution = () => {
     };
 
     fetchAllCuratedSolutions();
+    
   }, []);
 
   let solution = useMemo(() => {
@@ -243,7 +244,7 @@ const Solution = () => {
       fetchPole();
       fetchFeedBack();
       fetchProfile();
-      
+
     } else {
       navigate.push("/");
     }
@@ -415,6 +416,7 @@ const Solution = () => {
   };
 
   if (solution) {
+
     if (solution?.imageLink) {
       imageLinks.push({ link: solution?.imageLink });
     }
@@ -424,6 +426,7 @@ const Solution = () => {
         imageLinks?.push({ link: image?.imageLink });
       });
     }
+    
   }
 
   useEffect(() => {

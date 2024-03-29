@@ -97,17 +97,17 @@ const SolutionTab = ({
 
     // const renderSelect = (label, disabled, index, indexCotation) => {
     //   const existingValues = cotations && cotations[0] ? cotations[0] : [];
-  
+
     //   const selectedValue = existingValues[index]?.average || null;
-  
+
     //   const selectedOption = optionsFeedBack?.find(
     //     (option) => option.cote === selectedValue
     //   );
-  
+
     //   return (
     //     <Row className="mt-3">
     //       <Col>{label}</Col>
-  
+
     //       <Col>
     //         <Select
     //           options={optionsFeedBack}
