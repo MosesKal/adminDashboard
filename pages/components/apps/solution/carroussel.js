@@ -20,6 +20,7 @@ const isImageValid = (url) => {
 };
 
 const Carousels = ({ imageLinks }) => {
+  
   let isValidImageFound = false;
 
   return (

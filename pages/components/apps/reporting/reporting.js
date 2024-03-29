@@ -25,6 +25,7 @@ const Reporting = ({curratedSolutions, conformedSolutions, solutions}) => {
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
+
         const fetchThematiqueData = async () => {
             try {
                 const response = await axios.get("/thematics");
@@ -34,18 +35,18 @@ const Reporting = ({curratedSolutions, conformedSolutions, solutions}) => {
             }
         };
 
-        const fetchMentions = async () => {
-            try {
-                const mentionsResponse = await axios.get("/quotations");
+        // const fetchMentions = async () => {
+        //     try {
+        //         const mentionsResponse = await axios.get("/quotations");
 
-                const mentions = mentionsResponse?.data?.data
+        //         const mentions = mentionsResponse?.data?.data
 
-                setMentions(mentions.map((mention) => ({id: mention.id, average: mention.average})));
+        //         setMentions(mentions.map((mention) => ({id: mention.id, average: mention.average})));
 
-            } catch (error) {
-                console.log(error);
-            }
-        }
+        //     } catch (error) {
+        //         console.log(error);
+        //     }
+        // }
 
         fetchThematiqueData();
 
@@ -179,9 +180,11 @@ const Reporting = ({curratedSolutions, conformedSolutions, solutions}) => {
                         </Col>
                     </Row>
                     <Row className="mb-3">
+
                         <Col xs={12} md={4}>
-                            <GenerateCurratedSolutionsPdf curratedSolutions={curratedSolutions} chartImage={chartImageCurratedSolutions} isCuratedSolution={true} tabImage={tabImageCurratedSolutions}/>
+                            <GenerateCurratedSolutionsPdf curratedSolutions={curratedSolutions} chartImage={chartImageCurratedSolutions} isCuratedSolution={true} tabImage={tabImageCurratedSolutions} />
                         </Col>
+
                         <Col xs={12} md={8}>
                             <GenerateStatsCharts
                                 chartImageConformedSolutions={chartImageConformedSolutions}

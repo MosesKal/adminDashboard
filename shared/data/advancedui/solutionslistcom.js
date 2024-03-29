@@ -45,7 +45,10 @@ const Solutionslistcom = () => {
     const [showEditModal, setShowEditModal] = useState(false);
 
     useEffect(() => {
+
+
         const fetchThematique = async () => {
+
             try {
                 const thematiqueResponse = await axios.get("/thematics");
                 const data = thematiqueResponse?.data?.data;
@@ -56,9 +59,14 @@ const Solutionslistcom = () => {
             } catch (error) {
                 console.log(error);
             }
+            
         };
+
+
         const fetchStatus = async () => {
+
             try {
+
                 const statusResponse = await axios.get("/status");
                 const data = statusResponse?.data?.data;
                 const allStatusOption = {value: "Tous", label: "Tous"};
@@ -70,7 +78,9 @@ const Solutionslistcom = () => {
             }
         };
 
+
         const fetchUser = async () => {
+
             try {
                 setIsLoadingUsers(true);
                 const responseUser = await axios.get("/users");
@@ -81,18 +91,24 @@ const Solutionslistcom = () => {
                 setIsLoadingUsers(false);
                 console.error("Erreur lors de la récupération des données :", error);
             }
+
         };
 
+
         const fetchProfile = async () => {
+
             try {
                 const profileResponse = await axios.get("/auth/profile/");
                 setProfile(profileResponse?.data?.data);
             } catch (error) {
                 console.log(error);
             }
+
         };
 
+
         const fetchPole = async () => {
+
             let data;
 
             try {
@@ -104,7 +120,9 @@ const Solutionslistcom = () => {
             } catch (e) {
                 console.log(e);
             }
+
         };
+
 
         const fetchMentions = async () => {
             try {
@@ -130,9 +148,14 @@ const Solutionslistcom = () => {
         fetchProfile();
         fetchPole();
         fetchMentions();
+
+
     }, []);
 
+
+
     const fetchSolutions = async () => {
+        
         try {
             setIsLoadingSolution(true);
             let responseSolution;
@@ -156,13 +179,18 @@ const Solutionslistcom = () => {
             setIsLoadingSolution(false);
             console.error("Erreur lors de la récupération des données :", error);
         }
+
     };
+
+
 
     useMemo(() => {
         if (profile) {
             fetchSolutions();
         }
     }, [profile]);
+
+
 
     const dataMerged = useMemo(() => {
         const mergeData = (solutions, users) => {
@@ -179,6 +207,8 @@ const Solutionslistcom = () => {
 
         return mergeData(solutions, users);
     }, [solutions, users]);
+
+
 
     const dataConformedSolutionsMerged = useMemo(() => {
         const mergeDataConfermedSolution = (solutions, users) => {

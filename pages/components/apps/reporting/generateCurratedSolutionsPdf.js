@@ -1,4 +1,5 @@
 import SolutionTemplate from "@/pages/components/apps/reporting/solutionTemplate";
+
 const GenerateCurratedSolutionsPdf = ({curratedSolutions, chartImage, isCuratedSolution, tabImage}) => {
 
     return (
