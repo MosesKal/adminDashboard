@@ -89,7 +89,8 @@ const SolutionTemplate = ({solutions, chartImage, isCuratedSolution, tabImage}) 
             {solutions && chartImage && isCuratedSolution && (
                 <PDFViewer width="100%" height="600px">
                     <Document>
-                        <StatCuration solutions={enhancedSolutions} chartImage={chartImage} isCuratedSolution={isCuratedSolution} tabImage={tabImage} />
+                        <StatCuration solutions={enhancedSolutions} chartImage={chartImage}
+                                      isCuratedSolution={isCuratedSolution} tabImage={tabImage}/>
                         {
                             (isCuratedSolution ? enhancedSolutions : solutions).map((solution, index) =>
                                 (
