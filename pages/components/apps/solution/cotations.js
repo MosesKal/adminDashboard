@@ -33,6 +33,7 @@ const Cotations = ({
   optionsFeedBack,
   userConnectedEmail,
   solutionId,
+  isAdmin,
 }) => {
   return (
     <>
@@ -61,11 +62,13 @@ const Cotations = ({
                 </div>
               ))}
 
-            <RenderSelectForSendingCote
-              optionsFeedBack={optionsFeedBack}
-              userConnectedEmail={userConnectedEmail}
-              solutionId={solutionId}
-            />
+            {isAdmin && (
+              <RenderSelectForSendingCote
+                optionsFeedBack={optionsFeedBack}
+                userConnectedEmail={userConnectedEmail}
+                solutionId={solutionId}
+              />
+            )}
           </Card.Body>
         </Card>
       </div>
@@ -133,8 +136,8 @@ const RenderSelectForDisplayingCote = ({
     if (quotation) {
       const ids = quotation.split(",").map((id) => parseInt(id.trim()));
       const tableauMerge = ids.map((id) => {
-        const feedback = optionsFeedBack.find((fb) => fb.value === id);
-        return feedback; // Retourne l'objet feedback correspondant
+        const feedback = optionsFeedBack?.find((fb) => fb.value === id);
+        return feedback; 
       });
       return tableauMerge;
     }

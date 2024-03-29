@@ -318,23 +318,25 @@ const Solutionslistcom = () => {
     }, [dataCurratedSolutionsMerged, filters]);
 
     const dataCurratedSolutionsMergedWithCote = useMemo(() => {
-
-        if (isAdmin) {
-            const newData = filteredCurratedSolutions.map(solution => {
-                const feedbacks = solution.feedbacks[0].quotations.split(",").map(id => parseInt(id, 10));
-                const coteTotal = feedbacks.reduce((total, id) => {
-                    const mention = mentions.find(mention => mention.id === id);
-                    return total + (mention ? mention.average : 0);
-                }, 0);
-                return {...solution, cote: ((coteTotal / 40) * 100)};
-            });
-
-
-            newData.sort((a, b) => b.cote - a.cote);
-
-            return newData;
+        if (isAdmin && filteredCurratedSolutions) {
+            return filteredCurratedSolutions.map(solution => {
+                const lastFeedback = solution.feedbacks.slice(-1)[0];
+                if (lastFeedback) {
+                    const feedbacks = lastFeedback.quotations.split(",").map(id => parseInt(id, 10));
+                    const coteTotal = feedbacks.reduce((total, id) => {
+                        const mention = mentions.find(mention => mention.id === id);
+                        return total + (mention ? mention.average : 0);
+                    }, 0);
+                    return {...solution, cote: ((coteTotal / 40) * 100)};
+                } else {
+                    return {...solution, cote: 0}; 
+                }
+            }).sort((a, b) => b.cote - a.cote);
         }
     }, [filteredCurratedSolutions, mentions, isAdmin]);
+    
+
+
 
 
 

@@ -1,9 +1,9 @@
 import React from "react";
 import Carousels from "./carroussel";
-import {Card, Col, Nav, Row, Tab} from "react-bootstrap";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {library} from "@fortawesome/fontawesome-svg-core";
-import {faPlay} from "@fortawesome/free-solid-svg-icons";
+import { Card, Col, Nav, Row, Tab } from "react-bootstrap";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { faPlay } from "@fortawesome/free-solid-svg-icons";
 import moment from "moment";
 
 import GenerateCurratedSolutionPdf from "@/pages/components/apps/reporting/generateCurratedSolutionPdf";
@@ -12,51 +12,48 @@ import Cotations from "@/pages/components/apps/solution/cotations";
 library.add(faPlay);
 
 const getVideoIdFromUrl = (url) => {
-    const pattern =
-        /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
-    const match = ur / components / apps / solution / l.match(pattern);
-    return match ? match[1] : null;
+  const pattern =
+    /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+  const match = ur / components / apps / solution / l.match(pattern);
+  return match ? match[1] : null;
 };
 
-
 const SolutionTab = ({
-                         solution,
-                         thematique,
-                         imageLinks,
-                         optionsFeedBack,
-                         isAdmin,
-                         showYoutubeThumbnail,
-                         feedbacks,
-                         userConnectedEmail,
-                         solutionId
-                     }) => {
-
-
-    return (
-        <>
+  solution,
+  thematique,
+  imageLinks,
+  optionsFeedBack,
+  isAdmin,
+  showYoutubeThumbnail,
+  feedbacks,
+  userConnectedEmail,
+  solutionId,
+}) => {
+  return (
+    <>
       <span className=" py-0 ">
         <div className="profile-tab tab-menu-heading border-bottom-0 ">
           <Tab.Container id="left-tabs-example" defaultActiveKey="About">
             <Nav
-                variant="pills"
-                className="nav profile-tabs main-nav-line tabs-menu profile-nav-line bg-white mb-4 border-0 br-5 mb-0	"
+              variant="pills"
+              className="nav profile-tabs main-nav-line tabs-menu profile-nav-line bg-white mb-4 border-0 br-5 mb-0	"
             >
               <Nav.Item className="me-1">
                 <Nav.Link className=" mb-2 mt-2" eventKey="About">
                   Detail sur la Solution
                 </Nav.Link>
               </Nav.Item>
-                {isAdmin ? (
-                    <Nav.Item className="me-1">
-                        <Nav.Link className="mb-2 mt-2" eventKey="EditProfile">
-                            {"Status de la solution"}
-                        </Nav.Link>
-                    </Nav.Item>
-                ) : (
-                    ""
-                )}
-
+              {isAdmin ? (
                 <Nav.Item className="me-1">
+                  <Nav.Link className="mb-2 mt-2" eventKey="EditProfile">
+                    {"Status de la solution"}
+                  </Nav.Link>
+                </Nav.Item>
+              ) : (
+                ""
+              )}
+
+              <Nav.Item className="me-1">
                 <Nav.Link className="mb-2 mt-2" eventKey="Timeline">
                   Feed-Back
                 </Nav.Link>
@@ -73,8 +70,8 @@ const SolutionTab = ({
                   <Tab.Content>
                     <Tab.Pane eventKey="About">
                       <div
-                          className="main-content-body tab-pane active"
-                          id="about"
+                        className="main-content-body tab-pane active"
+                        id="about"
                       >
                         <Card className="">
                           <Card.Body className="border-0 p-10 rounded-10">
@@ -104,63 +101,63 @@ const SolutionTab = ({
                                     </h5>
                                     <p className="">
                                       {solution && solution.videoLink ? (
-                                          <>
-                                              <p>
-                                                  <a
-                                                      href={solution.videoLink}
-                                                      target="_blank"
-                                                  >
-                                                      {solution.videoLink}
-                                                  </a>
-                                              </p>
-                                              <span
-                                                  style={{position: "relative"}}
-                                              >
+                                        <>
+                                          <p>
+                                            <a
+                                              href={solution.videoLink}
+                                              target="_blank"
+                                            >
+                                              {solution.videoLink}
+                                            </a>
+                                          </p>
+                                          <span
+                                            style={{ position: "relative" }}
+                                          >
                                             {showYoutubeThumbnail && (
-                                                <a
-                                                    href={`https://www.youtube.com/watch?v=${getVideoIdFromUrl(
-                                                        solution.videoLink
-                                                    )}`}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    style={{
-                                                        position: "relative",
-                                                        display: "block",
-                                                    }}
-                                                >
-                                                    <img
-                                                        src={`https://img.youtube.com/vi/${getVideoIdFromUrl(
-                                                            solution.videoLink
-                                                        )}/default.jpg`}
-                                                        alt="YouTube Thumbnail"
-                                                        style={{
-                                                            maxWidth: "80%",
-                                                            cursor: "pointer",
-                                                            display: "block",
-                                                            width: "100%",
-                                                        }}
-                                                        fluid
-                                                    />
-                                                    <FontAwesomeIcon
-                                                        icon={faPlay}
-                                                        style={{
-                                                            position: "absolute",
-                                                            top: "50%",
-                                                            left: "40%",
-                                                            transform:
-                                                                "translate(-50%, -50%)",
-                                                            color: "white",
-                                                            fontSize: "3rem",
-                                                            maxWidth: "50px",
-                                                            opacity: "0.5",
-                                                        }}
-                                                    />
-                                                </a>
+                                              <a
+                                                href={`https://www.youtube.com/watch?v=${getVideoIdFromUrl(
+                                                  solution.videoLink
+                                                )}`}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                style={{
+                                                  position: "relative",
+                                                  display: "block",
+                                                }}
+                                              >
+                                                <img
+                                                  src={`https://img.youtube.com/vi/${getVideoIdFromUrl(
+                                                    solution.videoLink
+                                                  )}/default.jpg`}
+                                                  alt="YouTube Thumbnail"
+                                                  style={{
+                                                    maxWidth: "80%",
+                                                    cursor: "pointer",
+                                                    display: "block",
+                                                    width: "100%",
+                                                  }}
+                                                  fluid
+                                                />
+                                                <FontAwesomeIcon
+                                                  icon={faPlay}
+                                                  style={{
+                                                    position: "absolute",
+                                                    top: "50%",
+                                                    left: "40%",
+                                                    transform:
+                                                      "translate(-50%, -50%)",
+                                                    color: "white",
+                                                    fontSize: "3rem",
+                                                    maxWidth: "50px",
+                                                    opacity: "0.5",
+                                                  }}
+                                                />
+                                              </a>
                                             )}
                                           </span>
-                                          </>
+                                        </>
                                       ) : (
-                                          "pas de lien youtube"
+                                        "pas de lien youtube"
                                       )}
                                     </p>
                                   </div>
@@ -174,8 +171,8 @@ const SolutionTab = ({
                                       </p>
                                       <p className=" tx-15 m-b-0">
                                         {solution
-                                            ? solution.targetedProblem
-                                            : ""}
+                                          ? solution.targetedProblem
+                                          : ""}
                                       </p>
                                     </div>
                                     <div className="">
@@ -184,11 +181,11 @@ const SolutionTab = ({
                                       </h5>
                                       <p className="">
                                         {solution?.challenges.map(
-                                            (challenge) => (
-                                                <p key={challenge.id}>
-                                                    → {challenge.name}
-                                                </p>
-                                            )
+                                          (challenge) => (
+                                            <p key={challenge.id}>
+                                              → {challenge.name}
+                                            </p>
+                                          )
                                         )}
                                       </p>
                                     </div>
@@ -198,10 +195,10 @@ const SolutionTab = ({
                                       </h5>
                                       <p className="">
                                         {solution
-                                            ? moment(solution.createdAt).format(
-                                                "DD MMMM YYYY [à] HH:mm"
+                                          ? moment(solution.createdAt).format(
+                                              "DD MMMM YYYY [à] HH:mm"
                                             )
-                                            : ""}
+                                          : ""}
                                       </p>
                                     </div>
                                   </div>
@@ -222,10 +219,10 @@ const SolutionTab = ({
                                       <p className="">
                                         {thematique ? thematique.odds : ""}
                                       </p>
-                                    );
-        </div>
+                                      );
+                                    </div>
                                   </div>
-                                  <Carousels imageLinks={imageLinks}/>
+                                  <Carousels imageLinks={imageLinks} />
                                 </Col>
                               </Row>
                             </div>
@@ -235,26 +232,25 @@ const SolutionTab = ({
                     </Tab.Pane>
                     <Tab.Pane eventKey="EditProfile">
                       <div
-                          className="main-content-body tab-pane border-top-0"
-                          id="edit"
+                        className="main-content-body tab-pane border-top-0"
+                        id="edit"
                       ></div>
                     </Tab.Pane>
                     <Tab.Pane eventKey="Timeline">
-                      
-
-
-
-
-                        <Cotations feedbacks={feedbacks} optionsFeedBack={optionsFeedBack}
-                                   userConnectedEmail={userConnectedEmail} solutionId={solutionId}/>
-
-
-
+                      <Cotations
+                        feedbacks={feedbacks}
+                        optionsFeedBack={optionsFeedBack}
+                        userConnectedEmail={userConnectedEmail}
+                        solutionId={solutionId}
+                        isAdmin={isAdmin}
+                      />
                     </Tab.Pane>
                     <Tab.Pane eventKey="PdfDownload">
                       <div className="main-content-body tab-pane border-top-0">
-                        <Card style={{height: "1000px"}}>
-                          <GenerateCurratedSolutionPdf curratedSolution={solution}/>
+                        <Card style={{ height: "1000px" }}>
+                          <GenerateCurratedSolutionPdf
+                            curratedSolution={solution}
+                          />
                         </Card>
                       </div>
                     </Tab.Pane>
@@ -265,8 +261,8 @@ const SolutionTab = ({
           </Tab.Container>
         </div>
       </span>
-        </>
-    );
+    </>
+  );
 };
 
 export default SolutionTab;
