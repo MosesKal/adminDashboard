@@ -42,7 +42,7 @@ const Solution = () => {
 
     const [isAdmin, setIsAdmin] = useState(false);
 
-    let userConnected;
+    // let userConnected;
 
     const [profile, setProfile] = useState(null);
 
@@ -217,9 +217,9 @@ const Solution = () => {
         }
     }, [id, navigate, isAdmin, thematiqueId]);
 
-    if (typeof window !== "undefined") {
-        userConnected = JSON.parse(localStorage?.getItem("ACCESS_ACCOUNT"));
-    }
+    // if (typeof window !== "undefined") {
+    //     userConnected = JSON.parse(localStorage?.getItem("ACCESS_ACCOUNT"));
+    // }
 
     useEffect(() => {
         if (solution) {
@@ -245,6 +245,15 @@ const Solution = () => {
             });
         }
     }
+
+
+
+    const userConnectedEmail = useMemo( () => {
+        if(profile){
+            return profile.email
+        }
+    }, [profile])
+
 
 
 
@@ -286,6 +295,8 @@ const Solution = () => {
                         profileCurateur={profileCurateur}
                         feedbacks={feedbacksWithUserDetails}
                         optionsFeedBack={optionsFeedBack}
+                        userConnectedEmail = { userConnectedEmail }
+                        solutionId={id}
                     />
 
                     <Col lg={12} md={12} xl={12}>
