@@ -12,9 +12,8 @@ import Cotations from "@/pages/components/apps/solution/cotations";
 library.add(faPlay);
 
 const getVideoIdFromUrl = (url) => {
-  const pattern =
-    /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
-  const match = url / components / apps / solution / l.match(pattern);
+  const pattern = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+  const match = url.match(pattern);
   return match ? match[1] : null;
 };
 
@@ -28,6 +27,7 @@ const SolutionTab = ({
   feedbacks,
   userConnectedEmail,
   solutionId,
+  isCurated
 }) => {
 
 
@@ -94,6 +94,7 @@ const SolutionTab = ({
                         userConnectedEmail={userConnectedEmail}
                         solutionId={solutionId}
                         isAdmin={isAdmin}
+                        isCurated={isCurated}
                       />
                     </Tab.Pane>
                     <Tab.Pane eventKey="PdfDownload">

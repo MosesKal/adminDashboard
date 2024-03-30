@@ -13,6 +13,7 @@ const Solution = () => {
   const navigate = useRouter();
 
   const [allCuratedSolutions, setAllCuratedSolutions] = useState([]);
+  const [solution, setSolution] = useState();
   const [feedbacksWithUserDetails, setFeedbacksWithUserDetails] = useState();
 
   const [thematique, setThematique] = useState();
@@ -41,35 +42,43 @@ const Solution = () => {
 
   const [profile, setProfile] = useState(null);
 
+
+
   useEffect(() => {
     const storedSolution = localStorage.getItem("solution");
     const storedProfileInnovateur = localStorage.getItem("profileInnovateur");
 
     if (storedSolution) {
-      solution = JSON.parse(storedSolution);
+     setSolution(JSON.parse(storedSolution));
     }
 
     if (storedProfileInnovateur) {
       profileInnovateur = JSON.parse(storedProfileInnovateur);
     }
 
-    const fetchAllCuratedSolutions = async () => {
+    const fetchSolution = async () => {
       try {
-        const solutionResponse = await axios.get("/solutions/curated/all");
-        setAllCuratedSolutions(solutionResponse?.data?.data);
+        const solutionResponse = await axios.get(`/solutions/${id}`);
+        setSolution(solutionResponse?.data?.data);
       } catch (error) {
         console.log(error);
       }
     };
 
-    fetchAllCuratedSolutions();
+    fetchSolution();
+
+    return ()=>{
+      localStorage.removeItem("profileInnovateur")
+      localStorage.removeItem("solution");
+    }
+
   }, []);
 
-  let solution = useMemo(() => {
-    if (allCuratedSolutions.length > 0) {
-      return allCuratedSolutions.find((sol) => sol.id == id);
-    }
-  }, [allCuratedSolutions, id]);
+  // let solution = useMemo(() => {
+  //   if (allCuratedSolutions.length > 0) {
+  //     return allCuratedSolutions.find((sol) => sol.id == id);
+  //   }
+  // }, [allCuratedSolutions, id]);
 
   const fetchUserDetails = async (userId) => {
     try {
@@ -86,7 +95,7 @@ const Solution = () => {
 
   useEffect(() => {
     const fetchFeedbacksWithUserDetails = async () => {
-      if (solution) {
+      if (solution && solution.feedbacks.length > 0) {
         const feedbacksWithUserDetails = await Promise.all(
           solution.feedbacks.map(async (feedback) => {
             const userDetails = await fetchUserDetails(feedback.userId);
@@ -95,6 +104,7 @@ const Solution = () => {
         );
         setFeedbacksWithUserDetails(feedbacksWithUserDetails);
       }
+      return null;
     };
 
     fetchFeedbacksWithUserDetails();
@@ -247,6 +257,17 @@ const handleNextSolution = async () => {
     window.scrollTo({top: 0, behavior: "smooth"});
 };
 
+const isCurated = useMemo(()=>{
+  if(solution){
+    if(solution.feedbacks.length > 0){
+      return true
+    }else{
+      return false
+    }
+  }
+}, [solution])
+
+
   return (
     <div>
       <Seo title={"Profile"} />
@@ -285,6 +306,7 @@ const handleNextSolution = async () => {
             optionsFeedBack={optionsFeedBack}
             userConnectedEmail={userConnectedEmail}
             solutionId={id}
+            isCurated={isCurated}
           />
 
           <Col lg={12} md={12} xl={12}>

@@ -34,6 +34,7 @@ const Cotations = ({
   userConnectedEmail,
   solutionId,
   isAdmin,
+  isCurated
 }) => {
   return (
     <>
@@ -62,13 +63,14 @@ const Cotations = ({
                 </div>
               ))}
 
-            {isAdmin && (
-              <RenderSelectForSendingCote
-                optionsFeedBack={optionsFeedBack}
-                userConnectedEmail={userConnectedEmail}
-                solutionId={solutionId}
-              />
-            )}
+              {isAdmin || !isCurated ? (
+                <RenderSelectForSendingCote
+                  optionsFeedBack={optionsFeedBack}
+                  userConnectedEmail={userConnectedEmail}
+                  solutionId={solutionId}
+                />
+              ) : null}
+
           </Card.Body>
         </Card>
       </div>
@@ -83,10 +85,15 @@ const CuratorInfo = ({ userDetails }) => {
         <div className="d-sm-flex p-3 sub-review-section border subsection-color br-tl-0 br-tr-0">
           <div className="d-flex me-3">
             {userDetails?.profile ? (
+              // <img
+              //   className="media-object brround avatar-md"
+              //   alt="64x64"
+              //   src={`${imageBaseUrl}/${userDetails.profile}`}
+              // />
               <img
                 className="media-object brround avatar-md"
                 alt="64x64"
-                src={`${imageBaseUrl}/${userDetails.profile}`}
+                src={"../../../assets/img/faces/profile.jpg"}
               />
             ) : (
               <img

@@ -27,7 +27,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     const status = JSON.parse(localStorage.getItem("STATUS_ACCOUNT"));
-    if (status.authenticate) {
+    if (status?.authenticate) {
 
       const fetchSolutions = async () => {
         try {
