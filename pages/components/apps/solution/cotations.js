@@ -147,11 +147,14 @@ const RenderSelectForDisplayingCote = ({
   const totalCote = useMemo(() => {
     let total = 0;
 
-    mentions.forEach((mention) => {
-      total += mention.cote;
-    });
+    if(mentions){
+      mentions.forEach((mention) => {
+        total += mention.cote;
+      });
+  
+      return total;
+    }
 
-    return total;
   }, [mentions]);
 
   return (
