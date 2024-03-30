@@ -149,7 +149,7 @@ const RenderSelectForDisplayingCote = ({
 
     if(mentions){
       mentions.forEach((mention) => {
-        total += mention.cote;
+        total += mention?.cote;
       });
   
       return total;

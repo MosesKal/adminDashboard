@@ -14,7 +14,7 @@ library.add(faPlay);
 const getVideoIdFromUrl = (url) => {
   const pattern =
     /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
-  const match = ur / components / apps / solution / l.match(pattern);
+  const match = url / components / apps / solution / l.match(pattern);
   return match ? match[1] : null;
 };
 
@@ -155,7 +155,7 @@ const SolutionDetails = ({ solution, imageLinks }) => {
                             </a>
                           </p>
                           <span style={{ position: "relative" }}>
-                            {showYoutubeThumbnail && (
+                            {(
                               <a
                                 href={`https://www.youtube.com/watch?v=${getVideoIdFromUrl(
                                   solution.videoLink
