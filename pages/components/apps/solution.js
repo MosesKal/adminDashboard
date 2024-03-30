@@ -39,8 +39,6 @@ const Solution = () => {
 
   const [isAdmin, setIsAdmin] = useState(false);
 
- 
-
   const [profile, setProfile] = useState(null);
 
   useEffect(() => {
@@ -65,7 +63,6 @@ const Solution = () => {
     };
 
     fetchAllCuratedSolutions();
-    
   }, []);
 
   let solution = useMemo(() => {
@@ -108,8 +105,6 @@ const Solution = () => {
       return solution?.user || {};
     }
   }, [solution]);
-
-
 
   useEffect(() => {
     const status = JSON.parse(localStorage?.getItem("STATUS_ACCOUNT"));
@@ -210,8 +205,6 @@ const Solution = () => {
     }
   }, [id, navigate, isAdmin, thematiqueId]);
 
-
-
   useEffect(() => {
     if (solution) {
       localStorage.setItem("solution", JSON.stringify(solution));
@@ -244,6 +237,15 @@ const Solution = () => {
   }, [profile]);
 
 
+  const handlePreviousSolution = async () => {
+
+    window.scrollTo({top: 0, behavior: "smooth"});
+};
+
+const handleNextSolution = async () => {
+
+    window.scrollTo({top: 0, behavior: "smooth"});
+};
 
   return (
     <div>
@@ -290,7 +292,39 @@ const Solution = () => {
               <Card.Body>
                 <div className="text-wrap">
                   <div className="example">
-                    <Row className="row-sm align-item-center"></Row>
+                    <Row className="row-sm align-item-center">
+                      <Col lg={6}>
+                        <div
+                          aria-label="Basic example"
+                          className="d-flex justify-content-start"
+                        >
+                          <Button
+                            onClick={handlePreviousSolution}
+                            type="button"
+                            className="btn button-icon"
+                          >
+                            <i class="bi bi-chevron-double-left"></i>
+                            <span>Solution Précedente</span>
+                          </Button>
+                        </div>
+                      </Col>
+
+                      <Col lg={6}>
+                        <div
+                          aria-label="Basic example"
+                          className="d-flex justify-content-end"
+                        >
+                          <Button
+                            onClick={handleNextSolution}
+                            type="button"
+                            className="btn button-icon"
+                          >
+                            <span>Solution Suivante</span>
+                            <i class="bi bi-chevron-double-right"></i>
+                          </Button>
+                        </div>
+                      </Col>
+                    </Row>
                   </div>
                 </div>
               </Card.Body>
