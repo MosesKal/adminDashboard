@@ -4,7 +4,7 @@ import DataTable from "react-data-table-component";
 import {
     columnsCurations as configureColumnsCuration,
     truncateText
-} from "@/shared/data/advancedui/solution/conformSolution/columnDataTableConformSolution";
+} from "@/shared/data/advancedui/solutionslistCuration";
 import axios from "@/pages/api/axios";
 import Select from "react-select";
 import {ToastContainer} from "react-toastify";

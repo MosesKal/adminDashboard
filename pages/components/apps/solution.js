@@ -7,13 +7,13 @@ import "react-toastify/dist/ReactToastify.css";
 import Seo from "@/shared/layout-components/seo/seo";
 import { useRouter } from "next/router";
 import axios from "@/pages/api/axios";
+import Title from "../components/Title";
 
 const Solution = () => {
-  const router = useRouter();
   const navigate = useRouter();
 
   const [allCuratedSolutions, setAllCuratedSolutions] = useState([]);
-  const [solution, setSolution] = useState();
+  const [solution, setSolution] = useState(null);
   const [feedbacksWithUserDetails, setFeedbacksWithUserDetails] = useState();
 
   const [thematique, setThematique] = useState();
@@ -41,15 +41,14 @@ const Solution = () => {
   const [isAdmin, setIsAdmin] = useState(false);
 
   const [profile, setProfile] = useState(null);
-
-
+  const [currentSolutionIndex, setCurrentSolutionIndex] = useState(0);
 
   useEffect(() => {
     const storedSolution = localStorage.getItem("solution");
     const storedProfileInnovateur = localStorage.getItem("profileInnovateur");
 
     if (storedSolution) {
-     setSolution(JSON.parse(storedSolution));
+      setSolution(JSON.parse(storedSolution));
     }
 
     if (storedProfileInnovateur) {
@@ -65,13 +64,25 @@ const Solution = () => {
       }
     };
 
+    const fetchCuratedSolutions = async () => {
+      try {
+        const solutionsResponse = await axios.get(
+          "http://localhost:8000/solutions/curated/all"
+        );
+        setAllCuratedSolutions(solutionsResponse.data);
+      } catch (error) {
+        console.error("Erreur lors de la récupération des solutions :", error);
+      }
+    };
+
+    fetchCuratedSolutions();
+
     fetchSolution();
 
-    return ()=>{
-      localStorage.removeItem("profileInnovateur")
+    return () => {
+      localStorage.removeItem("profileInnovateur");
       localStorage.removeItem("solution");
-    }
-
+    };
   }, []);
 
   // let solution = useMemo(() => {
@@ -246,54 +257,44 @@ const Solution = () => {
     }
   }, [profile]);
 
-
   const handlePreviousSolution = async () => {
-
-    window.scrollTo({top: 0, behavior: "smooth"});
-};
-
-const handleNextSolution = async () => {
-
-    window.scrollTo({top: 0, behavior: "smooth"});
-};
-
-const isCurated = useMemo(()=>{
-  if(solution){
-    if(solution.feedbacks.length > 0){
-      return true
-    }else{
-      return false
+    if (currentSolutionIndex > 0) {
+      const newIndex = currentSolutionIndex - 1;
+      setCurrentSolutionIndex(newIndex);
+      setSolution(allCuratedSolutions[newIndex]);
     }
-  }
-}, [solution])
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+  
+  const handleNextSolution = async () => {
+    if (currentSolutionIndex < allCuratedSolutions.length - 1) {
+      const newIndex = currentSolutionIndex + 1;
+      setCurrentSolutionIndex(newIndex);
+      setSolution(allCuratedSolutions[newIndex]);
+    }
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+  
 
+  const isCurated = useMemo(() => {
+    if (solution) {
+      if (solution.feedbacks.length > 0) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  }, [solution]);
 
   return (
     <div>
       <Seo title={"Profile"} />
-      <div className="breadcrumb-header justify-content-between">
-        <div className="left-content">
-          <span className="main-content-title mg-b-0 mg-b-lg-1">
-            DETAILS DE LA SOLUTION
-          </span>
-        </div>
-        <div className="justify-content-center mt-2">
-          <Breadcrumb className="breadcrumb">
-            <Button
-              variant=""
-              type="button"
-              className="btn button-icon btn-sm btn-outline-secondary me-1"
-              onClick={() => router.back()}
-            >
-              <i class="bi bi-arrow-left"></i>
-              <span className="ms-1">{"Retour"}</span>
-            </Button>
-          </Breadcrumb>
-        </div>
-      </div>
+
+      <Title title={"DETAILS DE LA SOLUTION"} />
 
       <Row>
         <Col lg={12} md={12}>
+          
           <CardInnovateur profileInnovateur={profileInnovateur} />
 
           <SolutionTab
