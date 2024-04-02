@@ -1,13 +1,14 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Carousels from "./carroussel";
 import { Card, Col, Nav, Row, Tab } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faPlay } from "@fortawesome/free-solid-svg-icons";
 import moment from "moment";
-
 import GenerateCurratedSolutionPdf from "@/pages/components/apps/reporting/generateCurratedSolutionPdf";
 import Cotations from "@/pages/components/apps/solution/cotations";
+import axios from "@/pages/api/axios";
+import { toast } from "react-toastify";
 
 library.add(faPlay);
 
@@ -84,7 +85,9 @@ const SolutionTab = ({
                       <div
                         className="main-content-body tab-pane border-top-0"
                         id="edit"
-                      ></div>
+                      >
+                        <Timeline solution={solution} />
+                      </div>
                     </Tab.Pane>
                     <Tab.Pane eventKey="Timeline">
                       <Cotations
@@ -112,6 +115,127 @@ const SolutionTab = ({
           </Tab.Container>
         </div>
       </span>
+    </>
+  );
+};
+
+const Timeline = ({ solution }) => {
+  const [isLoadingUpdateStatus, setIsLoadingUpdateStatus] = useState(false);
+  const [statusList, setStatusList] = useState([]);
+  const [currentStatus, setCurrentStatus] = useState(null);
+
+  const handleUpdateStatus = async (newStatus) => {
+    try {
+      if (currentStatus !== "Non conforme aux critères") {
+        setIsLoadingUpdateStatus(true);
+        const response = await axios.patch(`/solutions/${solution.id}`, {
+          status: newStatus,
+        });
+
+        if (response.status === 200) {
+          toast.success("Statut mis à jour avec succès");
+          setCurrentStatus(newStatus);
+        } else {
+          toast.error("Erreur lors de la mise à jour du statut");
+        }
+      }
+    } catch (error) {
+      console.error("Erreur lors de la mise à jour du statut :", error);
+      toast.error("Erreur lors de la mise à jour du statut");
+    } finally {
+      setIsLoadingUpdateStatus(false);
+    }
+  };
+
+  useEffect(() => {
+    const fetchStatus = async () => {
+      try {
+        const responseStatus = await axios.get("/status");
+
+        const filteredStatus = responseStatus.data.data.filter(
+          (status) => status.name !== "Non conforme aux critères"
+        );
+        setStatusList(filteredStatus);
+      } catch (error) {
+        console.error("Erreur lors de la récupération des statuts :", error);
+      }
+    };
+    fetchStatus();
+  }, []);
+
+  useEffect(() => {
+    if (solution && solution.statusId) {
+      const currentStatusId = solution.statusId;
+      setCurrentStatus(currentStatusId);
+    }
+  }, [solution]);
+
+  return (
+    <>
+      <Row>
+        <Col lg={12}>
+          <Card className="custom-card">
+            <Card.Header className="custom-card-header"></Card.Header>
+            <Card.Body>
+              <div className="vtimeline">
+                {statusList.map((status, index) => (
+                  <div
+                    key={status.id}
+                    className={`timeline-wrapper ${
+                      currentStatus === status.id
+                        ? "timeline-wrapper-primary"
+                        : "timeline-wrapper-dark"
+                    } ${index % 2 === 0 ? "timeline-inverted" : ""}`}
+                  >
+                    <div className="timeline-badge pt-2">
+                      {index === 0 && <i className="bi bi-hourglass-top"></i>}
+                      {index === 1 && <i className="bi bi-map-fill"></i>}
+                      {index === 2 && <i className="bi bi-search"></i>}
+                      {index === 3 && <i className="bi bi-eyedropper"></i>}
+                    </div>
+                    <div className="timeline-panel">
+                      <div className="timeline-heading">
+                        <h6 className="timeline-title">{status.name}</h6>
+                      </div>
+                      <div className="timeline-body">
+                        <p>{status.description}</p>
+                        {currentStatus === status.id && (
+                          <>
+                            {index > 0 && (
+                              <button
+                                className="btn btn-secondary me-2"
+                                onClick={() =>
+                                  handleUpdateStatus(statusList[index - 1].id)
+                                }
+                                disabled={isLoadingUpdateStatus}
+                              >
+                                Retour
+                              </button>
+                            )}
+                            {index < statusList.length - 1 && (
+                              <button
+                                className="btn btn-primary"
+                                onClick={() =>
+                                  handleUpdateStatus(statusList[index + 1].id)
+                                }
+                                disabled={isLoadingUpdateStatus}
+                              >
+                                {isLoadingUpdateStatus
+                                  ? "En cours..."
+                                  : "Suivant"}
+                              </button>
+                            )}
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
     </>
   );
 };

@@ -30500,6 +30500,8 @@ a.option-dots {
     border-bottom-right-radius: 50%;
 }
 
+
+
 .rtl .vtimeline .timeline-wrapper.timeline-inverted {
     padding-left: 0;
     padding-right: 90px;
@@ -91261,4 +91263,7 @@ a.text-dark:focus {
 .btn-w-lg {
     min-width: 150px;
 }
+
+
+
 /*# sourceMappingURL=style.css.map */

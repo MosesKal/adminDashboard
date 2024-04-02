@@ -37,10 +37,11 @@ const Cotations = ({
   isCurated,
 }) => {
   return (
+
+
     <>
       <div
         className="main-content-body tab-pane border-top-0 h-500"
-        // style={{ height: "2000px", maxHeight: "2000px" }}
         id="edit"
       >
         <Card style={{ height: "100%", maxHeight: "100%" }} className="">
@@ -78,6 +79,8 @@ const Cotations = ({
 };
 
 const CuratorInfo = ({ userDetails }) => {
+
+
   return (
     <>
       {userDetails && (
@@ -177,6 +180,7 @@ const RenderSelectForDisplayingCote = ({
     }
     return [];
   }, [optionsFeedBack, quotation]);
+  
 
   const totalCote = useMemo(() => {
     let total = 0;
@@ -197,8 +201,6 @@ const RenderSelectForDisplayingCote = ({
       pole: pole,
     };
   }, [userDetails, organisation, pole]);
-
-  console.log(feedback, "feedback");
 
   return (
     <>
@@ -288,7 +290,6 @@ const RenderSelectForSendingCote = ({
   userConnectedEmail,
   solutionId,
 }) => {
-
   const [adminComment, setAdminComment] = useState("");
 
   const [selectedRatings, setSelectedRatings] = useState({
@@ -354,6 +355,7 @@ const RenderSelectForSendingCote = ({
       style={{ border: "1px solid #ccc", padding: "10px" }}
     >
       <h4>Réévaluation des notes</h4>
+
       <Row>
         {/* <Col xl={3}></Col> */}
         <Col xl={6}>
