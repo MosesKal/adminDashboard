@@ -12,7 +12,8 @@ import Cotations from "@/pages/components/apps/solution/cotations";
 library.add(faPlay);
 
 const getVideoIdFromUrl = (url) => {
-  const pattern = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+  const pattern =
+    /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
   const match = url.match(pattern);
   return match ? match[1] : null;
 };
@@ -27,10 +28,8 @@ const SolutionTab = ({
   feedbacks,
   userConnectedEmail,
   solutionId,
-  isCurated
+  isCurated,
 }) => {
-
-
   return (
     <>
       <span className=" py-0 ">
@@ -156,7 +155,7 @@ const SolutionDetails = ({ solution, imageLinks }) => {
                             </a>
                           </p>
                           <span style={{ position: "relative" }}>
-                            {(
+                            {
                               <a
                                 href={`https://www.youtube.com/watch?v=${getVideoIdFromUrl(
                                   solution.videoLink
@@ -195,7 +194,7 @@ const SolutionDetails = ({ solution, imageLinks }) => {
                                   }}
                                 />
                               </a>
-                            )}
+                            }
                           </span>
                         </>
                       ) : (
@@ -250,11 +249,7 @@ const SolutionDetails = ({ solution, imageLinks }) => {
                       <h5 className="text-primary m-b-5 tx-17 text-uppercase">
                         {"ODD Concerné(s)"}
                       </h5>
-                      <p className="">
-                        {
-                          solution.thematic.odds
-                        }
-                      </p>
+                      <p className="">{solution.thematic.odds}</p>
                     </div>
                   </div>
                   <Carousels imageLinks={imageLinks} />

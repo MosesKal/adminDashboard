@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Button, Card, Col, ProgressBar, Row } from "react-bootstrap";
 import moment from "moment";
 import Select from "react-select";
@@ -34,13 +34,13 @@ const Cotations = ({
   userConnectedEmail,
   solutionId,
   isAdmin,
-  isCurated
+  isCurated,
 }) => {
   return (
     <>
       <div
         className="main-content-body tab-pane border-top-0 h-500"
-        style={{ height: "2000px", maxHeight: "2000px" }}
+        // style={{ height: "2000px", maxHeight: "2000px" }}
         id="edit"
       >
         <Card style={{ height: "100%", maxHeight: "100%" }} className="">
@@ -63,14 +63,13 @@ const Cotations = ({
                 </div>
               ))}
 
-              {isAdmin || !isCurated ? (
-                <RenderSelectForSendingCote
-                  optionsFeedBack={optionsFeedBack}
-                  userConnectedEmail={userConnectedEmail}
-                  solutionId={solutionId}
-                />
-              ) : null}
-
+            {isAdmin || !isCurated ? (
+              <RenderSelectForSendingCote
+                optionsFeedBack={optionsFeedBack}
+                userConnectedEmail={userConnectedEmail}
+                solutionId={solutionId}
+              />
+            ) : null}
           </Card.Body>
         </Card>
       </div>
@@ -108,16 +107,24 @@ const CuratorInfo = ({ userDetails }) => {
             <h5 className="mt-0 mb-1 font-weight-semibold">
               {
                 <>
-                  <div className="mb-1">Curé par : {userDetails?.name}</div>
-                  <span className="h6">
-                    Date de curation : Le{" "}
-                    {moment(userDetails?.createdAt).format(
-                      "DD/MM/YYYY [à] HH:mm"
-                    )}{" "}
-                  </span>
+                  <div className="mb-1 mt-3">
+                    Curé par : {userDetails?.name}
+                  </div>
+                  <div className="mb-1 h6"> - Email : {userDetails?.email}</div>
+                  <div className="mb-1 h6">
+                    {" "}
+                    - Num Tel : {userDetails?.phoneNumber}
+                  </div>
+                  <hr className="border" />
+                  <div className="mb-1 h6">
+                    {" "}
+                    - Organisation : {userDetails?.organisation}
+                  </div>
+                  <div className="mb-1 h6"> - Pole : {userDetails?.pole}</div>
                 </>
               }
             </h5>
+
             <blockquote className="blockquote mt-4">
               <p className="h6"></p>
             </blockquote>
@@ -133,18 +140,38 @@ const RenderSelectForDisplayingCote = ({
   optionsFeedBack,
   feedback,
 }) => {
+  const [organisation, setOrganisation] = useState(null);
+  const [pole, setPole] = useState(null);
+
+  useEffect(() => {
+    const fetchOrganisation = async () => {
+      const response = await axios.get(
+        `/organisations/${userDetails?.organisationId}`
+      );
+      setOrganisation(response.data.data.name);
+    };
+
+    const fetchPole = async () => {
+      const response = await axios.get(`/poles/${userDetails?.poleId}`);
+      setPole(response.data.data.name);
+    };
+
+    fetchOrganisation();
+    fetchPole();
+  }, [userDetails]);
+
   const quotation = useMemo(() => {
     if (feedback) {
       return feedback.quotations;
     }
-  }, feedback);
+  }, [feedback]);
 
   const mentions = useMemo(() => {
     if (quotation) {
       const ids = quotation.split(",").map((id) => parseInt(id.trim()));
       const tableauMerge = ids.map((id) => {
         const feedback = optionsFeedBack?.find((fb) => fb.value === id);
-        return feedback; 
+        return feedback;
       });
       return tableauMerge;
     }
@@ -154,26 +181,34 @@ const RenderSelectForDisplayingCote = ({
   const totalCote = useMemo(() => {
     let total = 0;
 
-    if(mentions){
+    if (mentions) {
       mentions.forEach((mention) => {
         total += mention?.cote;
       });
-  
+
       return total;
     }
-
   }, [mentions]);
+
+  const userDetailWithOrganisationPoleMerge = useMemo(() => {
+    return {
+      ...userDetails,
+      organisation: organisation,
+      pole: pole,
+    };
+  }, [userDetails, organisation, pole]);
+
+  console.log(feedback, "feedback");
 
   return (
     <>
       <Row>
-        <Col xl={3}>
-          <CuratorInfo userDetails={userDetails} />
+        <Col xl={6}>
+          <CuratorInfo userDetails={userDetailWithOrganisationPoleMerge} />
         </Col>
-        <Col xl={9}></Col>
+        <Col xl={6}></Col>
       </Row>
       <Row>
-        <Col xl={3}></Col>
         <Col xl={6}>
           <div className="mt-3">
             {mentions && (
@@ -230,7 +265,19 @@ const RenderSelectForDisplayingCote = ({
             )}
           </div>
         </Col>
-        <Col xl={3}></Col>
+        <Col xl={6}>
+          {feedback.adminComment && (
+            <div className="mt-3">
+              <h6>{"Commentaire du curateur"}</h6>
+              <textarea
+                value={feedback.adminComment}
+                className="form-control"
+                rows={6}
+                readOnly
+              ></textarea>
+            </div>
+          )}
+        </Col>
       </Row>
     </>
   );
@@ -241,6 +288,9 @@ const RenderSelectForSendingCote = ({
   userConnectedEmail,
   solutionId,
 }) => {
+
+  const [adminComment, setAdminComment] = useState("");
+
   const [selectedRatings, setSelectedRatings] = useState({
     Pertinence: null,
     Impact: null,
@@ -284,6 +334,7 @@ const RenderSelectForSendingCote = ({
     const payload = {
       quotations,
       user: userConnectedEmail,
+      adminComment,
     };
 
     if (solutionId && userConnectedEmail && quotations) {
@@ -302,9 +353,9 @@ const RenderSelectForSendingCote = ({
       className={"my-5"}
       style={{ border: "1px solid #ccc", padding: "10px" }}
     >
-      <h4>Curérer à Nouveau</h4>
+      <h4>Réévaluation des notes</h4>
       <Row>
-        <Col xl={3}></Col>
+        {/* <Col xl={3}></Col> */}
         <Col xl={6}>
           <div className="mt-3">
             <Row className={"my-3"}>
@@ -366,7 +417,18 @@ const RenderSelectForSendingCote = ({
             </div>
           </div>
         </Col>
-        <Col xl={3}></Col>
+        <Col xl={6}>
+          <div className="mt-3">
+            <h6>{"Commentaire (255 caractères au maximum)"}</h6>
+            <textarea
+              className="form-control"
+              rows={6}
+              placeholder="Veuillez saisir un commentaire"
+              value={adminComment}
+              onChange={(e) => setAdminComment(e.target.value)}
+            ></textarea>
+          </div>
+        </Col>
       </Row>
     </div>
   );

@@ -41,9 +41,10 @@ const Solution = () => {
   const [isAdmin, setIsAdmin] = useState(false);
 
   const [profile, setProfile] = useState(null);
-  const [currentSolutionIndex, setCurrentSolutionIndex] = useState(0);
+
 
   useEffect(() => {
+
     const storedSolution = localStorage.getItem("solution");
     const storedProfileInnovateur = localStorage.getItem("profileInnovateur");
 
@@ -66,10 +67,8 @@ const Solution = () => {
 
     const fetchCuratedSolutions = async () => {
       try {
-        const solutionsResponse = await axios.get(
-          "http://localhost:8000/solutions/curated/all"
-        );
-        setAllCuratedSolutions(solutionsResponse.data);
+        const solutionsResponse = await axios.get("/solutions/curated/all");
+        setAllCuratedSolutions(solutionsResponse?.data?.data);
       } catch (error) {
         console.error("Erreur lors de la récupération des solutions :", error);
       }
@@ -83,13 +82,8 @@ const Solution = () => {
       localStorage.removeItem("profileInnovateur");
       localStorage.removeItem("solution");
     };
-  }, []);
 
-  // let solution = useMemo(() => {
-  //   if (allCuratedSolutions.length > 0) {
-  //     return allCuratedSolutions.find((sol) => sol.id == id);
-  //   }
-  // }, [allCuratedSolutions, id]);
+  }, []);
 
   const fetchUserDetails = async (userId) => {
     try {
@@ -105,6 +99,7 @@ const Solution = () => {
   };
 
   useEffect(() => {
+
     const fetchFeedbacksWithUserDetails = async () => {
       if (solution && solution.feedbacks.length > 0) {
         const feedbacksWithUserDetails = await Promise.all(
@@ -240,6 +235,7 @@ const Solution = () => {
   }, [solution, profileInnovateur]);
 
   if (solution) {
+
     if (solution?.imageLink) {
       imageLinks.push({ link: solution?.imageLink });
     }
@@ -249,6 +245,7 @@ const Solution = () => {
         imageLinks?.push({ link: image?.imageLink });
       });
     }
+
   }
 
   const userConnectedEmail = useMemo(() => {
@@ -257,24 +254,29 @@ const Solution = () => {
     }
   }, [profile]);
 
-  const handlePreviousSolution = async () => {
-    if (currentSolutionIndex > 0) {
-      const newIndex = currentSolutionIndex - 1;
-      setCurrentSolutionIndex(newIndex);
-      setSolution(allCuratedSolutions[newIndex]);
-    }
+
+  const handleNextSolution = () => {
+
+    const currentIndex = allCuratedSolutions.findIndex(sol => sol?.id === solution?.id);
+    
+    const nextIndex = (currentIndex + 1) % allCuratedSolutions.length;
+    
+    setSolution(allCuratedSolutions[nextIndex]);
+    
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
   
-  const handleNextSolution = async () => {
-    if (currentSolutionIndex < allCuratedSolutions.length - 1) {
-      const newIndex = currentSolutionIndex + 1;
-      setCurrentSolutionIndex(newIndex);
-      setSolution(allCuratedSolutions[newIndex]);
-    }
+  const handlePreviousSolution = () => {
+    
+    const currentIndex = allCuratedSolutions.findIndex(sol => sol?.id === solution?.id);
+    
+    const previousIndex = (currentIndex - 1 + allCuratedSolutions.length) % allCuratedSolutions.length;
+    
+    setSolution(allCuratedSolutions[previousIndex]);
+    
     window.scrollTo({ top: 0, behavior: "smooth" });
+
   };
-  
 
   const isCurated = useMemo(() => {
     if (solution) {
@@ -286,6 +288,11 @@ const Solution = () => {
     }
   }, [solution]);
 
+
+
+
+
+
   return (
     <div>
       <Seo title={"Profile"} />
@@ -294,7 +301,7 @@ const Solution = () => {
 
       <Row>
         <Col lg={12} md={12}>
-          
+
           <CardInnovateur profileInnovateur={profileInnovateur} />
 
           <SolutionTab
