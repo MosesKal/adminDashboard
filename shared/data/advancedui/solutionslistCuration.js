@@ -1,122 +1,120 @@
 import React from "react";
 import moment from "moment";
-import {Row, Col, Button, Badge} from "react-bootstrap";
+import { Row, Col, Button, Badge } from "react-bootstrap";
 
 import Link from "next/link";
 
 export const truncateText = (text, maxLength) => {
-    if (text?.length > maxLength) {
-        return text.substring(0, maxLength) + "...";
-    }
-    return text;
+  if (text?.length > maxLength) {
+    return text.substring(0, maxLength) + "...";
+  }
+  return text;
 };
 
-export const columnsCurations = (handleDelete,) => [
+export const columnsCurations = (handleDelete) => [
+  {
+    name: "Etat",
+    selector: (row) => [row.feedbacks],
+    cell: (row) => (
+      <div className={row.class}>
+        {row.feedbacks.length > 0 ? (
+          <Badge pill bg="primary">
+            Déjà currée
+          </Badge>
+        ) : (
+          <Badge pill bg="warning">
+            Non currée
+          </Badge>
+        )}
+      </div>
+    ),
+  },
+  {
+    name: "pourcentage",
+    selector: (row) => [row.cote],
+    cell: (row) => {
+      let badgeColorClass = "";
 
-    {
-        name: "Etat",
-        selector: (row) => [row.feedbacks],
-        cell: (row) => <div className={row.class}>
-            {
-                row.feedbacks.length > 0 ? (
-                    <Badge pill bg="primary">
-                        Déjà currée
-                    </Badge>
-                ) : (
-                    <Badge pill bg="warning">
-                        Non currée
-                    </Badge>
-                )
-            }
+      if (row.cote >= 75) {
+        badgeColorClass = "success";
+      } else if (row.cote >= 50) {
+        badgeColorClass = "warning";
+      } else {
+        badgeColorClass = "danger";
+      }
 
-        </div>,
+      return (
+        <div className="tx-center tx-14">
+          <Badge pill bg={badgeColorClass}>
+            {row.cote} %
+          </Badge>
+        </div>
+      );
     },
-    {
-        name: "pourcentage",
-        selector: (row) => [row.cote],
-        cell: (row) => {
-            let badgeColorClass = '';
-
-            if (row.cote >= 75) {
-                badgeColorClass = 'success';
-            } else if (row.cote >= 50) {
-                badgeColorClass = 'warning';
-            } else {
-                badgeColorClass = 'danger';
-            }
-
-            return (
-                    <div className="tx-center tx-14">
-                        <Badge pill bg={badgeColorClass}>
-                            {row.cote} %
-                        </Badge>
-                    </div>
-            );
-        },
-    },
-    {
-        name: "Titre",
-        selector: (row) => [row.name],
-        sortable: false,
-        cell: (row) => (
-            <span>
+  },
+  {
+    name: "Titre",
+    selector: (row) => [row.name],
+    sortable: false,
+    cell: (row) => (
+      <span>
         <span className="tx-13">{truncateText(row.name, 100)}</span>
       </span>
-        ),
-    },
-    {
-        name: "Thématique",
-        selector: (row) => [row.thematic?.name],
-        sortable: false,
-        cell: (row) => (
-            <span>
+    ),
+  },
+  {
+    name: "Thématique",
+    selector: (row) => [row.thematic?.name],
+    sortable: false,
+    cell: (row) => (
+      <span>
         <p className="tx-14 font-weight-semibold text-dark mb-1">
           {truncateText(row.thematic?.name, 30)}
         </p>
         <p className="tx-12 text-muted mb-0">{`ODDS : ${row.thematic?.odds}`}</p>
       </span>
-        ),
-    },
-    {
-        name: "Date et Heure de soumission",
-        selector: (row) => [row.createdAt],
-        sortable: false,
-        cell: (row) => (
-            <span className="tx-center">
+    ),
+  },
+  {
+    name: "Date et Heure de soumission",
+    selector: (row) => [row.createdAt],
+    sortable: false,
+    cell: (row) => (
+      <span className="tx-center">
         <span className=" tx-13 font-weight-semibold">
           {"Soumis le"} {moment(row?.createdAt).format("DD/MM/YYYY [à] HH:mm")}
         </span>
       </span>
-        ),
-    },
-    {
-        name: "Actions",
-        selector: (row) => [row.Action],
-        sortable: false,
-        cell: (row) => (
-            <div className="w-100">
-                <Row className="justify-content-evenly">
-                    <Col xs={12} md={12} lg={12} xl={12} xxl={6}>
-                        <Link
-                            className="btn btn-primary btn-sm w-100 button-icon"
-                            href={`/components/apps/solution?id=${row?.id}&innovateurId=${row?.user?.id}&thematiqueId=${row?.thematic?.id}`}
-                            as="/components/apps/solution"
-                        >
-                            <span className="ps-1">Détails</span>
-                        </Link>
-                    </Col>
-                    <Col xs={12} md={12} lg={12} xl={12} xxl={6}>
-                        <Button
-                            variant=""
-                            type="button"
-                            onClick={() => handleDelete(row)}
-                            className="btn w-100 button-icon btn-sm btn-secondary m-0"
-                        >
-                            <span className="ps-1">Supprimer</span>
-                        </Button>
-                    </Col>
-                </Row>
-            </div>
-        ),
-    },
+    ),
+  },
+  {
+    name: "Actions",
+    selector: (row) => [row.Action],
+    sortable: false,
+    cell: (row) => (
+      <div className="w-100">
+        <Row className="justify-content-evenly">
+          <Col xs={12} md={12} lg={12} xl={12} xxl={6}>
+            <Link
+              className="btn btn-primary btn-sm w-100 button-icon"
+              href={`/components/apps/solution?id=${row?.id}&innovateurId=${row?.user?.id}&thematiqueId=${row?.thematic?.id}`}
+              as="/components/apps/solution"
+            >
+              <span className="ps-1">Détails</span>
+            </Link>
+          </Col>
+          <Col xs={12} md={12} lg={12} xl={12} xxl={6}>
+            <Button
+              variant=""
+              type="button"
+              onClick={() => handleDelete(row)}
+              className="btn w-100 button-icon btn-sm btn-secondary m-0"
+            >
+              <span className="ps-1">Supprimer</span>
+            </Button>
+          </Col>
+        </Row>
+      </div>
+    ),
+  },
 ];

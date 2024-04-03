@@ -42,9 +42,7 @@ const Solution = () => {
 
   const [profile, setProfile] = useState(null);
 
-
   useEffect(() => {
-
     const storedSolution = localStorage.getItem("solution");
     const storedProfileInnovateur = localStorage.getItem("profileInnovateur");
 
@@ -82,7 +80,6 @@ const Solution = () => {
       localStorage.removeItem("profileInnovateur");
       localStorage.removeItem("solution");
     };
-
   }, []);
 
   const fetchUserDetails = async (userId) => {
@@ -99,7 +96,6 @@ const Solution = () => {
   };
 
   useEffect(() => {
-
     const fetchFeedbacksWithUserDetails = async () => {
       if (solution && solution.feedbacks.length > 0) {
         const feedbacksWithUserDetails = await Promise.all(
@@ -235,7 +231,6 @@ const Solution = () => {
   }, [solution, profileInnovateur]);
 
   if (solution) {
-
     if (solution?.imageLink) {
       imageLinks.push({ link: solution?.imageLink });
     }
@@ -245,7 +240,6 @@ const Solution = () => {
         imageLinks?.push({ link: image?.imageLink });
       });
     }
-
   }
 
   const userConnectedEmail = useMemo(() => {
@@ -254,28 +248,30 @@ const Solution = () => {
     }
   }, [profile]);
 
-
   const handleNextSolution = () => {
+    const currentIndex = allCuratedSolutions.findIndex(
+      (sol) => sol?.id === solution?.id
+    );
 
-    const currentIndex = allCuratedSolutions.findIndex(sol => sol?.id === solution?.id);
-    
     const nextIndex = (currentIndex + 1) % allCuratedSolutions.length;
-    
+
     setSolution(allCuratedSolutions[nextIndex]);
-    
+
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
-  
-  const handlePreviousSolution = () => {
-    
-    const currentIndex = allCuratedSolutions.findIndex(sol => sol?.id === solution?.id);
-    
-    const previousIndex = (currentIndex - 1 + allCuratedSolutions.length) % allCuratedSolutions.length;
-    
-    setSolution(allCuratedSolutions[previousIndex]);
-    
-    window.scrollTo({ top: 0, behavior: "smooth" });
 
+  const handlePreviousSolution = () => {
+    const currentIndex = allCuratedSolutions.findIndex(
+      (sol) => sol?.id === solution?.id
+    );
+
+    const previousIndex =
+      (currentIndex - 1 + allCuratedSolutions.length) %
+      allCuratedSolutions.length;
+
+    setSolution(allCuratedSolutions[previousIndex]);
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const isCurated = useMemo(() => {
@@ -289,10 +285,7 @@ const Solution = () => {
   }, [solution]);
 
 
-
-
-
-
+  
   return (
     <div>
       <Seo title={"Profile"} />
@@ -301,7 +294,6 @@ const Solution = () => {
 
       <Row>
         <Col lg={12} md={12}>
-
           <CardInnovateur profileInnovateur={profileInnovateur} />
 
           <SolutionTab

@@ -120,6 +120,7 @@ const SolutionTab = ({
 };
 
 const Timeline = ({ solution }) => {
+  
   const [isLoadingUpdateStatus, setIsLoadingUpdateStatus] = useState(false);
   const [statusList, setStatusList] = useState([]);
   const [currentStatus, setCurrentStatus] = useState(null);

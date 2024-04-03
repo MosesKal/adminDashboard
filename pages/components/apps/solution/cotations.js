@@ -37,13 +37,8 @@ const Cotations = ({
   isCurated,
 }) => {
   return (
-
-
     <>
-      <div
-        className="main-content-body tab-pane border-top-0 h-500"
-        id="edit"
-      >
+      <div className="main-content-body tab-pane border-top-0 h-500" id="edit">
         <Card style={{ height: "100%", maxHeight: "100%" }} className="">
           <Card.Body
             className=" "
@@ -79,8 +74,6 @@ const Cotations = ({
 };
 
 const CuratorInfo = ({ userDetails }) => {
-
-
   return (
     <>
       {userDetails && (
@@ -180,7 +173,6 @@ const RenderSelectForDisplayingCote = ({
     }
     return [];
   }, [optionsFeedBack, quotation]);
-  
 
   const totalCote = useMemo(() => {
     let total = 0;
